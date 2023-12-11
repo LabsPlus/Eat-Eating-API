@@ -12,6 +12,6 @@
     "resolveJsonModule": true,
     "strictNullChecks": false,
   },
-  "include": ["src/*", "src/database/sequelize.ts"],
+  "include": ["src/*"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,35 +1,32 @@
-import express from "express";
-import { router } from "./routes";
+import express, { Application } from "express";
+import { Routers } from "./routes/routes";
 import morgan from "morgan";
+import cors from "cors";
 
-export class App{
-  public server: express.Application;
+export class App {
+  private app: Application;
 
-  constructor(){
-    this.server = express();
+  constructor() {
+    this.app = express();
     this.middleware();
-    this.router();
+    this.setupRoutes();
   }
 
-  private middleware(){
-    this.server.use(express.json());
-    this.server.use(morgan('dev'));
-    this.server.use((req, res, next) =>{
-        res.header("Access-Control-Allow-Origin", "*"); // update to match the domain
-        res.header("Access-Control-Allow-Credentials", "true");
-        res.header(
-            "Access-Control-Allow-Headers",
-            "Origin, X-Requested-With, Content-Type, Accept"
-        );
-        res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-        next();
+  private middleware() {
+    this.app.use(express.json());
+    this.app.use(morgan("dev"));
+    this.app.use(cors());
+    this.app.use(express.urlencoded({ extended: true }));
+  }
+
+  listen(port: number) {
+    this.app.listen(port, () => {
+      console.log(`Servidor rodando na porta ${port}`);
     });
   }
 
-  private router(){
-    this.server.use(router);
+  private setupRoutes() {
+    const routers = new Routers();
+    this.app.use("/", routers.getRoutes());
   }
 }
-
-
-

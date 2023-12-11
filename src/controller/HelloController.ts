@@ -1,12 +1,11 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
-class HelloControler{
-
-    public home(req: Request, res: Response){
-        return res.json({
-            response: "Hello"
-        })
-    }
+class HelloControler {
+  public home(req: Request, res: Response, next: NextFunction) {
+    return res.json({
+      response: "Hello",
+    });
+  }
 }
 
-export const helloControler = new HelloControler();
+export { HelloControler };

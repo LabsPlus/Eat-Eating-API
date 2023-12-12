@@ -1,6 +1,5 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, Sequelize } from 'sequelize';
 import { sequelize } from '../sequelize';
-
 class User extends Model {
   public id!: number;
   public email!: string;
@@ -38,4 +37,5 @@ User.init(
     modelName: 'user',
   },
 );
+
 export { User };

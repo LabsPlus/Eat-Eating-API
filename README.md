@@ -28,13 +28,10 @@ DB_USER = admin
 DB_PASSWORD = 1234
 
 # database
-DIALECT = postgres
-DB_HOST = localhost
-DB_PORT = 5432
-DB_NAME = eateating
+DATABASE_URL = 'Url de conexão do banco de dados'
 
 # localhost
-PORT = 3001
+PORT = 3000
 ```
 
 Crie um banco de dados com o nome "eateating" usando o PostgreSQL.

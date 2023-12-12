@@ -1,7 +1,7 @@
-import express, { Application } from "express";
-import { Routers } from "./routes/routes";
-import morgan from "morgan";
-import cors from "cors";
+import express, { Application } from 'express';
+import { Routers } from './routes/routes';
+import morgan from 'morgan';
+import cors from 'cors';
 
 export class App {
   private app: Application;
@@ -14,7 +14,7 @@ export class App {
 
   private middleware() {
     this.app.use(express.json());
-    this.app.use(morgan("dev"));
+    this.app.use(morgan('dev'));
     this.app.use(cors());
     this.app.use(express.urlencoded({ extended: true }));
   }
@@ -27,6 +27,6 @@ export class App {
 
   private setupRoutes() {
     const routers = new Routers();
-    this.app.use("/", routers.getRoutes());
+    this.app.use('/', routers.getRoutes());
   }
 }

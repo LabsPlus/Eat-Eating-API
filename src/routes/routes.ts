@@ -1,16 +1,29 @@
-import { Router } from "express";
-import { HelloControler } from "../controller/HelloController";
+import { Router } from 'express';
+import { UserController } from '../controller/user';
 
 class Routers {
   private router: Router;
-  private helloControler: HelloControler;
+  private userController: UserController;
   constructor() {
     this.router = Router();
-    this.helloControler = new HelloControler();
+    this.userController = new UserController();
   }
 
   getRoutes() {
-    this.router.get("/", this.helloControler.home);
+    this.router.post(
+      '/',
+      this.userController.createUser.bind(this.userController),
+    );
+
+    this.router.post(
+      '/auth',
+      this.userController.authUser.bind(this.userController),
+    );
+
+    this.router.post(
+      '/refreshtoken',
+      this.userController.refreshToken.bind(this.userController),
+    );
 
     return this.router;
   }

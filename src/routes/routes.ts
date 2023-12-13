@@ -10,9 +10,19 @@ class Routers {
   }
 
   getRoutes() {
-    this.router.get(
+    this.router.post(
       '/',
       this.userController.createUser.bind(this.userController),
+    );
+
+    this.router.post(
+      '/auth',
+      this.userController.authUser.bind(this.userController),
+    );
+
+    this.router.post(
+      '/refreshtoken',
+      this.userController.refreshToken.bind(this.userController),
     );
 
     return this.router;

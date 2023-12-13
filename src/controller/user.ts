@@ -22,6 +22,30 @@ class UserController {
       next(error);
     }
   }
+
+  async authUser(request: Request, response: Response, next: NextFunction) {
+    const { email, password } = request.body;
+
+    try {
+      const result = await this.userServices.authUser({ email, password });
+
+      return response.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async refreshToken(request: Request, response: Response, next: NextFunction) {
+    const { refreshToken } = request.body;
+
+    try {
+      const result = await this.userServices.refreshToken(refreshToken);
+
+      return response.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export { UserController };

@@ -3,3 +3,8 @@ export interface IUserCreate {
   password: string;
   emailRecovery: string;
 }
+
+export interface IUserAuth {
+  email: string;
+  password: string;
+}

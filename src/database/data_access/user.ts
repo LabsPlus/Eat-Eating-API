@@ -11,6 +11,12 @@ class UserDAL {
 
     return result;
   }
+
+  async findUserByEmail(email: string) {
+    const result = await User.findOne({ where: { email } });
+
+    return result;
+  }
 }
 
 export { UserDAL };

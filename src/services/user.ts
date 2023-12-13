@@ -10,8 +10,12 @@ class UserServices {
   }
 
   async createUser({ email, password, emailRecovery }: IUserCreate) {
-    const passwordHash = await hash(password, 10);
+    const findUserByEmail = this.userDAL.findUserByEmail(email);
+    if (findUserByEmail) {
+      throw new Error('User email already exists');
+    }
 
+    const passwordHash = await hash(password, 10);
     const result = await this.userDAL.createUser({
       email,
       password: passwordHash,

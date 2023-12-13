@@ -28,7 +28,10 @@ DB_USER = admin
 DB_PASSWORD = 1234
 
 # database
-DATABASE_URL = 'Url de conexão do banco de dados'
+DATABASE_URL = 'DIALECT://DB_USER:DB_PASSWORD@DB_HOST:DB_PORT/DB_NAME'
+
+Por exemplo:
+DATABASE_URL = 'postgres://labsif:1234@localhost:5432/eateating'
 
 # localhost
 PORT = 3000

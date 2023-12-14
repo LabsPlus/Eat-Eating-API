@@ -23,15 +23,19 @@ IMPORTANTE: É necessário ter pelo menos a versão estável mais recente do Nod
 Na pasta "api", crie um arquivo chamado: .env com o seguinte formato:
 
 ```
-# user auth
-DB_USER = admin
-DB_PASSWORD = 1234
-
 # database
 DATABASE_URL = 'DIALECT://DB_USER:DB_PASSWORD@DB_HOST:DB_PORT/DB_NAME'
 
 Por exemplo:
 DATABASE_URL = 'postgres://labsif:1234@localhost:5432/eateating'
+
+
+# tokens
+ACCESS_LOCAL_KEY_TOKEN = 'chave do tipo hash md5'
+ACCESS_LOCAL_KEY_TOKEN_REFRESH = 'chave do tipo hash md5'
+
+Para obter as chaves acima [click aqui](https://passwordsgenerator.net/md5-hash-generator/), e digite palavras aleatórias, e a chave das variáveis tem que ser diferentes.
+
 
 # localhost
 PORT = 3000

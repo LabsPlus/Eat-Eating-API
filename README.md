@@ -34,13 +34,13 @@ DATABASE_URL = 'postgres://labsif:1234@localhost:5432/eateating'
 ACCESS_LOCAL_KEY_TOKEN = 'chave do tipo hash md5'
 ACCESS_LOCAL_KEY_TOKEN_REFRESH = 'chave do tipo hash md5'
 
-Para obter as chaves acima [click aqui](https://passwordsgenerator.net/md5-hash-generator/), e digite palavras aleatórias, e a chave das variáveis tem que ser diferentes.
+Para obter as chaves acima  entre no link: https://passwordsgenerator.net/md5-hash-generator/
+Digite palavras aleatórias para obter a chave (a chave das variáveis devem ser diferentes).
 
 
 # localhost
 PORT = 3000
 ```
-
 Crie um banco de dados com o nome "eateating" usando o PostgreSQL.
 
 ## Instalação

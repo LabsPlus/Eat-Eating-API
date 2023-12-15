@@ -18,6 +18,7 @@ class UserDAL {
     return result;
   }
 
+
   async findUserByToken(token: string) {
     const result = await User.findOne({ where: {resetToken: token} });
 
@@ -38,6 +39,8 @@ class UserDAL {
         return result.resetToken; // retorna o token para recuperação de senha
   }
 }
+
+
 
 
 export { UserDAL };

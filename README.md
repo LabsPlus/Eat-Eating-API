@@ -23,15 +23,20 @@ IMPORTANTE: É necessário ter pelo menos a versão estável mais recente do Nod
 Na pasta "api", crie um arquivo chamado: .env com o seguinte formato:
 
 ```
-# user auth
-DB_USER = admin
-DB_PASSWORD = 1234
-
 # database
 DATABASE_URL = 'DIALECT://DB_USER:DB_PASSWORD@DB_HOST:DB_PORT/DB_NAME'
 
 Por exemplo:
 DATABASE_URL = 'postgres://labsif:1234@localhost:5432/eateating'
+
+
+# tokens
+ACCESS_LOCAL_KEY_TOKEN = 'chave do tipo hash md5'
+ACCESS_LOCAL_KEY_TOKEN_REFRESH = 'chave do tipo hash md5'
+
+Para obter as chaves acima  entre no link: https://passwordsgenerator.net/md5-hash-generator/
+Digite palavras aleatórias para obter a chave (a chave das variáveis devem ser diferentes).
+
 
 # localhost
 PORT = 3000
@@ -49,6 +54,7 @@ NODEMAILER_EMAIL = exemplo@gmail.com
 LINK = localhost:3001 # link do front end onde sera usado no email para redirecionar para a pagina de redefinição de senha
 ```
 
+
 ### Rotas da aplicação
 
 - /createUser `rota post` recebe um email, um password e um emailRecovery e retorna um usuario criado no banco de dados
@@ -59,10 +65,13 @@ LINK = localhost:3001 # link do front end onde sera usado no email para redireci
 
 /forgotPassword recebe um email de usuario envia um email para usuario que quer trocar a senha com o token para trocar a senha e retorna uma mensagem de sucesso da operação
 
+
 Crie um banco de dados com o nome "eateating" usando o PostgreSQL.
 
 ## Instalação
 
 1. Clone este repositório
 2. Na raiz do projeto, instale as dependências: `npm install`
-3. Inicie a aplicação: `npm start`
+3. Inicie a aplicação em desenvolvimento: `npm run start:dev`
+4. Gere o buld da aplicação com: `npm run build`
+5. Inicie a aplicação build: `npm run start:prod`

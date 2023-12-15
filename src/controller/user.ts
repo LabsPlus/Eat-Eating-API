@@ -47,6 +47,7 @@ class UserController {
     }
   }
 
+
   async updatePassword(request: Request, response: Response, next: NextFunction){
     const { newPassword, token} = request.body;
     try {
@@ -68,6 +69,7 @@ class UserController {
       next(error);
     }
   }
+
 }
 
 export { UserController };

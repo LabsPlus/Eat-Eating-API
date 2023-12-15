@@ -35,7 +35,29 @@ DATABASE_URL = 'postgres://labsif:1234@localhost:5432/eateating'
 
 # localhost
 PORT = 3000
+
+#credenciais para autentição
+ACCESS_LOCAL_KEY_TOKEN_REFRESH = 123456
+ACCESS_LOCAL_KEY_TOKEN = 4567890
+
+#nodemailer credenciais para envio de email
+USER_EMAIL = 35e9b6df75846
+PASSWORD_EMAIL = a3f84dce442daf
+HOST = sandbox.smtp.mailtrap.io #transportador de email
+NODEMAILER_EMAIL = exemplo@gmail.com
+
+LINK = localhost:3001 # link do front end onde sera usado no email para redirecionar para a pagina de redefinição de senha
 ```
+
+### Rotas da aplicação
+
+- /createUser `rota post` recebe um email, um password e um emailRecovery e retorna um usuario criado no banco de dados
+- /auth `rota post` recebe um email, um password e retorna um objeto com o token um refresh token com seu tempo de inspiração e o usuario autenticado
+- /refreshToken `rota post` recebe um refresh token e retorna o refresh token e seu tempo de expiração
+
+\*/updatePassword recebe uma senha e token para resetar senha, altera a senha do usuario com o token retorna o usuario com a senha alterada.
+
+/forgotPassword recebe um email de usuario envia um email para usuario que quer trocar a senha com o token para trocar a senha e retorna uma mensagem de sucesso da operação
 
 Crie um banco de dados com o nome "eateating" usando o PostgreSQL.
 

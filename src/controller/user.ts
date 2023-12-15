@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserServices } from '../services/user';
+import { InvalidConnectionError } from 'sequelize';
 
 class UserController {
   private userServices: UserServices;
@@ -18,8 +19,10 @@ class UserController {
       });
 
       return response.status(201).json(result);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
+
+      return response.status(401).json(error.message);
     }
   }
 
@@ -30,8 +33,10 @@ class UserController {
       const result = await this.userServices.authUser({ email, password });
 
       return response.status(200).json(result);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
+
+      return response.status(401).json(error.message);
     }
   }
 
@@ -42,8 +47,10 @@ class UserController {
       const result = await this.userServices.refreshToken(refreshToken);
 
       return response.status(200).json(result);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
+
+      return response.status(401).json(error.message);
     }
   }
 }

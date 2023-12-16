@@ -1,13 +1,21 @@
 import { compare, hash } from 'bcrypt';
 import { UserDAL } from '../database/data_access/user';
+import { Email } from '../utils/email';
 import { IUserAuth, IUserCreate } from '../intefaces/user';
 import { sign, verify } from 'jsonwebtoken';
+import { error } from 'console';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const { Link } = process.env;
 
 class UserServices {
   private userDAL: UserDAL;
+  private email: Email;
 
   constructor() {
     this.userDAL = new UserDAL();
+    this.email = new Email();
   }
 
   async createUser({ email, password, emailRecovery }: IUserCreate) {
@@ -97,6 +105,52 @@ class UserServices {
       refreshToken: { refreshToken: newRefreshToken, expiresIn: '7d' },
     };
   }
+
+  async updatePassword(newPassword: string, token: string): Promise<any> {
+  const user = await this.userDAL.findUserByToken(token);
+  if (!user) {
+    throw new Error('There is no user with this token');
+  }
+
+  const now = new Date();
+
+  // Verificar se o token expirou
+  if (user.resetTokenExpiry && now > user.resetTokenExpiry) {
+    throw new Error('Sorry the token expired');
+  }
+
+  const passwordHash = await hash(newPassword, 10);
+
+  const result = await this.userDAL.updatePassword(passwordHash, user);
+  return result;
+}
+
+  async forgotPassword(email: string): Promise<any> {
+    const user = await this.userDAL.findUserByEmail(email);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const resetToken = await hash(email + Date.now(), 10);
+    const resetTokenExpiry = new Date(Date.now() + 3600000);
+    const token = await this.userDAL.updateResetToken(resetToken, resetTokenExpiry, user);
+
+    const resetLink = `${process.env.LINK || ''}/recuperacao-senha/${token}`;
+    const sendEmail = await this.email.sendEmail({
+      destination : email,
+      subject: 'Recuperação de senha',
+      content: `Olá! Para resetar sua senha clique nesse link: ${resetLink}`
+    },
+    );
+
+    if (!sendEmail) {
+      throw new Error('Email not sent');
+    }
+
+    return sendEmail;
+  }
+
+
 }
 
 export { UserServices };

@@ -53,6 +53,29 @@ class UserController {
       return response.status(401).json(error.message);
     }
   }
+
+
+  async updatePassword(request: Request, response: Response, next: NextFunction){
+    const { newPassword, token} = request.body;
+    try {
+      const result = await this.userServices.updatePassword( newPassword, token);
+
+      return response.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+   async forgotPassword(request: Request, response: Response, next: NextFunction){
+    const {email} = request.body;
+    try {
+      
+      const result = await this.userServices.forgotPassword(email);
+      return response.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }
 
 export { UserController };

@@ -11,7 +11,8 @@ class Routers {
 
   getRoutes() {
     this.router.post(
-      '/',
+
+      '/createUser',
       this.userController.createUser.bind(this.userController),
     );
 
@@ -25,7 +26,17 @@ class Routers {
       this.userController.refreshToken.bind(this.userController),
     );
 
+    this.router.post(
+      '/updatePassword',
+      this.userController.updatePassword.bind(this.userController),
+    );
+    this.router.post(
+      '/forgotPassword',
+      this.userController.forgotPassword.bind(this.userController),
+    );
     return this.router;
   }
+
+  
 }
 export { Routers };

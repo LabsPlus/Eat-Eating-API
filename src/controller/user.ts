@@ -62,7 +62,6 @@ class UserController {
     try {
       
       const result = await this.userServices.forgotPassword(email);
-      console.log("chegou aqui" + result);
       return response.status(200).json(result);
     } catch (error) {
       next(error);

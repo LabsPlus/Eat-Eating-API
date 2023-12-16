@@ -136,10 +136,11 @@ class UserServices {
     const token = await this.userDAL.updateResetToken(resetToken, resetTokenExpiry, user);
 
     const resetLink = `${process.env.LINK || ''}/recuperacao-senha/${token}`;
-    const sendEmail = await this.email.sendEmail(
-      email,
-      'Recuperação de senha',
-      `Olá! Para resetar sua senha clique nesse link: ${resetLink}`,
+    const sendEmail = await this.email.sendEmail({
+      destination : email,
+      subject: 'Recuperação de senha',
+      content: `Olá! Para resetar sua senha clique nesse link: ${resetLink}`
+    },
     );
 
     if (!sendEmail) {

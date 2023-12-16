@@ -11,6 +11,7 @@ class Routers {
 
   getRoutes() {
     this.router.post(
+
       '/createUser',
       this.userController.createUser.bind(this.userController),
     );

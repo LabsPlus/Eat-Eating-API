@@ -150,6 +150,7 @@ class UserServices {
     return sendEmail;
   }
 
+
 }
 
 export { UserServices };

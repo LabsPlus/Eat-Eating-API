@@ -61,10 +61,14 @@ LINK = localhost:3001 # link do front end onde sera usado no email para redireci
 - /auth `rota post` recebe um email, um password e retorna um objeto com o token um refresh token com seu tempo de inspiração e o usuario autenticado
 - /refreshToken `rota post` recebe um refresh token e retorna o refresh token e seu tempo de expiração
 
-\*/updatePassword recebe uma senha e token para resetar senha, altera a senha do usuario com o token retorna o usuario com a senha alterada.
+- /updatePassword recebe uma senha e token para resetar senha, altera a senha do usuario com o token retorna o usuario com a senha alterada.
 
-/forgotPassword recebe um email de usuario envia um email para usuario que quer trocar a senha com o token para trocar a senha e retorna uma mensagem de sucesso da operação
+- /forgotPassword recebe um email de usuario envia um email para usuario que quer trocar a senha com o token para trocar a senha e retorna uma mensagem de sucesso da operação 
 
+
+## testar envio de e-mails
+
+- Para testar a rota `forgotPassword` é necessario ter um transportador de emails de teste para isso vá no site mailtrap, crie uma conta, vá na parte de email testing e troque a seleção de tecnolgia para node pegue as credenciais do site como host, usuario e senha e cole em seu .env na parte de nodemailer credentials como a forma descrita acima, quando enviar o email será enviado para esse site.
 
 Crie um banco de dados com o nome "eateating" usando o PostgreSQL.
 

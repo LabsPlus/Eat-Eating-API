@@ -44,6 +44,7 @@ PORT = 3000
 #credenciais para autentição
 ACCESS_LOCAL_KEY_TOKEN_REFRESH = 123456
 ACCESS_LOCAL_KEY_TOKEN = 4567890
+PORT = numero da porta de preferencia 
 
 #nodemailer credenciais para envio de email
 USER_EMAIL = 35e9b6df75846

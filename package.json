@@ -5,8 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "test": "jest",
-    "start:prod": "node dist/server.js",
-    "start:dev": " ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
+    "start": "node dist/server.js",
+    "dev": " ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
     "build": "tsc"
   },
   "keywords": [],

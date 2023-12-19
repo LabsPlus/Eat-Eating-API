@@ -1,6 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import { sequelize } from '../sequelize';
-class User extends Model {
+class Login extends Model {
   public id!: number;
   public email!: string;
   public password!: string;
@@ -10,7 +10,7 @@ class User extends Model {
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
-User.init(
+Login.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -32,7 +32,7 @@ User.init(
       allowNull: false,
       unique: false,
     },
-    resetToken:{
+    resetToken: {
       type: DataTypes.STRING,
       allowNull: true,
       unique: false,
@@ -40,16 +40,16 @@ User.init(
     resetTokenExpiry: {
       type: DataTypes.DATE,
       allowNull: true,
-      unique: false, 
+      unique: false,
     },
-
   },
   {
     timestamps: true,
     sequelize,
     paranoid: true,
-    modelName: 'user',
+    modelName: 'login',
+    tableName: 'login',
   },
 );
 
-export { User };
+export { Login };

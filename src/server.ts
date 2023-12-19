@@ -1,14 +1,18 @@
 import { App } from './app';
 import { sequelize } from './database/sequelize';
-import { User } from './database/models/user';
+import { Login } from './database/models/login';
 
 const app = new App();
 
-User.sync({ alter: true }).then(() => {
-  console.log('Tabele user sincronizada');
-});
+Login.sync({ alter: true })
+  .then(() => {
+    console.log('Tabele sincronizada');
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3003;
 
 sequelize.sync({ alter: true }).then(() => {
   console.log('conectado');

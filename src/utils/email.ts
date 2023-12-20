@@ -1,11 +1,11 @@
 require('dotenv').config();
 import * as nodemailer from 'nodemailer';
-import {ISendEmail} from "../intefaces/email"
+import { ISendEmail } from '../intefaces/email';
 
 class Email {
   constructor() {}
 
-  async sendEmail({destination, subject, content}: ISendEmail) {
+  async sendEmail({ destination, subject, content, link }: ISendEmail) {
     try {
       const transporter = nodemailer.createTransport({
         host: process.env.HOST,
@@ -21,7 +21,7 @@ class Email {
         from: process.env.NODEMAILER_EMAIL,
         to: destination,
         subject: subject,
-        text: content,
+        html: `<a href="${link}" style="display:inline-block;padding:10px 20px;background-color:#007BFF;color:#fff;text-decoration:none;border-radius:5px;"> ${content}</a>`,
       };
 
       const info = await transporter.sendMail(mailOptions);

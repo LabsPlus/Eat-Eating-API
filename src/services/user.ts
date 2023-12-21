@@ -139,7 +139,7 @@ class UserServices {
       user,
     );
 
-    const resetLink = `${process.env.LINK || ''}/nova-senha/${token}`;
+    const resetLink = `${process.env.LINK || ''}/nova-senha?token=${token}`;
     const sendEmail = await this.email.sendEmail({
       destination: email,
       subject: 'Recuperação de senha',

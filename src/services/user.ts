@@ -107,23 +107,23 @@ class UserServices {
   }
 
   async updatePassword(newPassword: string, token: string): Promise<any> {
-  const user = await this.userDAL.findUserByToken(token);
-  if (!user) {
-    throw new Error('There is no user with this token');
+    const user = await this.userDAL.findUserByToken(token);
+    if (!user) {
+      throw new Error('There is no user with this token');
+    }
+
+    const now = new Date();
+
+    // Verificar se o token expirou
+    if (user.resetTokenExpiry && now > user.resetTokenExpiry) {
+      throw new Error('Sorry the token expired');
+    }
+
+    const passwordHash = await hash(newPassword, 10);
+
+    const result = await this.userDAL.updatePassword(passwordHash, user);
+    return result;
   }
-
-  const now = new Date();
-
-  // Verificar se o token expirou
-  if (user.resetTokenExpiry && now > user.resetTokenExpiry) {
-    throw new Error('Sorry the token expired');
-  }
-
-  const passwordHash = await hash(newPassword, 10);
-
-  const result = await this.userDAL.updatePassword(passwordHash, user);
-  return result;
-}
 
   async forgotPassword(email: string): Promise<any> {
     const user = await this.userDAL.findUserByEmail(email);
@@ -133,15 +133,19 @@ class UserServices {
 
     const resetToken = await hash(email + Date.now(), 10);
     const resetTokenExpiry = new Date(Date.now() + 3600000);
-    const token = await this.userDAL.updateResetToken(resetToken, resetTokenExpiry, user);
-
-    const resetLink = `${process.env.LINK || ''}/recuperacao-senha/${token}`;
-    const sendEmail = await this.email.sendEmail({
-      destination : email,
-      subject: 'Recuperação de senha',
-      content: `Olá! Para resetar sua senha clique nesse link: ${resetLink}`
-    },
+    const token = await this.userDAL.updateResetToken(
+      resetToken,
+      resetTokenExpiry,
+      user,
     );
+
+    const resetLink = `${process.env.LINK || ''}/nova-senha?token=${token}`;
+    const sendEmail = await this.email.sendEmail({
+      destination: email,
+      subject: 'Recuperação de senha',
+      content: `Clique aqui para redefinir sua senha `,
+      link: resetLink,
+    });
 
     if (!sendEmail) {
       throw new Error('Email not sent');
@@ -149,8 +153,6 @@ class UserServices {
 
     return sendEmail;
   }
-
-
 }
 
 export { UserServices };

@@ -1,5 +1,6 @@
 export interface ISendEmail{
   destination: string, 
   subject: string, 
-  content: string
+  content: string,
+  link: string
 }

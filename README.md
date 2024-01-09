@@ -12,11 +12,11 @@ Cada alteração deve ser documentada, a exemplo das rotas, com detalhes sobre o
 
 ## Tecnologias utilizadas
 
-- <p>NodeJS</p>
-- <p>ExpressJS</p>
-- <p>SequelizeJS</p>
+- <p>NodeJS: Versão 20.9</p>
+- <p>ExpressJS: Versão 4.18</p>
+- <p>SequelizeJS: Versão 6.35</p>
 - <p>postgresSQL: Versão 15</p>
-- <p>Typescript</p>
+- <p>Typescript: Versão 5.3</p>
 
 
 ### Crie um banco de dados para a aplicação

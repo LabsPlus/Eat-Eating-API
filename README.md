@@ -37,7 +37,7 @@ Substitua SEU_USUARIO pelo seu nome de usuário do PostgreSQL.
 ### IMPORTANTE: 
 É necessário ter pelo menos a versão estável mais recente do Node e NPM. Certifique-se de tê-los instalados corretamente para instalar as dependências necessárias e executar o projeto.
 
-Na pasta "api", crie um arquivo chamado: .env com o seguinte formato:
+Na pasta "eat-eating-api", crie um arquivo chamado: .env com o seguinte formato:
 
 ```
 # database

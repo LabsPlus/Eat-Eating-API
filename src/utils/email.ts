@@ -1,7 +1,6 @@
 require('dotenv').config();
 import * as nodemailer from 'nodemailer';
 import { ISendEmail } from '../intefaces/email';
-import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
 
 class Email {
   constructor() {}

@@ -15,10 +15,27 @@ Cada alteração deve ser documentada, a exemplo das rotas, com detalhes sobre o
 - <p>NodeJS</p>
 - <p>ExpressJS</p>
 - <p>SequelizeJS</p>
-- <p>postgresSQL</p>
+- <p>postgresSQL: Versão 15</p>
 - <p>Typescript</p>
 
-IMPORTANTE: É necessário ter pelo menos a versão estável mais recente do Node e NPM. Certifique-se de tê-los instalados corretamente para instalar as dependências necessárias e executar o projeto.
+
+### Crie um banco de dados para a aplicação
+#### 1. Acesse o PostgreSQL:
+  Abra o terminal ou prompt de comando e acesse o PostgreSQL usando o utilitário psql. Você pode fazer isso usando o seguinte comando:
+``` 
+      psql -U SEU_USUARIO
+```
+Substitua SEU_USUARIO pelo seu nome de usuário do PostgreSQL.
+
+#### 2. Crie um Banco de Dados:
+  Dentro do ambiente do PostgreSQL, crie um novo banco de dados com o seguinte comando:
+``` 
+      CREATE DATABASE NOME_DO_BANCO;
+```
+😊 Seu banco foi criado, agora pode usar a URL nas descrições abaixo:
+
+### IMPORTANTE: 
+É necessário ter pelo menos a versão estável mais recente do Node e NPM. Certifique-se de tê-los instalados corretamente para instalar as dependências necessárias e executar o projeto.
 
 Na pasta "api", crie um arquivo chamado: .env com o seguinte formato:
 

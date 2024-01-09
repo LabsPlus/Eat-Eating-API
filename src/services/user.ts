@@ -131,7 +131,7 @@ class UserServices {
       throw new Error('User not found');
     }
 
-    const resetToken = await hash(email + Date.now(), 10);
+    const resetToken = await hash(user.emailRecovery + Date.now(), 10);
     const resetTokenExpiry = new Date(Date.now() + 3600000);
     const token = await this.userDAL.updateResetToken(
       resetToken,
@@ -141,7 +141,7 @@ class UserServices {
 
     const resetLink = `${process.env.LINK || ''}/nova-senha?token=${token}`;
     const sendEmail = await this.email.sendEmail({
-      destination: email,
+      destination: user.emailRecovery,
       subject: 'Recuperação de senha',
       content: `Clique aqui para redefinir sua senha `,
       link: resetLink,

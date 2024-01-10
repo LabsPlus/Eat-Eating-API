@@ -54,28 +54,35 @@ class UserController {
     }
   }
 
-
-  async updatePassword(request: Request, response: Response, next: NextFunction){
-    const { newPassword, token} = request.body;
+  async updatePassword(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
+    const { newPassword, token } = request.body;
     try {
-      const result = await this.userServices.updatePassword( newPassword, token);
+      const result = await this.userServices.updatePassword(newPassword, token);
 
       return response.status(200).json(result);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
+      return response.status(401).json(error.message);
     }
   }
-   async forgotPassword(request: Request, response: Response, next: NextFunction){
-    const {email} = request.body;
+  async forgotPassword(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
+    const { email } = request.body;
     try {
-      
       const result = await this.userServices.forgotPassword(email);
       return response.status(200).json(result);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
+      return response.status(401).json(error.message);
     }
   }
-
 }
 
 export { UserController };

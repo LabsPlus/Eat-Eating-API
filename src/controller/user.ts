@@ -76,7 +76,8 @@ class UserController {
   ) {
     const { email } = request.body;
     try {
-      const result = await this.userServices.forgotPassword(email);
+      const ip = request.ip;
+      const result = await this.userServices.forgotPassword(email, ip!);
       return response.status(200).json(result);
     } catch (error: any) {
       next(error);

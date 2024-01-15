@@ -42,7 +42,7 @@ describe('UserServices', () => {
 
       // Utilize uma função async para aguardar a execução da expectativa
       await expect(
-        userServices.forgotPassword('nonexistent@example.com'),
+        userServices.forgotPassword('nonexistent@example.com', 'fake_ip'),
       ).rejects.toThrow('User not found');
     });
 

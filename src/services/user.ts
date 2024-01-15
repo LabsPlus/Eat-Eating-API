@@ -2,9 +2,10 @@ import { compare, hash } from 'bcrypt';
 import { UserDAL } from '../database/data_access/user';
 import { Email } from '../utils/email';
 import { IUserAuth, IUserCreate } from '../intefaces/user';
+import {RateLimit} from '../utils/rateLimit'
 import { sign, verify } from 'jsonwebtoken';
-import { error } from 'console';
 import dotenv from 'dotenv';
+import { error } from 'console';
 dotenv.config();
 
 const { Link } = process.env;
@@ -12,10 +13,15 @@ const { Link } = process.env;
 class UserServices {
   private userDAL: UserDAL;
   private email: Email;
+  private rateLimit: RateLimit;
+  private invalidAttempts: Map<string, number>;
+  
 
   constructor() {
     this.userDAL = new UserDAL();
     this.email = new Email();
+    this.rateLimit = new RateLimit();
+    this.invalidAttempts = new Map();
   }
 
   async createUser({ email, password, emailRecovery }: IUserCreate) {
@@ -125,11 +131,23 @@ class UserServices {
     return result;
   }
 
-  async forgotPassword(email: string): Promise<any> {
+  async forgotPassword(email: string, ip: string): Promise<any> {
+
+    if(this.rateLimit.verifyBlock(ip)){
+      throw new Error("This ip was blocked for 15 minutes")
+    }
+   
     const user = await this.userDAL.findUserByEmail(email);
     if (!user) {
+      const actualAttempts = this.invalidAttempts.get(ip) || 0;
+      this.invalidAttempts.set(ip, actualAttempts + 1);
+
+      if(actualAttempts + 1 === 3){
+          this.rateLimit.blockIp(ip);
+      }
       throw new Error('User not found');
     }
+    
 
     const resetToken = await hash(user.emailRecovery + Date.now(), 10);
     const resetTokenExpiry = new Date(Date.now() + 3600000);
@@ -153,6 +171,8 @@ class UserServices {
 
     return sendEmail;
   }
+
+ 
 }
 
 export { UserServices };

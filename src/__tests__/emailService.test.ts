@@ -20,7 +20,12 @@ describe('Email', () => {
       close: jest.fn(),
     } as any);
 
-    const result = await email.sendEmail('example@example.com', 'Subject', 'Content');
+    const result = await email.sendEmail({
+      destination: 'example@example.com',
+      subject: 'Subject',
+      content: 'Content',
+      link: 'https://example.com',
+    });
 
     expect(nodemailer.createTransport).toHaveBeenCalledWith({
       host: process.env.HOST,
@@ -41,7 +46,12 @@ describe('Email', () => {
       close: jest.fn(),
     } as any);
 
-    await expect(email.sendEmail('example@example.com', 'Subject', 'Content')).rejects.toThrow('email not sended');
+    await expect(email.sendEmail({
+      destination: 'example@example.com',
+      subject: 'Subject',
+      content: 'Content',
+      link: 'https://example.com',
+    })).rejects.toThrow('email not sended');
 
     expect(nodemailer.createTransport).toHaveBeenCalledWith({
       host: process.env.HOST,

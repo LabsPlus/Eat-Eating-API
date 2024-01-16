@@ -1,8 +1,8 @@
-import { Login } from '../models/login';
-import { IUserCreate } from '../../intefaces/user';
+import { Login } from '../models/login.models';
+import { IUsersCreate } from '../../intefaces/users.interfaces';
 
-class UserDAL {
-  async createUser({ email, password, emailRecovery }: IUserCreate) {
+class UsersDALs {
+  async createUser({ email, password, emailRecovery }: IUsersCreate) {
     const result = await Login.create({
       email,
       password,
@@ -42,4 +42,4 @@ class UserDAL {
   }
 }
 
-export { UserDAL };
+export { UsersDALs };

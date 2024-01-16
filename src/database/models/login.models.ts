@@ -1,5 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { sequelize } from '../sequelize';
+import { sequelize } from '../sequelize.databases';
 class Login extends Model {
   public id!: number;
   public email!: string;

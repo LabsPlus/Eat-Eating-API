@@ -1,31 +1,35 @@
 import { compare, hash } from 'bcrypt';
-import { UserDAL } from '../database/data_access/user';
-import { Email } from '../utils/email';
-import { IUserAuth, IUserCreate } from '../intefaces/user';
+import { UsersDALs } from '../database/data_access/users.dals';
+import { EmailUtils } from '../utils/email.utils';
+import { IUsersAuth, IUsersCreate } from '../intefaces/users.interfaces';
+import { RateLimitUtils} from '../utils/rateLimit.utils'
 import { sign, verify } from 'jsonwebtoken';
-import { error } from 'console';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const { Link } = process.env;
 
-class UserServices {
-  private userDAL: UserDAL;
-  private email: Email;
-
+class UsersServices {
+  private usersDALs: UsersDALs;
+  private emailUtils: EmailUtils;
+  private rateLimitUtils: RateLimitUtils;
+  private invalidAttempts: Map<string, number>;
+  
   constructor() {
-    this.userDAL = new UserDAL();
-    this.email = new Email();
+    this.usersDALs = new UsersDALs();
+    this.emailUtils = new EmailUtils();
+    this.rateLimitUtils = new RateLimitUtils();
+    this.invalidAttempts = new Map();
   }
 
-  async createUser({ email, password, emailRecovery }: IUserCreate) {
-    const findUserByEmail = await this.userDAL.findUserByEmail(email);
+  async createUser({ email, password, emailRecovery }: IUsersCreate) {
+    const findUserByEmail = await this.usersDALs.findUserByEmail(email);
     if (findUserByEmail) {
       throw new Error('User email already exists');
     }
 
     const passwordHash = await hash(password, 10);
-    const result = await this.userDAL.createUser({
+    const result = await this.usersDALs.createUser({
       email,
       password: passwordHash,
       emailRecovery,
@@ -34,8 +38,8 @@ class UserServices {
     return result;
   }
 
-  async authUser({ email, password }: IUserAuth) {
-    const findUserByEmail = await this.userDAL.findUserByEmail(email);
+  async authUser({ email, password }: IUsersAuth) {
+    const findUserByEmail = await this.usersDALs.findUserByEmail(email);
     if (!findUserByEmail) {
       throw new Error('Invalid email or password');
     }
@@ -107,7 +111,7 @@ class UserServices {
   }
 
   async updatePassword(newPassword: string, token: string): Promise<any> {
-    const user = await this.userDAL.findUserByToken(token);
+    const user = await this.usersDALs.findUserByToken(token);
     if (!user) {
       throw new Error('There is no user with this token');
     }
@@ -121,26 +125,38 @@ class UserServices {
 
     const passwordHash = await hash(newPassword, 10);
 
-    const result = await this.userDAL.updatePassword(passwordHash, user);
+    const result = await this.usersDALs.updatePassword(passwordHash, user);
     return result;
   }
 
-  async forgotPassword(email: string): Promise<any> {
-    const user = await this.userDAL.findUserByEmail(email);
+  async forgotPassword(email: string, ip: string): Promise<any> {
+
+    if(this.rateLimitUtils.verifyBlock(ip)){
+      throw new Error("This ip was blocked for 15 minutes")
+    }
+   
+    const user = await this.usersDALs.findUserByEmail(email);
     if (!user) {
+      const actualAttempts = this.invalidAttempts.get(ip) || 0;
+      this.invalidAttempts.set(ip, actualAttempts + 1);
+
+      if(actualAttempts + 1 === 3){
+          this.rateLimitUtils.blockIp(ip);
+      }
       throw new Error('User not found');
     }
+    
 
     const resetToken = await hash(user.emailRecovery + Date.now(), 10);
     const resetTokenExpiry = new Date(Date.now() + 3600000);
-    const token = await this.userDAL.updateResetToken(
+    const token = await this.usersDALs.updateResetToken(
       resetToken,
       resetTokenExpiry,
       user,
     );
 
     const resetLink = `${process.env.LINK || ''}/nova-senha?token=${token}`;
-    const sendEmail = await this.email.sendEmail({
+    const sendEmail = await this.emailUtils.sendEmail({
       destination: user.emailRecovery,
       subject: 'Recuperação de senha',
       content: `Clique aqui para redefinir sua senha `,
@@ -153,6 +169,8 @@ class UserServices {
 
     return sendEmail;
   }
+
+ 
 }
 
-export { UserServices };
+export { UsersServices };

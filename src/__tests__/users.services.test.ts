@@ -1,7 +1,7 @@
 // src/__tests__/userServices.test.ts
-import { UserServices } from '../services/user';
-import { UserDAL } from '../database/data_access/user';
-import { Email } from '../utils/email';
+import { UserServices } from '../services/users.services';
+import { UsersDALs } from '../database/data_access/users.dals';
+import { Email } from '../utils/email.utils';
 import { hash, compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 
@@ -22,7 +22,7 @@ describe('UserServices', () => {
 
     it('should throw an error if the user does not exist', async () => {
       // Alterando o mock apenas para este teste
-      jest.spyOn(UserDAL.prototype, 'findUserByToken').mockResolvedValue(null);
+      jest.spyOn(UsersDALs.prototype, 'findUserByToken').mockResolvedValue(null);
 
       // Utilize uma função async para aguardar a execução da expectativa
       await expect(
@@ -38,17 +38,17 @@ describe('UserServices', () => {
 
     it('should throw an error if the user does not exist', async () => {
       // Alterando o mock apenas para este teste
-      jest.spyOn(UserDAL.prototype, 'findUserByEmail').mockResolvedValue(null);
+      jest.spyOn(UsersDALs.prototype, 'findUserByEmail').mockResolvedValue(null);
 
       // Utilize uma função async para aguardar a execução da expectativa
       await expect(
-        userServices.forgotPassword('nonexistent@example.com'),
+        userServices.forgotPassword('nonexistent@example.com', 'fake_ip'),
       ).rejects.toThrow('User not found');
     });
 
     it('should throw an error if the email is not sent successfully', async () => {
       // Mock findUserByEmail to return a valid user
-      UserDAL.prototype.findUserByEmail = jest.fn().mockResolvedValue({
+      UsersDALs.prototype.findUserByEmail = jest.fn().mockResolvedValue({
         id: 1,
         email: 'test@example.com',
       });
@@ -57,7 +57,7 @@ describe('UserServices', () => {
       (hash as jest.Mock).mockResolvedValue('hashedResetToken');
 
       // Mock updateResetToken to return the updated user
-      UserDAL.prototype.updateResetToken = jest.fn().mockResolvedValue({
+      UsersDALs.prototype.updateResetToken = jest.fn().mockResolvedValue({
         id: 1,
         resetToken: 'hashedResetToken',
         resetTokenExpiry: new Date(Date.now() + 3600000),

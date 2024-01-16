@@ -1,18 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserServices } from '../services/user';
-import { InvalidConnectionError } from 'sequelize';
+import { UsersServices } from '../services/users.services';
 
-class UserController {
-  private userServices: UserServices;
+class UsersController {
+  private usersServices: UsersServices;
 
   constructor() {
-    this.userServices = new UserServices();
+    this.usersServices = new UsersServices();
   }
 
   async createUser(request: Request, response: Response, next: NextFunction) {
     const { email, password, emailRecovery } = request.body;
     try {
-      const result = await this.userServices.createUser({
+      const result = await this.usersServices.createUser({
         email,
         password,
         emailRecovery,
@@ -30,7 +29,7 @@ class UserController {
     const { email, password } = request.body;
 
     try {
-      const result = await this.userServices.authUser({ email, password });
+      const result = await this.usersServices.authUser({ email, password });
 
       return response.status(200).json(result);
     } catch (error: any) {
@@ -44,7 +43,7 @@ class UserController {
     const { refreshToken } = request.body;
 
     try {
-      const result = await this.userServices.refreshToken(refreshToken);
+      const result = await this.usersServices.refreshToken(refreshToken);
 
       return response.status(200).json(result);
     } catch (error: any) {
@@ -61,7 +60,7 @@ class UserController {
   ) {
     const { newPassword, token } = request.body;
     try {
-      const result = await this.userServices.updatePassword(newPassword, token);
+      const result = await this.usersServices.updatePassword(newPassword, token);
 
       return response.status(200).json(result);
     } catch (error: any) {
@@ -76,7 +75,8 @@ class UserController {
   ) {
     const { email } = request.body;
     try {
-      const result = await this.userServices.forgotPassword(email);
+      const ip = request.ip;
+      const result = await this.usersServices.forgotPassword(email, ip!);
       return response.status(200).json(result);
     } catch (error: any) {
       next(error);
@@ -85,4 +85,4 @@ class UserController {
   }
 }
 
-export { UserController };
+export { UsersController };

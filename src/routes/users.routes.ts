@@ -1,18 +1,23 @@
 import { Router } from 'express';
-import { UserController } from '../controller/user';
+import { UsersController } from '../controller/users.controlers';
 
-class Routers {
+class UsersRouters {
   private router: Router;
-  private userController: UserController;
+  private userController: UsersController;
   constructor() {
     this.router = Router();
-    this.userController = new UserController();
+    this.userController = new UsersController();
   }
 
-  getRoutes() {
+   getRoutes() {
+    //this.router.get('/', this.userController.Hello.bind(this.userController));
+    return this.router;
+  }
+  
+  postRoutes() {
     this.router.post(
 
-      '/createUser',
+      '/create',
       this.userController.createUser.bind(this.userController),
     );
 
@@ -22,7 +27,7 @@ class Routers {
     );
 
     this.router.post(
-      '/refreshtoken',
+      '/refresh',
       this.userController.refreshToken.bind(this.userController),
     );
 
@@ -39,4 +44,4 @@ class Routers {
 
   
 }
-export { Routers };
+export { UsersRouters };

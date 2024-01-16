@@ -1,4 +1,4 @@
-class RateLimit {
+class RateLimitUtils {
     private blocked: Map<string, number> = new Map();
     constructor(){
 
@@ -14,4 +14,4 @@ class RateLimit {
     }
 }
 
-export {RateLimit};
+export {RateLimitUtils};

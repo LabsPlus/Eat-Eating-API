@@ -1,10 +1,10 @@
-export interface IUserCreate {
+export interface IUsersCreate {
   email: string;
   password: string;
   emailRecovery: string;
 }
 
-export interface IUserAuth {
+export interface IUsersAuth {
   email: string;
   password: string;
 }

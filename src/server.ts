@@ -1,6 +1,6 @@
 import { App } from './app';
-import { sequelize } from './database/sequelize';
-import { Login } from './database/models/login';
+import { sequelize } from './database/sequelize.databases';
+import { Login } from './database/models/login.models';
 
 const app = new App();
 

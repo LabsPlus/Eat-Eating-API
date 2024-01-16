@@ -1,8 +1,8 @@
 require('dotenv').config();
 import * as nodemailer from 'nodemailer';
-import { ISendEmail } from '../intefaces/email';
+import { ISendEmail } from '../intefaces/email.interfaces';
 
-class Email {
+class EmailUtils {
   constructor() {}
 
   async sendEmail({ destination, subject, content, link }: ISendEmail) {
@@ -33,4 +33,4 @@ class Email {
   }
 }
 
-export { Email };
+export { EmailUtils };

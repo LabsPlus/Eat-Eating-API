@@ -1,10 +1,11 @@
 import { compare, hash } from 'bcrypt';
 import { UsersDALs } from '../database/data_access/users.dals';
 import { EmailUtils } from '../utils/email.utils';
-import { IUsersAuth, IUsersCreate } from '../intefaces/users.interfaces';
+import { IUsersAuth, IUsersCreate, IUserForgotPassword, IUsersUpdatePassword } from '../intefaces/users.interfaces';
 import { RateLimitUtils} from '../utils/rateLimit.utils'
 import { sign, verify } from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { error } from 'console';
 dotenv.config();
 
 const { Link } = process.env;
@@ -110,7 +111,10 @@ class UsersServices {
     };
   }
 
-  async updatePassword(newPassword: string, token: string): Promise<any> {
+  async updatePassword({newPassword, token}: IUsersUpdatePassword){
+    if(token === undefined){
+      throw new Error('Token is Undefined')
+    }
     const user = await this.usersDALs.findUserByToken(token);
     if (!user) {
       throw new Error('There is no user with this token');
@@ -129,10 +133,13 @@ class UsersServices {
     return result;
   }
 
-  async forgotPassword(email: string, ip: string): Promise<any> {
+  async forgotPassword({email, ip}: IUserForgotPassword) {
 
+    if(ip === undefined){
+      throw new Error('Cannot find ip');
+    }
     if(this.rateLimitUtils.verifyBlock(ip)){
-      throw new Error("This ip was blocked for 15 minutes")
+      throw new Error('Too many requests. This IP has been blocked for 15 minutes')
     }
    
     const user = await this.usersDALs.findUserByEmail(email);
@@ -164,7 +171,7 @@ class UsersServices {
     });
 
     if (!sendEmail) {
-      throw new Error('Email not sent');
+      throw new Error('Error send email');
     }
 
     return sendEmail;

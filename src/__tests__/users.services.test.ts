@@ -1,7 +1,7 @@
 // src/__tests__/userServices.test.ts
-import { UserServices } from '../services/users.services';
+import { UsersServices } from '../services/users.services';
 import { UsersDALs } from '../database/data_access/users.dals';
-import { Email } from '../utils/email.utils';
+import { EmailUtils } from '../utils/email.utils';
 import { hash, compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 
@@ -11,10 +11,10 @@ jest.mock('bcrypt');
 jest.mock('jsonwebtoken');
 
 describe('UserServices', () => {
-  let userServices: UserServices;
+  let userServices: UsersServices;
 
   beforeEach(() => {
-    userServices = new UserServices();
+    userServices = new UsersServices();
   });
 
   describe('updatePassword', () => {
@@ -26,7 +26,7 @@ describe('UserServices', () => {
 
       // Utilize uma função async para aguardar a execução da expectativa
       await expect(
-        userServices.updatePassword('newPassword', 'nonexistentToken'),
+        userServices.updatePassword({newPassword: 'newPassword', token: 'nonexistentToken'}),
       ).rejects.toThrow('There is no user with this token');
     });
 
@@ -42,7 +42,7 @@ describe('UserServices', () => {
 
       // Utilize uma função async para aguardar a execução da expectativa
       await expect(
-        userServices.forgotPassword('nonexistent@example.com', 'fake_ip'),
+        userServices.forgotPassword({email:'nonexistent@example.com', ip:'fake_ip'}),
       ).rejects.toThrow('User not found');
     });
 

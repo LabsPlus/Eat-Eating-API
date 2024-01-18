@@ -60,7 +60,7 @@ class UsersController {
   ) {
     const { newPassword, token } = request.body;
     try {
-      const result = await this.usersServices.updatePassword(newPassword, token);
+      const result = await this.usersServices.updatePassword({newPassword, token});
 
       return response.status(200).json(result);
     } catch (error: any) {
@@ -76,7 +76,7 @@ class UsersController {
     const { email } = request.body;
     try {
       const ip = request.ip;
-      const result = await this.usersServices.forgotPassword(email, ip!);
+      const result = await this.usersServices.forgotPassword({email, ip});
       return response.status(200).json(result);
     } catch (error: any) {
       next(error);

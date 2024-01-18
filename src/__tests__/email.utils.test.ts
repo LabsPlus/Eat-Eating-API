@@ -1,13 +1,13 @@
 import * as nodemailer from 'nodemailer';
-import { Email } from '../utils/email.utils'; // Substitua pelo caminho real
+import { EmailUtils } from '../utils/email.utils'; // Substitua pelo caminho real
 
 jest.mock('nodemailer');
 
 describe('Email', () => {
-  let email: Email;
+  let email: EmailUtils;
 
   beforeEach(() => {
-    email = new Email();
+    email = new EmailUtils();
   });
 
   afterEach(() => {

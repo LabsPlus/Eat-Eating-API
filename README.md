@@ -63,7 +63,7 @@ Digite palavras aleatórias para obter a chave (a chave das variáveis devem ser
 
 
 # localhost
-PORT = 3000
+
 
 #credenciais para autentição
 ACCESS_LOCAL_KEY_TOKEN_REFRESH = 123456
@@ -75,6 +75,7 @@ USER_EMAIL = 35e9b6df75846
 PASSWORD_EMAIL = a3f84dce442daf
 HOST = sandbox.smtp.mailtrap.io #transportador de email
 NODEMAILER_EMAIL = exemplo@gmail.com
+SMTP_PORT = 587 (PRECISA SER OBRIGATORIAMENTE 587)
 
 LINK = localhost:3001 # link do front end onde sera usado no email para redirecionar para a pagina de redefinição de senha
 ```

@@ -9,7 +9,7 @@ class EmailUtils {
     try {
       const transporter = nodemailer.createTransport({
         host: process.env.HOST,
-        port: 587,
+        port: parseInt(process.env.SMTP_PORT!),
         secure: false,
         auth: {
           user: process.env.USER_EMAIL,

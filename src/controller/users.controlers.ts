@@ -74,8 +74,9 @@ class UsersController {
     next: NextFunction,
   ) {
     const { email } = request.body;
+    
     try {
-      const ip = request.ip;
+      const ip = request.socket.remoteAddress || request.socket.remoteAddress || request.socket.remoteAddress;
       const result = await this.usersServices.forgotPassword({email, ip});
       return response.status(200).json(result);
     } catch (error: any) {

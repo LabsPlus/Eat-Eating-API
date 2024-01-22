@@ -12,8 +12,8 @@ class EmailUtils {
         port: parseInt(process.env.SMTP_PORT!),
         secure: false,
         auth: {
-          user: process.env.USER_EMAIL,
-          pass: process.env.PASSWORD_EMAIL,
+          user: process.env.SMTP_USERNAME,
+          pass: process.env.SMTP_PASSWORD,
         },
       });
 

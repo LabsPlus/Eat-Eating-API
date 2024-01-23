@@ -12,8 +12,7 @@ Login.sync({ alter: true })
     console.log(error);
   });
 
-//const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 sequelize.sync({ alter: true }).then(() => {
   console.log('conectado');
   app.listen(PORT);

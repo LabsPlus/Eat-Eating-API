@@ -15,7 +15,7 @@ class LoginDALs {
   }
 
   async findLoginByEmail(email: string) {
-    const result = await prisma.login.findUniqueOrThrow({ where: { email } });
+    const result = await prisma.login.findUnique({ where: { email } });
 
     return result;
   }

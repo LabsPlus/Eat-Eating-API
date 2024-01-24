@@ -175,7 +175,9 @@ class LoginServices {
       email: findLoginByEmail.email,
     });
 
-    const resetLink = `${process.env.LINK || ''}/nova-senha?token=${token}`;
+    const resetLink = `${process.env.LINK || ''}/nova-senha?token=${
+      token.resetToken
+    }`;
     const sendEmail = await this.emailUtils.sendEmail({
       destination: findLoginByEmail.emailRecovery,
       subject: 'Recuperação de senha',

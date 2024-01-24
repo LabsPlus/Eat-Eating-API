@@ -1,5 +1,5 @@
 import express, { Application } from 'express';
-import { UsersRouters } from './routes/users.routes';
+import { UsersRouters } from './routes/login.routes';
 import morgan from 'morgan';
 import cors from 'cors';
 
@@ -26,7 +26,7 @@ export class App {
   }
 
   private setupRoutes() {
-     const usersRouters = new UsersRouters();
+    const usersRouters = new UsersRouters();
     const userBaseRoute = '/users';
 
     this.app.use(userBaseRoute, usersRouters.getRoutes());

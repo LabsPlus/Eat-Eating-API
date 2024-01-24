@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { UsersController } from '../controller/users.controlers';
+import { UsersController } from '../controller/login.controlers';
 
 class UsersRouters {
   private router: Router;
@@ -9,14 +9,13 @@ class UsersRouters {
     this.userController = new UsersController();
   }
 
-   getRoutes() {
+  getRoutes() {
     //this.router.get('/', this.userController.Hello.bind(this.userController));
     return this.router;
   }
-  
+
   postRoutes() {
     this.router.post(
-
       '/create',
       this.userController.createUser.bind(this.userController),
     );
@@ -41,7 +40,5 @@ class UsersRouters {
     );
     return this.router;
   }
-
-  
 }
 export { UsersRouters };

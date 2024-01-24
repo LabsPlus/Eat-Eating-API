@@ -1,5 +1,5 @@
 import { compare, hash } from 'bcrypt';
-import { UsersDALs } from '../database/data_access/login.dals';
+import { UsersDALs } from '../database/data.access/login.dals';
 import { EmailUtils } from '../utils/email.utils';
 import {
   ILoginAuth,

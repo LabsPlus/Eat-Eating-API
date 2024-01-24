@@ -16,17 +16,17 @@ class LoginRoutes {
 
   postRoutes() {
     this.router.post(
-      '/create',
+      '/createLogin',
       this.loginController.createUser.bind(this.loginController),
     );
 
     this.router.post(
-      '/auth',
+      '/authLogin',
       this.loginController.authUser.bind(this.loginController),
     );
 
     this.router.post(
-      '/refresh',
+      '/refreshTokenLogin',
       this.loginController.refreshToken.bind(this.loginController),
     );
 
@@ -34,13 +34,13 @@ class LoginRoutes {
   }
 
   patchRoutes() {
-    this.router.post(
-      '/updatePassword',
+    this.router.patch(
+      '/updatePasswordLogin',
       this.loginController.updatePassword.bind(this.loginController),
     );
 
-    this.router.post(
-      '/forgotPassword',
+    this.router.patch(
+      '/forgotPasswordLogin',
       this.loginController.forgotPassword.bind(this.loginController),
     );
     return this.router;

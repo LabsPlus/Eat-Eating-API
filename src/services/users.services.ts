@@ -2,10 +2,10 @@ import { compare, hash } from 'bcrypt';
 import { UsersDALs } from '../database/data_access/login.dals';
 import { EmailUtils } from '../utils/email.utils';
 import {
-  IUsersAuth,
-  IUsersCreate,
-  IUserForgotPassword,
-  IUsersUpdatePassword,
+  ILoginAuth,
+  ILoginCreate,
+  ILoginForgotPassword,
+  ILoginUpdatePassword,
 } from '../intefaces/login.interfaces';
 import { RateLimitUtils } from '../utils/rateLimit.utils';
 import { sign, verify } from 'jsonwebtoken';
@@ -28,14 +28,14 @@ class UsersServices {
     this.invalidAttempts = new Map();
   }
 
-  async createUser({ email, password, emailRecovery }: IUsersCreate) {
-    const findUserByEmail = await this.usersDALs.findUserByEmail(email);
-    if (findUserByEmail) {
+  async createLogin({ email, password, emailRecovery }: ILoginCreate) {
+    const findLoginByEmail = await this.usersDALs.findLoginByEmail(email);
+    if (findLoginByEmail) {
       throw new Error('User email already exists');
     }
 
     const passwordHash = await hash(password, 10);
-    const result = await this.usersDALs.createUser({
+    const result = await this.usersDALs.createLogin({
       email,
       password: passwordHash,
       emailRecovery,
@@ -44,13 +44,13 @@ class UsersServices {
     return result;
   }
 
-  async authUser({ email, password }: IUsersAuth) {
-    const findUserByEmail = await this.usersDALs.findUserByEmail(email);
-    if (!findUserByEmail) {
+  async authLogin({ email, password }: ILoginAuth) {
+    const findLoginByEmail = await this.usersDALs.findLoginByEmail(email);
+    if (!findLoginByEmail) {
       throw new Error('Invalid email or password');
     }
 
-    const passwordMatch = await compare(password, findUserByEmail.password);
+    const passwordMatch = await compare(password, findLoginByEmail.password);
     if (!passwordMatch) {
       throw new Error('Invalid email or password');
     }
@@ -67,12 +67,12 @@ class UsersServices {
     }
 
     const token = sign({ email }, secretKey, {
-      subject: findUserByEmail.id.toString(),
+      subject: findLoginByEmail.id.toString(),
       expiresIn: '60s',
     });
 
     const refreshToken = sign({ email }, secretKeyRefresh, {
-      subject: findUserByEmail.id.toString(),
+      subject: findLoginByEmail.id.toString(),
       expiresIn: '7d',
     });
 
@@ -80,7 +80,7 @@ class UsersServices {
       token: { token, expiresIn: '60s' },
       refreshToken: { refreshToken, expiresIn: '7d' },
       user: {
-        email: findUserByEmail.email,
+        email: findLoginByEmail.email,
       },
     };
   }
@@ -100,7 +100,7 @@ class UsersServices {
       throw new Error('There is no refresh token key');
     }
 
-    const verifyRefreshToken = await verify(refreshToken, secretKeyRefresh);
+    const verifyRefreshToken = verify(refreshToken, secretKeyRefresh);
 
     const { sub } = verifyRefreshToken;
 
@@ -116,29 +116,34 @@ class UsersServices {
     };
   }
 
-  async updatePassword({ newPassword, token }: IUsersUpdatePassword) {
+  async updatePassword({ newPassword, token }: ILoginUpdatePassword) {
     if (token === undefined) {
       throw new Error('Token is Undefined');
     }
-    const user = await this.usersDALs.findUserByToken(token);
-    if (!user) {
+    const findLoginByToken = await this.usersDALs.findLoginByToken(token);
+    if (!findLoginByToken) {
       throw new Error('There is no user with this token');
     }
 
     const now = new Date();
 
-    // Verificar se o token expirou
-    if (user.resetTokenExpiry && now > user.resetTokenExpiry) {
+    if (
+      findLoginByToken.resetTokenExpiry &&
+      now > findLoginByToken.resetTokenExpiry
+    ) {
       throw new Error('Sorry the token expired');
     }
 
     const passwordHash = await hash(newPassword, 10);
 
-    const result = await this.usersDALs.updatePassword(passwordHash, user);
+    const result = await this.usersDALs.updatePassword({
+      newPassword: passwordHash,
+      email: findLoginByToken.email,
+    });
     return result;
   }
 
-  async forgotPassword({ email, ip }: IUserForgotPassword) {
+  async forgotPassword({ email, ip }: ILoginForgotPassword) {
     if (ip === undefined) {
       throw new Error('Cannot find ip');
     }
@@ -148,8 +153,8 @@ class UsersServices {
       );
     }
 
-    const user = await this.usersDALs.findUserByEmail(email);
-    if (!user) {
+    const findLoginByEmail = await this.usersDALs.findLoginByEmail(email);
+    if (!findLoginByEmail) {
       const actualAttempts = this.invalidAttempts.get(ip) || 0;
       this.invalidAttempts.set(ip, actualAttempts + 1);
 
@@ -159,17 +164,20 @@ class UsersServices {
       throw new Error('User not found');
     }
 
-    const resetToken = await hash(user.emailRecovery + Date.now(), 10);
+    const resetToken = await hash(
+      findLoginByEmail.emailRecovery + Date.now(),
+      10,
+    );
     const resetTokenExpiry = new Date(Date.now() + 3600000);
-    const token = await this.usersDALs.updateResetToken(
+    const token = await this.usersDALs.updateResetToken({
       resetToken,
       resetTokenExpiry,
-      user,
-    );
+      email: findLoginByEmail.email,
+    });
 
     const resetLink = `${process.env.LINK || ''}/nova-senha?token=${token}`;
     const sendEmail = await this.emailUtils.sendEmail({
-      destination: user.emailRecovery,
+      destination: findLoginByEmail.emailRecovery,
       subject: 'Recuperação de senha',
       content: `Clique aqui para redefinir sua senha `,
       link: resetLink,

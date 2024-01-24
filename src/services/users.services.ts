@@ -1,8 +1,13 @@
 import { compare, hash } from 'bcrypt';
-import { UsersDALs } from '../database/data_access/users.dals';
+import { UsersDALs } from '../database/data_access/login.dals';
 import { EmailUtils } from '../utils/email.utils';
-import { IUsersAuth, IUsersCreate, IUserForgotPassword, IUsersUpdatePassword } from '../intefaces/users.interfaces';
-import { RateLimitUtils} from '../utils/rateLimit.utils'
+import {
+  IUsersAuth,
+  IUsersCreate,
+  IUserForgotPassword,
+  IUsersUpdatePassword,
+} from '../intefaces/login.interfaces';
+import { RateLimitUtils } from '../utils/rateLimit.utils';
 import { sign, verify } from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { error } from 'console';
@@ -15,7 +20,7 @@ class UsersServices {
   private emailUtils: EmailUtils;
   private rateLimitUtils: RateLimitUtils;
   private invalidAttempts: Map<string, number>;
-  
+
   constructor() {
     this.usersDALs = new UsersDALs();
     this.emailUtils = new EmailUtils();
@@ -111,9 +116,9 @@ class UsersServices {
     };
   }
 
-  async updatePassword({newPassword, token}: IUsersUpdatePassword){
-    if(token === undefined){
-      throw new Error('Token is Undefined')
+  async updatePassword({ newPassword, token }: IUsersUpdatePassword) {
+    if (token === undefined) {
+      throw new Error('Token is Undefined');
     }
     const user = await this.usersDALs.findUserByToken(token);
     if (!user) {
@@ -133,26 +138,26 @@ class UsersServices {
     return result;
   }
 
-  async forgotPassword({email, ip}: IUserForgotPassword) {
-
-    if(ip === undefined){
+  async forgotPassword({ email, ip }: IUserForgotPassword) {
+    if (ip === undefined) {
       throw new Error('Cannot find ip');
     }
-    if(this.rateLimitUtils.verifyBlock(ip)){
-      throw new Error('Too many requests. This IP has been blocked for 15 minutes')
+    if (this.rateLimitUtils.verifyBlock(ip)) {
+      throw new Error(
+        'Too many requests. This IP has been blocked for 15 minutes',
+      );
     }
-   
+
     const user = await this.usersDALs.findUserByEmail(email);
     if (!user) {
       const actualAttempts = this.invalidAttempts.get(ip) || 0;
       this.invalidAttempts.set(ip, actualAttempts + 1);
 
-      if(actualAttempts + 1 === 3){
-          this.rateLimitUtils.blockIp(ip);
+      if (actualAttempts + 1 === 3) {
+        this.rateLimitUtils.blockIp(ip);
       }
       throw new Error('User not found');
     }
-    
 
     const resetToken = await hash(user.emailRecovery + Date.now(), 10);
     const resetTokenExpiry = new Date(Date.now() + 3600000);
@@ -176,8 +181,6 @@ class UsersServices {
 
     return sendEmail;
   }
-
- 
 }
 
 export { UsersServices };

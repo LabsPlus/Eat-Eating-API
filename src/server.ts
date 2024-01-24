@@ -1,5 +1,5 @@
 import { App } from './app';
-import { sequelize } from './database/sequelize.databases';
+import { sequelize } from './database/prisma.databases';
 import { Login } from './database/models/login.models';
 
 const app = new App();

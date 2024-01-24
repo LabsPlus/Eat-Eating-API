@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
-import { UsersServices } from '../services/users.services';
+import { LoginServices } from '../services/login.services';
 
-class UsersController {
-  private usersServices: UsersServices;
+class LoginController {
+  private loginServices: LoginServices;
 
   constructor() {
-    this.usersServices = new UsersServices();
+    this.loginServices = new LoginServices();
   }
 
   async createUser(request: Request, response: Response, next: NextFunction) {
     const { email, password, emailRecovery } = request.body;
     try {
-      const result = await this.usersServices.createUser({
+      const result = await this.loginServices.createLogin({
         email,
         password,
         emailRecovery,
@@ -29,7 +29,7 @@ class UsersController {
     const { email, password } = request.body;
 
     try {
-      const result = await this.usersServices.authUser({ email, password });
+      const result = await this.loginServices.authLogin({ email, password });
 
       return response.status(200).json(result);
     } catch (error: any) {
@@ -43,7 +43,7 @@ class UsersController {
     const { refreshToken } = request.body;
 
     try {
-      const result = await this.usersServices.refreshToken(refreshToken);
+      const result = await this.loginServices.refreshToken(refreshToken);
 
       return response.status(200).json(result);
     } catch (error: any) {
@@ -60,7 +60,10 @@ class UsersController {
   ) {
     const { newPassword, token } = request.body;
     try {
-      const result = await this.usersServices.updatePassword({newPassword, token});
+      const result = await this.loginServices.updatePassword({
+        newPassword,
+        token,
+      });
 
       return response.status(200).json(result);
     } catch (error: any) {
@@ -68,16 +71,20 @@ class UsersController {
       return response.status(401).json(error.message);
     }
   }
+
   async forgotPassword(
     request: Request,
     response: Response,
     next: NextFunction,
   ) {
     const { email } = request.body;
-    
+
     try {
-      const ip = request.socket.remoteAddress || request.socket.remoteAddress || request.socket.remoteAddress;
-      const result = await this.usersServices.forgotPassword({email, ip});
+      const ip =
+        request.socket.remoteAddress ||
+        request.socket.remoteAddress ||
+        request.socket.remoteAddress;
+      const result = await this.loginServices.forgotPassword({ email, ip });
       return response.status(200).json(result);
     } catch (error: any) {
       next(error);
@@ -86,4 +93,4 @@ class UsersController {
   }
 }
 
-export { UsersController };
+export { LoginController };

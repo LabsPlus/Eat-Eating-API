@@ -1,5 +1,3 @@
-import { Login } from '@prisma/client';
-
 export interface ILoginCreate {
   email: string;
   password: string;

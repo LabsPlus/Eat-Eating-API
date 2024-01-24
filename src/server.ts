@@ -1,4 +1,6 @@
 import { App } from './app';
+// No início do seu aplicativo
+
 
 const corsConfig = {
   origin: 'http://localhost:3003',

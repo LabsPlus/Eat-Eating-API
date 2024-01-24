@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { UsersServices } from '../services/login.services';
 
-class UsersController {
+class LoginController {
   private usersServices: UsersServices;
 
   constructor() {
@@ -71,6 +71,7 @@ class UsersController {
       return response.status(401).json(error.message);
     }
   }
+
   async forgotPassword(
     request: Request,
     response: Response,
@@ -92,4 +93,4 @@ class UsersController {
   }
 }
 
-export { UsersController };
+export { LoginController };

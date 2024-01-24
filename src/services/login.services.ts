@@ -1,5 +1,5 @@
 import { compare, hash } from 'bcrypt';
-import { UsersDALs } from '../database/data.access/login.dals';
+import { LoginDALs } from '../database/data.access/login.dals';
 import { EmailUtils } from '../utils/email.utils';
 import {
   ILoginAuth,
@@ -16,26 +16,26 @@ dotenv.config();
 const { Link } = process.env;
 
 class UsersServices {
-  private usersDALs: UsersDALs;
+  private loginDALs: LoginDALs;
   private emailUtils: EmailUtils;
   private rateLimitUtils: RateLimitUtils;
   private invalidAttempts: Map<string, number>;
 
   constructor() {
-    this.usersDALs = new UsersDALs();
+    this.loginDALs = new LoginDALs();
     this.emailUtils = new EmailUtils();
     this.rateLimitUtils = new RateLimitUtils();
     this.invalidAttempts = new Map();
   }
 
   async createLogin({ email, password, emailRecovery }: ILoginCreate) {
-    const findLoginByEmail = await this.usersDALs.findLoginByEmail(email);
+    const findLoginByEmail = await this.loginDALs.findLoginByEmail(email);
     if (findLoginByEmail) {
       throw new Error('User email already exists');
     }
 
     const passwordHash = await hash(password, 10);
-    const result = await this.usersDALs.createLogin({
+    const result = await this.loginDALs.createLogin({
       email,
       password: passwordHash,
       emailRecovery,
@@ -45,7 +45,7 @@ class UsersServices {
   }
 
   async authLogin({ email, password }: ILoginAuth) {
-    const findLoginByEmail = await this.usersDALs.findLoginByEmail(email);
+    const findLoginByEmail = await this.loginDALs.findLoginByEmail(email);
     if (!findLoginByEmail) {
       throw new Error('Invalid email or password');
     }
@@ -120,7 +120,7 @@ class UsersServices {
     if (token === undefined) {
       throw new Error('Token is Undefined');
     }
-    const findLoginByToken = await this.usersDALs.findLoginByToken(token);
+    const findLoginByToken = await this.loginDALs.findLoginByToken(token);
     if (!findLoginByToken) {
       throw new Error('There is no user with this token');
     }
@@ -136,7 +136,7 @@ class UsersServices {
 
     const passwordHash = await hash(newPassword, 10);
 
-    const result = await this.usersDALs.updatePassword({
+    const result = await this.loginDALs.updatePassword({
       newPassword: passwordHash,
       email: findLoginByToken.email,
     });
@@ -153,7 +153,7 @@ class UsersServices {
       );
     }
 
-    const findLoginByEmail = await this.usersDALs.findLoginByEmail(email);
+    const findLoginByEmail = await this.loginDALs.findLoginByEmail(email);
     if (!findLoginByEmail) {
       const actualAttempts = this.invalidAttempts.get(ip) || 0;
       this.invalidAttempts.set(ip, actualAttempts + 1);
@@ -169,7 +169,7 @@ class UsersServices {
       10,
     );
     const resetTokenExpiry = new Date(Date.now() + 3600000);
-    const token = await this.usersDALs.updateResetToken({
+    const token = await this.loginDALs.updateResetToken({
       resetToken,
       resetTokenExpiry,
       email: findLoginByEmail.email,

@@ -1,21 +1,19 @@
 import express, { Application } from 'express';
-import { UsersRouters } from './routes/login.routes';
-import morgan from 'morgan';
-import cors from 'cors';
+import { LoginRoutes } from './routes/login.routes';
+import cors, { CorsOptions } from 'cors';
 
 export class App {
   private app: Application;
 
-  constructor() {
+  constructor(corsConfig?: CorsOptions) {
     this.app = express();
-    this.middleware();
-    this.setupRoutes();
+    this.middleware(corsConfig || {});
+    this.setupLoginRoutes();
   }
 
-  private middleware() {
+  private middleware(corsConfig?: CorsOptions) {
     this.app.use(express.json());
-    this.app.use(morgan('dev'));
-    this.app.use(cors());
+    this.app.use(cors(corsConfig));
     this.app.use(express.urlencoded({ extended: true }));
   }
 
@@ -25,11 +23,12 @@ export class App {
     });
   }
 
-  private setupRoutes() {
-    const usersRouters = new UsersRouters();
-    const userBaseRoute = '/users';
+  private setupLoginRoutes() {
+    const loginRoutes = new LoginRoutes();
+    const loginBaseRoute = '/login';
 
-    this.app.use(userBaseRoute, usersRouters.getRoutes());
-    this.app.use(userBaseRoute, usersRouters.postRoutes());
+    this.app.use(loginBaseRoute, loginRoutes.patchRoutes());
+    this.app.use(loginBaseRoute, loginRoutes.getRoutes());
+    this.app.use(loginBaseRoute, loginRoutes.postRoutes());
   }
 }

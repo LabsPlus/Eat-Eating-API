@@ -1,44 +1,49 @@
 import { Router } from 'express';
-import { UsersController } from '../controller/login.controlers';
+import { LoginController } from '../controller/login.controlers';
 
-class UsersRouters {
+class LoginRoutes {
   private router: Router;
-  private userController: UsersController;
+  private loginController: LoginController;
   constructor() {
     this.router = Router();
-    this.userController = new UsersController();
+    this.loginController = new LoginController();
   }
 
   getRoutes() {
-    //this.router.get('/', this.userController.Hello.bind(this.userController));
+    //this.router.get('/', this.loginController.Hello.bind(this.loginController));
     return this.router;
   }
 
   postRoutes() {
     this.router.post(
       '/create',
-      this.userController.createUser.bind(this.userController),
+      this.loginController.createUser.bind(this.loginController),
     );
 
     this.router.post(
       '/auth',
-      this.userController.authUser.bind(this.userController),
+      this.loginController.authUser.bind(this.loginController),
     );
 
     this.router.post(
       '/refresh',
-      this.userController.refreshToken.bind(this.userController),
+      this.loginController.refreshToken.bind(this.loginController),
+    );
+
+    return this.router;
+  }
+
+  patchRoutes() {
+    this.router.post(
+      '/updatePassword',
+      this.loginController.updatePassword.bind(this.loginController),
     );
 
     this.router.post(
-      '/updatePassword',
-      this.userController.updatePassword.bind(this.userController),
-    );
-    this.router.post(
       '/forgotPassword',
-      this.userController.forgotPassword.bind(this.userController),
+      this.loginController.forgotPassword.bind(this.loginController),
     );
     return this.router;
   }
 }
-export { UsersRouters };
+export { LoginRoutes };

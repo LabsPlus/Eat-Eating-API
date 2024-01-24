@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
-import { UsersServices } from '../services/login.services';
+import { LoginServices } from '../services/login.services';
 
 class LoginController {
-  private usersServices: UsersServices;
+  private loginServices: LoginServices;
 
   constructor() {
-    this.usersServices = new UsersServices();
+    this.loginServices = new LoginServices();
   }
 
   async createUser(request: Request, response: Response, next: NextFunction) {
     const { email, password, emailRecovery } = request.body;
     try {
-      const result = await this.usersServices.createLogin({
+      const result = await this.loginServices.createLogin({
         email,
         password,
         emailRecovery,
@@ -29,7 +29,7 @@ class LoginController {
     const { email, password } = request.body;
 
     try {
-      const result = await this.usersServices.authLogin({ email, password });
+      const result = await this.loginServices.authLogin({ email, password });
 
       return response.status(200).json(result);
     } catch (error: any) {
@@ -43,7 +43,7 @@ class LoginController {
     const { refreshToken } = request.body;
 
     try {
-      const result = await this.usersServices.refreshToken(refreshToken);
+      const result = await this.loginServices.refreshToken(refreshToken);
 
       return response.status(200).json(result);
     } catch (error: any) {
@@ -60,7 +60,7 @@ class LoginController {
   ) {
     const { newPassword, token } = request.body;
     try {
-      const result = await this.usersServices.updatePassword({
+      const result = await this.loginServices.updatePassword({
         newPassword,
         token,
       });
@@ -84,7 +84,7 @@ class LoginController {
         request.socket.remoteAddress ||
         request.socket.remoteAddress ||
         request.socket.remoteAddress;
-      const result = await this.usersServices.forgotPassword({ email, ip });
+      const result = await this.loginServices.forgotPassword({ email, ip });
       return response.status(200).json(result);
     } catch (error: any) {
       next(error);

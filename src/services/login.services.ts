@@ -15,7 +15,7 @@ dotenv.config();
 
 const { Link } = process.env;
 
-class UsersServices {
+class LoginServices {
   private loginDALs: LoginDALs;
   private emailUtils: EmailUtils;
   private rateLimitUtils: RateLimitUtils;
@@ -191,4 +191,4 @@ class UsersServices {
   }
 }
 
-export { UsersServices };
+export { LoginServices };

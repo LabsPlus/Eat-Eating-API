@@ -20,3 +20,35 @@ model Login {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 }
+
+model TypeStudentGrant {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  users       User[] // Associação com o modelo User. Um tipo de bolsa pode estar associado a vários usuários.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  User        User[] // Associação com o modelo User. Uma categoria pode estar associada a vários usuários.
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
+}
+
+// O modelo User representa um usuário.
+model User {
+  id                 Int               @id @default(autoincrement())
+  name               String
+  enrollment         String            @unique
+  dailyMeals         Int
+  TypeStudentGrant   TypeStudentGrant? @relation(fields: [typeStudentGrantId], references: [id]) // Associação com o modelo TipoDeBolsa. Um usuário pode ter um tipo de bolsa.
+  typeStudentGrantId Int? // Campo para armazenar o identificador do tipo de bolsa associado ao usuário.
+  Category           Category?         @relation(fields: [categoryId], references: [id]) // Associação com o modelo Categoria. Um usuário pode ter uma categoria.
+  categoryId         Int? // Campo para armazenar o identificador da categoria associada ao usuário.
+  createdAt          DateTime?         @default(now())
+  updatedAt          DateTime?         @updatedAt
+}

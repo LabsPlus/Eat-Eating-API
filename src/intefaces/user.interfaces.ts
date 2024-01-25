@@ -1,7 +1,7 @@
 export interface IUserCreate {
     name: string;
-    matricula: string;
-    categoriaId?: number;
-    tipoDeBolsaId?: number;
-    refeicoesDiarias:  number;
+    enrollment: string;
+    categoryId?: number;
+    typeStudentGrantId?: number;
+    dailyMeals:  number;
 }

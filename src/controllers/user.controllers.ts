@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import {UserServices} from '../services/user.services';
 
-class UserController {
+class UserControllers {
     private userServices: UserServices;
 
     constructor() {
@@ -9,15 +9,15 @@ class UserController {
     }
 
     async createAnUser(request: Request, response: Response, next: NextFunction) {
-        const {name, matricula, categoriaId, tipoDeBolsaId, refeicoesDiarias} = request.body;
+        const {name, enrollment, categoryId, typeStudentGrantId, dailyMeals} = request.body;
 
         try {
             const user = await this.userServices.createUser({
                 name,
-                matricula,
-                categoriaId,
-                tipoDeBolsaId,
-                refeicoesDiarias,
+                enrollment,
+                categoryId,
+                typeStudentGrantId,
+                dailyMeals
             });
 
             return response.status(201).json(user);
@@ -48,4 +48,4 @@ class UserController {
     }
 }
 
-export {UserController};
+export {UserControllers};

@@ -6,19 +6,19 @@ class UserDALs {
     async createUser(
         {
             name,
-            matricula,
-            categoriaId,
-            tipoDeBolsaId,
-            refeicoesDiarias
+            enrollment,
+            categoryId,
+            typeStudentGrantId,
+            dailyMeals
         }: IUserCreate) {
 
         const result = await prisma.user.create({
             data: {
                 name,
-                matricula,
-                categoriaId,
-                tipoDeBolsaId,
-                refeicoesDiarias,
+                enrollment,
+                categoryId,
+                typeStudentGrantId,
+                dailyMeals
             },
         });
 
@@ -28,8 +28,8 @@ class UserDALs {
     async listAllUsers() {
         const users = await prisma.user.findMany({
             include: {
-                Categoria: true,
-                TipoDeBolsa: true,
+                Category: true,
+                TypeStudentGrant: true,
             },
         });
         return users;
@@ -40,10 +40,10 @@ class UserDALs {
         return users;
     }
 
-    async findUserByMatricula(matricula: string) {
+    async findUserByEnrollment(enrollment: string) {
         const user = await prisma.user.findUnique({
             where: {
-                matricula,
+                enrollment,
             },
         });
         return user;

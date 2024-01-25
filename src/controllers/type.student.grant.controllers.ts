@@ -1,17 +1,17 @@
-import {CategoriaServices} from "../services/categoria.services";
+import {TypeStudentGrantServices} from "../services/type.student.grant.services";
 import {NextFunction, Request, Response} from 'express';
 
-class CategoryController {
-    private categoriaServices: CategoriaServices;
+class TypeStudentGrantControllers {
+    private typeStudentGrantServices: TypeStudentGrantServices;
 
     constructor() {
-        this.categoriaServices = new CategoriaServices();
+        this.typeStudentGrantServices = new TypeStudentGrantServices();
     }
 
-    async createCategoria(request: Request, response: Response, next: NextFunction) {
+    async createTypeGrant(request: Request, response: Response, next: NextFunction) {
         const {name, description} = request.body;
         try {
-            const result = await this.categoriaServices.createCategoria({
+            const result = await this.typeStudentGrantServices.createTypeGrant({
                 name,
                 description,
             });
@@ -19,13 +19,14 @@ class CategoryController {
             return response.status(201).json(result);
         } catch (error: any) {
             next(error);
+
             return response.status(401).json(error.message);
         }
     }
 
-    async listAllCategorias(request: Request, response: Response, next: NextFunction) {
+    async listAllTypeGrant(request: Request, response: Response, next: NextFunction) {
         try {
-            const result = await this.categoriaServices.getAllCategorias();
+            const result = await this.typeStudentGrantServices.getAllTypeGrant();
             return response.status(200).json(result);
         } catch (error: any) {
             next(error);
@@ -33,9 +34,9 @@ class CategoryController {
         }
     }
 
-    async deleteAllCategorias(request: Request, response: Response, next: NextFunction) {
+    async deleteAllTypeGrant(request: Request, response: Response, next: NextFunction) {
         try {
-            const result = await this.categoriaServices.deleteAllCategorias();
+            const result = await this.typeStudentGrantServices.deleteAllTypeGrant();
             return response.status(204).json(result);
         } catch (error: any) {
             next(error);
@@ -44,4 +45,4 @@ class CategoryController {
     }
 }
 
-export {CategoryController};
+export {TypeStudentGrantControllers};

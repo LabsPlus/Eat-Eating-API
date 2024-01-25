@@ -1,7 +1,5 @@
 import {UserDALs} from "../database/data.access/user.dals";
 import {IUserCreate} from "../intefaces/user.interfaces";
-import {CategoriaDALs} from "../database/data.access/categoria.dals";
-import {TipoBolsaDALs} from "../database/data.access/tipoBolsa.dals";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -10,43 +8,29 @@ const {Link} = process.env;
 class UserServices {
 
     private userDALs: UserDALs;
-    private categoriaDALs: CategoriaDALs;
-    private tipoDeBolsaDALs: TipoBolsaDALs;
 
     constructor() {
         this.userDALs = new UserDALs();
-        this.categoriaDALs = new CategoriaDALs();
-        this.tipoDeBolsaDALs = new TipoBolsaDALs();
     }
 
-    async createUser({name, matricula, categoriaId, tipoDeBolsaId, refeicoesDiarias}: IUserCreate) {
+    async createUser({name, enrollment, categoryId, typeStudentGrantId, dailyMeals}: IUserCreate) {
 
-        if (matricula === undefined || matricula === null || matricula === '') {
-            throw new Error('Matricula is required');
+        if (enrollment === undefined || enrollment === null || enrollment === '') {
+            throw new Error('Enrollment is required');
         }
 
-        const findUserByMatricula = await this.userDALs.findUserByMatricula(matricula);
-        const existsCategoria = await this.categoriaDALs.existsCategoria(categoriaId);
-        const existsTipoDeBolsa = await this.tipoDeBolsaDALs.existsTipoBolsa(tipoDeBolsaId);
+        const findUserByEnrollment = await this.userDALs.findUserByEnrollment(enrollment);
 
-        if (!existsCategoria) {
-            throw new Error('Categoria not found');
-        }
-
-        if (!existsTipoDeBolsa) {
-            throw new Error('Tipo de bolsa not found');
-        }
-
-        if (findUserByMatricula) {
-            throw new Error('User matricula already exists');
+        if (findUserByEnrollment) {
+            throw new Error('User enrollment already exists');
         }
 
         const result = await this.userDALs.createUser({
             name,
-            matricula,
-            categoriaId,
-            tipoDeBolsaId,
-            refeicoesDiarias,
+            enrollment,
+            categoryId,
+            typeStudentGrantId,
+            dailyMeals
         });
 
         return result;
@@ -55,7 +39,7 @@ class UserServices {
     async listAllUsers() {
         const users = await this.userDALs.listAllUsers();
         return users.map(user => {
-            const { tipoDeBolsaId, categoriaId, ...userWithoutUnwantedFields } = user;
+            const { typeStudentGrantId, categoryId, ...userWithoutUnwantedFields } = user;
             return userWithoutUnwantedFields;
         });
     }

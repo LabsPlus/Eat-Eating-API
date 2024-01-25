@@ -1,17 +1,17 @@
-import {TipoBolsaServices} from "../services/tipoBolsa.services";
+import {CategoryServices} from "../services/category.services";
 import {NextFunction, Request, Response} from 'express';
 
-class TipoBolsaController {
-    private tipoBolsaServices: TipoBolsaServices;
+class CategoryControllers {
+    private categoryServices: CategoryServices;
 
     constructor() {
-        this.tipoBolsaServices = new TipoBolsaServices();
+        this.categoryServices = new CategoryServices();
     }
 
-    async createTipoBolsa(request: Request, response: Response, next: NextFunction) {
+    async createCategory(request: Request, response: Response, next: NextFunction) {
         const {name, description} = request.body;
         try {
-            const result = await this.tipoBolsaServices.createTipoBolsa({
+            const result = await this.categoryServices.createCategory({
                 name,
                 description,
             });
@@ -19,14 +19,13 @@ class TipoBolsaController {
             return response.status(201).json(result);
         } catch (error: any) {
             next(error);
-
             return response.status(401).json(error.message);
         }
     }
 
-    async listAllTipoBolsas(request: Request, response: Response, next: NextFunction) {
+    async listAllCategories(request: Request, response: Response, next: NextFunction) {
         try {
-            const result = await this.tipoBolsaServices.getAllTipoBolsas();
+            const result = await this.categoryServices.getAllCategories();
             return response.status(200).json(result);
         } catch (error: any) {
             next(error);
@@ -34,9 +33,9 @@ class TipoBolsaController {
         }
     }
 
-    async deleteAllTipoBolsas(request: Request, response: Response, next: NextFunction) {
+    async deleteAllCategories(request: Request, response: Response, next: NextFunction) {
         try {
-            const result = await this.tipoBolsaServices.deleteAllTipoBolsas();
+            const result = await this.categoryServices.deleteAllCategories();
             return response.status(204).json(result);
         } catch (error: any) {
             next(error);
@@ -45,4 +44,4 @@ class TipoBolsaController {
     }
 }
 
-export {TipoBolsaController};
+export {CategoryControllers};

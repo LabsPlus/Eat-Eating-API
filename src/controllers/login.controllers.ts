@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {LoginServices} from '../services/login.services';
 
-class LoginController {
+class LoginControllers {
     private loginServices: LoginServices;
 
     constructor() {
@@ -93,4 +93,4 @@ class LoginController {
     }
 }
 
-export {LoginController};
+export {LoginControllers};

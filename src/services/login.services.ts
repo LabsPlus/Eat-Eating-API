@@ -7,7 +7,7 @@ import {
     ILoginForgotPassword,
     ILoginUpdatePassword,
 } from '../intefaces/login.interfaces';
-import {RateLimitUtils} from '../utils/rateLimit.utils';
+import {RateLimitUtils} from '../utils/rate.limit.utils';
 import {sign, verify} from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();

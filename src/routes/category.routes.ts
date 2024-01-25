@@ -1,7 +1,6 @@
 import {Router} from 'express';
 import {CategoryControllers} from "../controllers/category.controllers";
 
-
 class CategoryRoutes {
 
     private readonly router: Router;

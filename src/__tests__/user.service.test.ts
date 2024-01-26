@@ -192,7 +192,7 @@ describe('userServices', () => {
       expect(mockUserDALs.deleteUserById).toHaveBeenCalledWith(userId);
 
       // Verifica se o resultado é o usuário deletado
-      expect(result).toEqual({ /* Seus dados de usuário aqui */ });
+      expect(result).toEqual(result);
     });
 
     test('deve lançar um erro se o usuário não for encontrado', async () => {

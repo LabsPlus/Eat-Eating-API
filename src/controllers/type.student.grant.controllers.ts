@@ -46,7 +46,7 @@ class TypeStudentGrantControllers {
 
     async deleteAllTypeGrant(request: Request, response: Response, next: NextFunction) {
         try {
-            const result = await this.typeStudentGrantServices.deleteAllTypeGrant();
+            const result = await this.typeStudentGrantServices.deleteAllTypeGrants();
             return response.status(204).json(result);
         } catch (error: any) {
             next(error);

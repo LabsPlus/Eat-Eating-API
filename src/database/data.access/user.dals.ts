@@ -40,13 +40,14 @@ class UserDALs {
         return users;
     }
 
-    async findUserByEnrollment(enrollment: string) {
-        const user = await prisma.user.findUnique({
+    async existsUserByEnrollment(enrollment: string): Promise<boolean> {
+        const result = await prisma.user.findUnique({
             where: {
                 enrollment,
             },
         });
-        return user;
+
+        return !!result;
     }
 }
 

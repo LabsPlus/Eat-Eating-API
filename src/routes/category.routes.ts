@@ -36,7 +36,10 @@ class CategoryRoutes {
             '/deleteCategories',
             this.categoryControllers.deleteAllCategories.bind(this.categoryControllers),
         );
-
+        this.router.delete(
+            '/deleteCategory/:id',
+            this.categoryControllers.deleteCategoryById.bind(this.categoryControllers),
+        );
         return this.router;
     }
 }

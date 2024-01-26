@@ -48,13 +48,19 @@ class UserServices {
 
     async listAllUsers() {
         const users = await this.userDALs.listAllUsers();
-        return users.map(user => {
-            const {typeStudentGrantId, categoryId, ...userWithoutUnwantedFields} = user;
+        return users.map((user:any) => {
+            const { typeStudentGrantId, categoryId, ...userWithoutUnwantedFields } = user;
             return userWithoutUnwantedFields;
         });
     }
-
-
+    
+    async deleteById(id: string){
+        const user = await this.userDALs.deleteUserById(id);
+        if(!user){
+            throw new Error("User not found");
+        }
+        return user;
+    }
     async deleteAllUsers() {
         const users = await this.userDALs.deleteAllUsers();
         return users;

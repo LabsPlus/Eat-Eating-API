@@ -1,18 +1,19 @@
 import {UserServices} from "../services/user.services";
 import {CategoryServices} from "../services/category.services";
 import {TypeStudentGrantServices} from "../services/type.student.grant.services";
+import { UserDALs } from '../database/data.access/user.dals';
 import now = jest.now;
 
 describe('userServices', () => {
     let userServices: UserServices;
     let categoryServices: CategoryServices;
     let typeStudentGrantServices: TypeStudentGrantServices;
-
+    let mockUserDALs: UserDALs;
     beforeEach(async () => {
         userServices = new UserServices();
         categoryServices = new CategoryServices();
         typeStudentGrantServices = new TypeStudentGrantServices();
-
+        userServices.userDALs = mockUserDALs;
         await categoryServices.deleteAllCategories();
         await typeStudentGrantServices.deleteAllTypeGrant();
         await userServices.deleteAllUsers();
@@ -177,5 +178,34 @@ describe('userServices', () => {
                 })
             ).rejects.toThrow('Enrollment is required');
         });
+    });
+    describe('deleteById', () => {
+    test('deve deletar um usuário existente com sucesso', async () => {
+      const userId = '123';
+
+      // Mock da função deleteUserById para retornar um usuário deletado
+      mockUserDALs.deleteUserById = jest.fn().mockResolvedValue({ /* Seus dados de usuário aqui */ });
+
+      const result = await userServices.deleteById(userId);
+
+      // Verifica se a função deleteUserById foi chamada com o ID correto
+      expect(mockUserDALs.deleteUserById).toHaveBeenCalledWith(userId);
+
+      // Verifica se o resultado é o usuário deletado
+      expect(result).toEqual(result);
+    });
+
+    test('deve lançar um erro se o usuário não for encontrado', async () => {
+      const userId = '123';
+
+      // Mock da função deleteUserById para retornar null (usuário não encontrado)
+      mockUserDALs.deleteUserById = jest.fn().mockResolvedValue(null);
+
+      // Aguarda o lançamento de um erro
+      await expect(userServices.deleteById(userId)).rejects.toThrow('User not found');
+
+      // Verifica se a função deleteUserById foi chamada com o ID correto
+      expect(mockUserDALs.deleteUserById).toHaveBeenCalledWith(userId);
+    });
     });
 });

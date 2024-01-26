@@ -49,6 +49,18 @@ class UserDALs {
 
         return !!result;
     }
+     async findUserById(id: number) {
+        const user = await prisma.user.findUnique({
+            where: {
+                id,
+            },
+        });
+        return user;
+    }
+    async deleteUserById(id: string){
+        const user = await prisma.user.delete({where: {id: Number(id)}});
+        return user;
+    }
 }
 
 export {UserDALs};

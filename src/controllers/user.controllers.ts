@@ -37,6 +37,17 @@ class UserControllers {
         }
     }
 
+    async deleteUserById(request: Request, response: Response, next: NextFunction) {
+        try{
+            const {id} = request.params;
+            const user = await this.userServices.deleteById(id);
+            return response.status(200).json(user);
+        }
+        catch (error: any) {
+            next(error);
+            return response.status(401).json(error.message);
+        }
+    }
     async deleteAllUsers(request: Request, response: Response, next: NextFunction) {
         try {
             const users = await this.userServices.deleteAllUsers();

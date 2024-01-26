@@ -29,6 +29,14 @@ class CategoryServices {
         return result;
     }
 
+    async deleteById(id: string){
+        const result = await this.categoryDALs.deleteCategoryById(id);
+        if(!result){
+            throw new Error("Category not found");
+        }
+        return result;
+    }
+
     async deleteAllCategories() {
         const result = await this.categoryDALs.deleteAllCategories();
         return result;

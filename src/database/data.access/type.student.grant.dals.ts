@@ -39,6 +39,12 @@ class TypeStudentGrantDALs {
         });
         return Boolean(result); // Retorna true se result não for nulo, e false caso contrário
     }
+    async deleteTypeGrantById(id: string){
+        const typeGrant = await prisma.typeStudentGrant.delete({where: {id: Number(id)}});
+       
+        return typeGrant;
+    }
+    
 }
 
 export {TypeStudentGrantDALs};

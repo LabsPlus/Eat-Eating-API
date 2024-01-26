@@ -14,10 +14,10 @@ class CategoryServices {
     async createCategory({name, description}: ICategoryCreate) {
         const findCategoriaByName = await this.categoryDALs.findCategoriaByName(name);
         if (findCategoriaByName) {
-            throw new Error('Category name already exists');
+            throw new Error('Category already exists');
         }
 
-        const result = await this.categoryDALs.createCategoria({
+        const result = await this.categoryDALs.createCategory({
             name,
             description
         });

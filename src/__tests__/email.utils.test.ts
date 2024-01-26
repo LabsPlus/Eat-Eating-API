@@ -1,5 +1,5 @@
 import * as nodemailer from 'nodemailer';
-import {EmailUtils} from '../utils/email.utils'; // Substitua pelo caminho real
+import {EmailUtils} from '../utils/email.utils';
 
 jest.mock('nodemailer');
 

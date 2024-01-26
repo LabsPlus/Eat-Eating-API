@@ -37,6 +37,11 @@ class CategoryDALs {
         });
         return Boolean(result); // Retorna true se result não for nulo, e false caso contrário
     }
+
+    async deleteCategoryById(id: string){
+        const category = await prisma.category.delete({where: {id: Number(id)}});
+        return category;
+    }
 }
 
 export {CategoryDALs};

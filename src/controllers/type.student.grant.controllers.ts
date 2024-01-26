@@ -33,6 +33,16 @@ class TypeStudentGrantControllers {
             return response.status(401).json(error.message);
         }
     }
+    async deleteTypeGrantById(request: Request, response: Response, next: NextFunction) {
+        try {
+            const {id} = request.params;
+            const result = await this.typeStudentGrantServices.deleteById(id);
+            return response.status(200).json(result);
+        } catch (error: any) {
+            next(error);
+            return response.status(401).json(error.message);
+        }
+    }
 
     async deleteAllTypeGrant(request: Request, response: Response, next: NextFunction) {
         try {

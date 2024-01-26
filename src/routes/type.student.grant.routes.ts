@@ -29,8 +29,12 @@ class TypeStudentGrantRoutes {
 
     deleteRoutes() {
         this.router.delete(
-            '/deleteTypeGrant',
+            '/deleteAllTypeGrant',
             this.typeStudentGrantControllers.deleteAllTypeGrant.bind(this.typeStudentGrantControllers),
+        );
+       this.router.delete(
+            '/deleteTypeGrant/:id',
+            this.typeStudentGrantControllers.deleteTypeGrantById.bind(this.typeStudentGrantControllers),
         );
         return this.router;
     }

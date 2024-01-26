@@ -32,7 +32,16 @@ class CategoryControllers {
             return response.status(401).json(error.message);
         }
     }
-
+     async deleteCategoryById(request: Request, response: Response, next: NextFunction) {
+        try {
+            const {id} = request.params;
+            const result = await this.categoryServices.deleteById(id);
+            return response.status(200).json(result);
+        } catch (error: any) {
+            next(error);
+            return response.status(401).json(error.message);
+        }
+    }
     async deleteAllCategories(request: Request, response: Response, next: NextFunction) {
         try {
             const result = await this.categoryServices.deleteAllCategories();

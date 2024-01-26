@@ -24,6 +24,10 @@ class UserRoutes {
             '/deleteAllUsers',
             this.userController.deleteAllUsers.bind(this.userController),
         );
+        this.router.delete(
+            '/deleteUser/:id',
+            this.userController.deleteUserById.bind(this.userController),
+        );
         return this.router;
     }
 

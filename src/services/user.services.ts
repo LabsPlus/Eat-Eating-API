@@ -1,13 +1,14 @@
 import {UserDALs} from "../database/data.access/user.dals";
 import {IUserCreate} from "../intefaces/user.interfaces";
 import dotenv from 'dotenv';
+
 dotenv.config();
 
 const {Link} = process.env;
 
 class UserServices {
 
-    private userDALs: UserDALs;
+    userDALs: UserDALs;
 
     constructor() {
         this.userDALs = new UserDALs();
@@ -19,7 +20,11 @@ class UserServices {
             throw new Error('Enrollment is required');
         }
 
-        const findUserByEnrollment = await this.userDALs.findUserByEnrollment(enrollment);
+        if(dailyMeals < 0 || dailyMeals > 3){
+            throw new Error('Daily meals must be between 0 and 3');
+        }
+
+        const findUserByEnrollment = await this.userDALs.existsUserByEnrollment(enrollment);
 
         if (findUserByEnrollment) {
             throw new Error('User enrollment already exists');
@@ -33,6 +38,11 @@ class UserServices {
             dailyMeals
         });
 
+        return result;
+    }
+
+    async findUserByEnrollment(enrollment: string) {
+        const result = await this.userDALs.existsUserByEnrollment(enrollment);
         return result;
     }
 
@@ -56,6 +66,5 @@ class UserServices {
         return users;
     }
 }
-
 
 export {UserServices};

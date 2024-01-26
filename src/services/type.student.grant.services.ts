@@ -29,7 +29,7 @@ class TypeStudentGrantServices {
         const result = await this.typeStudentGrantDALs.getAllTypeGrant();
         return result;
     }
-    async deleteById(id: string){
+    async deleteTypeGrantById(id: string){
         const result = await this.typeStudentGrantDALs.deleteTypeGrantById(id);
         if(!result){
             throw new Error("Category not found");

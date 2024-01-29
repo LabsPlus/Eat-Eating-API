@@ -10,7 +10,7 @@ export class App {
 
     constructor(corsConfig?: CorsOptions) {
         this.app = express();
-        this.middleware(corsConfig || {});
+        this.middleware(corsConfig);
         this.setupLoginRoutes();
         this.setupCategoryRoutes();
         this.setupTypeStudentGrantRoutes();

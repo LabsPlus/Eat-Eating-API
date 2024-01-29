@@ -1,15 +1,14 @@
 import { App } from './app';
 // No início do seu aplicativo
 
-
 const corsConfig = {
-  origin: 'http://localhost:3003',
+  origin: ['https://eat-eating-web-app.vercel.app','http://localhost:3000'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   optionsSuccessStatus: 204,
 };
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3003;
 
-const app = new App();
+const app = new App(corsConfig);
 
 app.listen(PORT);

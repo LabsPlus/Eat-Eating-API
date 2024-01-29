@@ -32,7 +32,7 @@ class CategoryServices {
     async updateCategory({id, name, description}: ICategoryUpdate){
         const category = await this.categoryDALs.existsCategory(id);
         if(!category){
-            throw new Error("category not found");
+            throw new Error("Category not found");
         }
 
         const result = await this.categoryDALs.updateCategory({id, name, description});

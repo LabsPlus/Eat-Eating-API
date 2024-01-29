@@ -33,7 +33,7 @@ class TypeStudentGrantServices {
     async updateTypeGrant({id, name, description}: ITypeStudentGrantUpdate){
         const typeGrant = await this.typeStudentGrantDALs.existsTipoBolsa(id);
         if(!typeGrant){
-            throw new Error('type Grant not found');
+            throw new Error('Type Grant not found');
         }
 
         const result = await this.typeStudentGrantDALs.updateTypeGrant({id, name, description});

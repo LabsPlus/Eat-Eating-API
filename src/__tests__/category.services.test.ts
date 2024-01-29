@@ -113,5 +113,4 @@ describe('CategoryServices', () => {
       expect(mockCategoryDALs.existsCategory).toHaveBeenCalledWith(categoryId);
     });
   });
-
 });

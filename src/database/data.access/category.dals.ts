@@ -5,6 +5,7 @@ import {
 } from '../../intefaces/category.interfaces';
 
 class CategoryDALs {
+
   async createCategory({ name, description }: ICategoryCreate) {
     const result = await prisma.category.create({
       data: { name, description },

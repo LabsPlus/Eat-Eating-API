@@ -59,6 +59,7 @@ describe('TypeStudentGrantServices', () => {
             expect(mockTypeStudentGrantDALs.deleteTypeGrantById).toHaveBeenCalledWith(typeGrantId);
         });
     });
+
     describe('updateTypeGrant', () => {
     test('deve atualizar um tipo de bolsa existente com sucesso', async () => {
       const typeGrantId = 123;
@@ -106,4 +107,5 @@ describe('TypeStudentGrantServices', () => {
 
     
     });
+
 });

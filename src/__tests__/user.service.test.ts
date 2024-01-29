@@ -261,6 +261,7 @@ describe('userServices', () => {
 
       // Verifica se a função findUserById foi chamada com o ID correto
       expect(mockUserDALs.findUserById).toHaveBeenCalledWith(userId);
+
     });
 
     

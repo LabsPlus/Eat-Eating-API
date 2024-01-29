@@ -32,6 +32,24 @@ class CategoryControllers {
             return response.status(401).json(error.message);
         }
     }
+       async updateCategory(request: Request, response: Response, next: NextFunction) {
+        const {id} = request.params;
+        const {name, description} = request.body;
+        
+        try {
+            const idnumber: number = parseInt(id);
+            const category = await this.categoryServices.updateCategory({
+                id: idnumber,
+                name,
+                description,
+            });
+
+            return response.status(201).json(category);
+        } catch (error: any) {
+            next(error);
+            return response.status(401).json(error.message);
+        }
+    }
      async deleteCategoryById(request: Request, response: Response, next: NextFunction) {
         try {
             const {id} = request.params;

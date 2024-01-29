@@ -1,5 +1,5 @@
 import {CategoryDALs} from "../database/data.access/category.dals";
-import {ICategoryCreate} from "../intefaces/category.interfaces";
+import {ICategoryCreate, ICategoryUpdate} from "../intefaces/category.interfaces";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -14,10 +14,10 @@ class CategoryServices {
     async createCategory({name, description}: ICategoryCreate) {
         const findCategoriaByName = await this.categoryDALs.findCategoriaByName(name);
         if (findCategoriaByName) {
-            throw new Error('Category name already exists');
+            throw new Error('Category already exists');
         }
 
-        const result = await this.categoryDALs.createCategoria({
+        const result = await this.categoryDALs.createCategory({
             name,
             description
         });
@@ -26,6 +26,16 @@ class CategoryServices {
 
     async getAllCategories() {
         const result = await this.categoryDALs.getAllCategories();
+        return result;
+    }
+
+    async updateCategory({id, name, description}: ICategoryUpdate){
+        const category = await this.categoryDALs.existsCategory(id);
+        if(!category){
+            throw new Error("category not found");
+        }
+
+        const result = await this.categoryDALs.updateCategory({id, name, description});
         return result;
     }
 

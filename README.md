@@ -82,13 +82,53 @@ LINK = localhost:3001 # link do front end onde sera usado no email para redireci
 
 ### Rotas da aplicação
 
-- /users/create`rota post` recebe um email, um password e um emailRecovery e retorna um usuario criado no banco de dados
-- users/auth `rota post` recebe um email, um password e retorna um objeto com o token um refresh token com seu tempo de inspiração e o usuario autenticado
-- users/refresh `rota post` recebe um refresh token e retorna o refresh token e seu tempo de expiração
+#### Rotas de login
 
-- users/updatePassword recebe uma senha e token para resetar senha, altera a senha do usuario com o token retorna o usuario com a senha alterada.
+- /login/createLogin`rota post` recebe um email, um password e um emailRecovery e retorna um usuario criado no banco de dados
 
-- users/forgotPassword recebe um email de usuario envia um email para usuario que quer trocar a senha com o token para trocar a senha e retorna uma mensagem de sucesso da operação
+- login/authLogin `rota post` recebe um email, um password e retorna um objeto com o token um refresh token com seu tempo de inspiração e o usuario autenticado
+
+- login/refreshTokenLogin `rota post` recebe um refresh token e retorna o refresh token e seu tempo de expiração
+
+- login/updatePassword `rota patch` recebe uma senha e token para resetar senha, altera a senha do usuario com o token retorna o usuario com a senha alterada.
+
+- login/forgotPassword `rota patch` recebe um email de usuario envia um email para usuario que quer trocar a senha com o token para trocar a senha e retorna uma mensagem de sucesso da operação
+
+#### Rotas de user
+
+user/createUser `rota post` recebe um nome, matricula, tipo de bolsa, categoria e refeições diarias e retorna o usuario criado no banco com esses dados.
+
+user/updateUser/:id `rota put` recebe um id por parametro e recebe nome, matricula, tipo de bolsa, categoria e refeições diarias no body, busca um usuario a ser atualizado, e retorna o usuario com seus dados atualizados.
+
+user/listAllUsers `rota get` retorna todos os usuarios do banco de dados
+
+user/deleteUser/:id `rota delete` recebe um id por parametro procura um usuario no banco de dados e deleta esse usuario
+
+user/deleteAllUsers `rota delete` deleta todos os usuarios do banco de dados
+
+#### Rotas de category
+
+category/createCategory `rota post` recebe um nome e uma descrição e retorna uma categoria criada no banco de dados.
+
+category/updateCategory/:id `rota put` recebe um nome e uma descrição procura uma categoria e retorna os dados dessa categoria atualizada.
+
+category/listAllCategories `rota get` retorna todas as categorias do banco
+
+category/deleteCategory/:id `rota delete` recebe um id por paramentro, procura uma categoria e deleta essa categoria do banco de dados.
+
+category/deleteAllCategories `rota delete` deleta todas as categorias do banco
+
+#### Rotas de student type grant
+
+typeStudentGrant/createTypeGrant `rota post` recebe um nome e uma descrição e retorna um tipo de bolsa criado no banco de dados.
+
+typeStudentGrant/updateTypeGrant/:id `rota put` recebe um nome e uma descrição procura um tipo de bolsa e retorna os dados desse tipo de bolsa atualizado.
+
+typeStudentGrant/listAllTypesGrants `rota get` retorna todos os tipos de bolsa do banco
+
+typeStudentGrant/deleteTypeGrant/:id `rota delete` recebe um id por paramentro, procura um tipo de bolsa e deleta esse tipo de bolsa do banco de dados.
+
+typeStudentGrant/deleteAllTypesGrants `rota delete` deleta todas os tipos de bolsa do banco
 
 ## testar envio de e-mails
 

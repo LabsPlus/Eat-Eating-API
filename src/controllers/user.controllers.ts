@@ -26,7 +26,27 @@ class UserControllers {
             return response.status(401).json(error.message);
         }
     }
+     async updateUser(request: Request, response: Response, next: NextFunction) {
+        const {id} = request.params;
+        const {name, enrollment, categoryId, typeStudentGrantId, dailyMeals} = request.body;
+        
+        try {
+            const idnumber: number = parseInt(id);
+            const user = await this.userServices.updateUser({
+                id: idnumber,
+                name,
+                enrollment,
+                categoryId,
+                typeStudentGrantId,
+                dailyMeals
+            });
 
+            return response.status(201).json(user);
+        } catch (error: any) {
+            next(error);
+            return response.status(401).json(error.message);
+        }
+    }
     async listAllUsers(request: Request, response: Response, next: NextFunction) {
         try {
             const users = await this.userServices.listAllUsers();

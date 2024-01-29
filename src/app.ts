@@ -34,6 +34,7 @@ export class App {
         const categoryBaseRoute = '/category';
 
         this.app.use(categoryBaseRoute, categoryRoutes.postRoutes());
+        this.app.use(categoryBaseRoute, categoryRoutes.putRoutes());
         this.app.use(categoryBaseRoute, categoryRoutes.getRoutes());
         this.app.use(categoryBaseRoute, categoryRoutes.deleteRoutes());
     }
@@ -43,6 +44,7 @@ export class App {
         const userBaseRoute = '/user';
 
         this.app.use(userBaseRoute, userRoutes.postRoutes());
+        this.app.use(userBaseRoute, userRoutes.putRoutes());
         this.app.use(userBaseRoute, userRoutes.getRoutes());
         this.app.use(userBaseRoute, userRoutes.deleteRoutes());
     }
@@ -52,6 +54,7 @@ export class App {
         const typeStudentGrantBaseRoute = '/typeStudentGrant';
 
         this.app.use(typeStudentGrantBaseRoute, typeStudentGrantRoutes.postRoutes());
+        this.app.use(typeStudentGrantBaseRoute, typeStudentGrantRoutes.putRoutes());
         this.app.use(typeStudentGrantBaseRoute, typeStudentGrantRoutes.getRoutes());
         this.app.use(typeStudentGrantBaseRoute, typeStudentGrantRoutes.deleteRoutes());
     }

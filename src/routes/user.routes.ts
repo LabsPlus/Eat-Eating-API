@@ -39,6 +39,14 @@ class UserRoutes {
 
         return this.router;
     }
+
+    putRoutes(){
+        this.router.put(
+            '/updateUser/:id',
+            this.userController.updateUser.bind(this.userController),
+        );
+        return this.router;
+    }
 }
 
 export {UserRoutes};

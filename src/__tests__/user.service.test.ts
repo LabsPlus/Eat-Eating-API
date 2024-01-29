@@ -15,27 +15,6 @@ describe('userServices', () => {
     let mockCategoryDALs: CategoryDALs;
     let mockTypeStudentGrantDALs: TypeStudentGrantDALs;
 
-    beforeEach(async () => {
-        userServices = new UserServices();
-        mockUserDALs = new UserDALs();
-
-        categoryServices = new CategoryServices();
-        mockCategoryDALs = new CategoryDALs();
-
-        typeStudentGrantServices = new TypeStudentGrantServices();
-        mockTypeStudentGrantDALs = new TypeStudentGrantDALs();
-
-        await categoryServices.deleteAllCategories();
-        await typeStudentGrantServices.deleteAllTypeGrants();
-
-        jest.clearAllMocks();
-    });
-    afterEach(async () => {
-        await categoryServices.deleteAllCategories();
-        await typeStudentGrantServices.deleteAllTypeGrants();
-
-        jest.resetAllMocks();
-    });
 
     const createMockCategory = (name: string) => ({
         id: 1,
@@ -60,6 +39,28 @@ describe('userServices', () => {
         dailyMeals,
         createdAt: new Date(now()),
         updatedAt: new Date(now())
+    });
+
+    beforeEach(async () => {
+        userServices = new UserServices();
+        categoryServices = new CategoryServices();
+        typeStudentGrantServices = new TypeStudentGrantServices();
+
+        mockUserDALs = new UserDALs();
+        mockCategoryDALs = new CategoryDALs();
+        mockTypeStudentGrantDALs = new TypeStudentGrantDALs();
+
+        userServices['userDALs'] = mockUserDALs;
+        categoryServices['categoryDALs'] = mockCategoryDALs;
+        typeStudentGrantServices['typeStudentGrantDALs'] = mockTypeStudentGrantDALs;
+    });
+
+    afterEach(async () => {
+        await categoryServices.deleteAllCategories();
+        await typeStudentGrantServices.deleteAllTypeGrants();
+        await userServices.deleteAllUsers();
+
+        jest.resetAllMocks();
     });
 
     describe('createCategory', () => {
@@ -213,57 +214,66 @@ describe('userServices', () => {
         });
     });
     describe('updateUser', () => {
-    test('deve atualizar um usuário existente com sucesso', async () => {
-      const userId = 123;
+        test('should successfully update an existing user', async () => {
+            const userId = 123;
 
-      // Mock da função findUserById para retornar um usuário existente
-      mockUserDALs.findUserById = jest.fn().mockResolvedValue({ /* Seus dados de usuário aqui */ });
+            // Mock da função findUserById para retornar o usuário existente
+            const existingUserData = {
+                id: userId,
+                name: 'Nome Antigo do Usuário',
+                enrollment: '123',
+                categoryId: 1,
+                typeStudentGrantId: 1,
+                dailyMeals: 1,
+                // Outros campos do usuário conforme necessário
+            };
+            mockUserDALs.findUserById = jest.fn().mockResolvedValue(existingUserData);
 
-      // Mock da função updateUser para retornar o usuário atualizado
-      mockUserDALs.updateUser = jest.fn().mockResolvedValue({ /* Seus dados de usuário atualizados aqui */ });
+            const updatedUserData = {
+                id: userId,
+                name: 'Novo Nome do Usuário',
+                enrollment: '456',
+                categoryId: 2,
+                typeStudentGrantId: 2,
+                dailyMeals: 2,
+                // Outros campos atualizados conforme necessário
+            };
 
-      const userData = {
-        id: userId,
-        name: 'Novo Nome do Usuário',
-        enrollment: '456',
-        categoryId: 2,
-        typeStudentGrantId: 2,
-        dailyMeals: 2,
-      };
+            // Mock da função updateUser para retornar os dados atualizados do usuário
+            mockUserDALs.updateUser = jest.fn().mockResolvedValue(updatedUserData);
 
-      const result = await userServices.updateUser(userData);
+            // Chama a função updateUser com os dados atualizados
+            const result = await userServices.updateUser(updatedUserData);
 
-      // Verifica se as funções foram chamadas corretamente
-      expect(mockUserDALs.findUserById).toHaveBeenCalledWith(userId);
-      expect(mockUserDALs.updateUser).toHaveBeenCalledWith(userData);
+            // Verifica se a função findUserById foi chamada com o ID correto
+            expect(mockUserDALs.findUserById).toHaveBeenCalledWith(userId);
 
-      // Verifica se o resultado é o usuário atualizado
-      expect(result).toEqual({ result });
+            // Verifica se a função updateUser foi chamada com os dados atualizados do usuário
+            expect(mockUserDALs.updateUser).toHaveBeenCalledWith(updatedUserData);
+
+            // Verifica se o resultado retornado pela função updateUser é os dados atualizados do usuário
+            expect(result).toEqual(updatedUserData);
+        });
+        test('should throw an error if the user is not found', async () => {
+            const userId = 123;
+
+            // Mock da função findUserById para retornar null (usuário não encontrado)
+            mockUserDALs.findUserById = jest.fn().mockResolvedValue(null);
+
+            const userData = {
+                id: userId,
+                name: 'Novo Nome do Usuário',
+                enrollment: '456',
+                categoryId: 2,
+                typeStudentGrantId: 2,
+                dailyMeals: 2,
+            };
+
+            // Aguarda o lançamento de um erro
+            await expect(userServices.updateUser(userData)).rejects.toThrow('User not found');
+
+            // Verifica se a função findUserById foi chamada com o ID correto
+            expect(mockUserDALs.findUserById).toHaveBeenCalledWith(userId);
+        });
     });
-
-    test('deve lançar um erro se o usuário não for encontrado', async () => {
-      const userId = 123;
-
-      // Mock da função findUserById para retornar null (usuário não encontrado)
-      mockUserDALs.findUserById = jest.fn().mockResolvedValue(null);
-
-      const userData = {
-        id: userId,
-        name: 'Novo Nome do Usuário',
-        enrollment: '456',
-        categoryId: 2,
-        typeStudentGrantId: 2,
-        dailyMeals: 2,
-      };
-
-      // Aguarda o lançamento de um erro
-      await expect(userServices.updateUser(userData)).rejects.toThrow('User not found');
-
-      // Verifica se a função findUserById foi chamada com o ID correto
-      expect(mockUserDALs.findUserById).toHaveBeenCalledWith(userId);
-
-    });
-
-    
-  });
 });

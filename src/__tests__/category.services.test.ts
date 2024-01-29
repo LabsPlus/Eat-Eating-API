@@ -14,7 +14,6 @@ describe('CategoryServices', () => {
 
     afterEach(async () => {
         await categoryServices.deleteAllCategories();
-        jest.clearAllMocks();
     });
 
     const createMockCategory = (name: string) => ({
@@ -69,48 +68,48 @@ describe('CategoryServices', () => {
     });
 
     describe('updateCategory', () => {
-    test('deve atualizar uma categoria existente com sucesso', async () => {
-      const categoryId = 123;
+        test('should successfully update an existing category', async () => {
+            const categoryId = 123;
 
-      // Mock da função existsCategory para retornar true (categoria existe)
-      mockCategoryDALs.existsCategory = jest.fn().mockResolvedValue(true);
+            // Mock da função existsCategory para retornar true (categoria existe)
+            mockCategoryDALs.existsCategory = jest.fn().mockResolvedValue(true);
 
-      // Mock da função updateCategory para retornar a categoria atualizada
-      mockCategoryDALs.updateCategory = jest.fn().mockResolvedValue({ /* Seus dados de categoria atualizados aqui */ });
+            // Mock da função updateCategory para retornar a categoria atualizada
+            mockCategoryDALs.updateCategory = jest.fn().mockResolvedValue({ /* Seus dados de categoria atualizados aqui */});
 
-      const categoryData = {
-        id: categoryId,
-        name: 'Novo Nome da Categoria',
-        description: 'Nova Descrição da Categoria',
-      };
+            const categoryData = {
+                id: categoryId,
+                name: 'Novo Nome da Categoria',
+                description: 'Nova Descrição da Categoria',
+            };
 
-      const result = await categoryServices.updateCategory(categoryData);
+            const result = await categoryServices.updateCategory(categoryData);
 
-      // Verifica se as funções foram chamadas corretamente
-      expect(mockCategoryDALs.existsCategory).toHaveBeenCalledWith(categoryId);
-      expect(mockCategoryDALs.updateCategory).toHaveBeenCalledWith(categoryData);
+            // Verifica se as funções foram chamadas corretamente
+            expect(mockCategoryDALs.existsCategory).toHaveBeenCalledWith(categoryId);
+            expect(mockCategoryDALs.updateCategory).toHaveBeenCalledWith(categoryData);
 
-      // Verifica se o resultado é a categoria atualizada
-      expect(result).toEqual({ /* Seus dados de categoria atualizados aqui */ });
+            // Verifica se o resultado é a categoria atualizada
+            expect(result).toEqual({ /* Seus dados de categoria atualizados aqui */});
+        });
+
+        test('should throw an error if the category is not found', async () => {
+            const categoryId = 123;
+
+            // Mock da função existsCategory para retornar false (categoria não encontrada)
+            mockCategoryDALs.existsCategory = jest.fn().mockResolvedValue(false);
+
+            const categoryData = {
+                id: categoryId,
+                name: 'Novo Nome da Categoria',
+                description: 'Nova Descrição da Categoria',
+            };
+
+            // Aguarda o lançamento de um erro
+            await expect(categoryServices.updateCategory(categoryData)).rejects.toThrow('Category not found');
+
+            // Verifica se a função existsCategory foi chamada com o ID correto
+            expect(mockCategoryDALs.existsCategory).toHaveBeenCalledWith(categoryId);
+        });
     });
-
-    test('deve lançar um erro se a categoria não for encontrada', async () => {
-      const categoryId = 123;
-
-      // Mock da função existsCategory para retornar false (categoria não encontrada)
-      mockCategoryDALs.existsCategory = jest.fn().mockResolvedValue(false);
-
-      const categoryData = {
-        id: categoryId,
-        name: 'Novo Nome da Categoria',
-        description: 'Nova Descrição da Categoria',
-      };
-
-      // Aguarda o lançamento de um erro
-      await expect(categoryServices.updateCategory(categoryData)).rejects.toThrow('Category not found');
-
-      // Verifica se a função existsCategory foi chamada com o ID correto
-      expect(mockCategoryDALs.existsCategory).toHaveBeenCalledWith(categoryId);
-    });
-  });
 });

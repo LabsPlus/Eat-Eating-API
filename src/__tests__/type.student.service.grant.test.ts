@@ -14,7 +14,6 @@ describe('TypeStudentGrantServices', () => {
 
     afterEach(async () => {
         await typeStudentGrantServices.deleteAllTypeGrants();
-        jest.clearAllMocks();
     });
 
     const createMockTypeStudentGrant = (name: string) => ({
@@ -61,51 +60,47 @@ describe('TypeStudentGrantServices', () => {
     });
 
     describe('updateTypeGrant', () => {
-    test('deve atualizar um tipo de bolsa existente com sucesso', async () => {
-      const typeGrantId = 123;
+        test('should successfully update an existing grant type', async () => {
+            const typeGrantId = 123;
 
-      // Mock da função existsTipoBolsa para retornar true (tipo de bolsa existe)
-      mockTypeStudentGrantDALs.existsTipoBolsa = jest.fn().mockResolvedValue(true);
+            // Mock da função existsTipoBolsa para retornar true (tipo de bolsa existe)
+            mockTypeStudentGrantDALs.existsTipoBolsa = jest.fn().mockResolvedValue(true);
 
-      // Mock da função updateTypeGrant para retornar o tipo de bolsa atualizado
-      mockTypeStudentGrantDALs.updateTypeGrant = jest.fn().mockResolvedValue({ /* Seus dados de tipo de bolsa atualizados aqui */ });
+            // Mock da função updateTypeGrant para retornar o tipo de bolsa atualizado
+            mockTypeStudentGrantDALs.updateTypeGrant = jest.fn().mockResolvedValue({ /* Seus dados de tipo de bolsa atualizados aqui */});
 
-      const typeGrantData = {
-        id: typeGrantId,
-        name: 'Novo Nome do Tipo de Bolsa',
-        description: 'Nova Descrição do Tipo de Bolsa',
-      };
+            const typeGrantData = {
+                id: typeGrantId,
+                name: 'Novo Nome do Tipo de Bolsa',
+                description: 'Nova Descrição do Tipo de Bolsa',
+            };
 
-      const result = await typeStudentGrantServices.updateTypeGrant(typeGrantData);
+            const result = await typeStudentGrantServices.updateTypeGrant(typeGrantData);
 
-      // Verifica se as funções foram chamadas corretamente
-      expect(mockTypeStudentGrantDALs.existsTipoBolsa).toHaveBeenCalledWith(typeGrantId);
-      expect(mockTypeStudentGrantDALs.updateTypeGrant).toHaveBeenCalledWith(typeGrantData);
+            // Verifica se as funções foram chamadas corretamente
+            expect(mockTypeStudentGrantDALs.existsTipoBolsa).toHaveBeenCalledWith(typeGrantId);
+            expect(mockTypeStudentGrantDALs.updateTypeGrant).toHaveBeenCalledWith(typeGrantData);
 
-      // Verifica se o resultado é o tipo de bolsa atualizado
-      expect(result).toEqual({ /* Seus dados de tipo de bolsa atualizados aqui */ });
+            // Verifica se o resultado é o tipo de bolsa atualizado
+            expect(result).toEqual({ /* Seus dados de tipo de bolsa atualizados aqui */});
+        });
+        test('should throw an error if the grant type is not found', async () => {
+            const typeGrantId = 123;
+
+            // Mock da função existsTipoBolsa para retornar false (tipo de bolsa não encontrado)
+            mockTypeStudentGrantDALs.existsTipoBolsa = jest.fn().mockResolvedValue(false);
+
+            const typeGrantData = {
+                id: typeGrantId,
+                name: 'Novo Nome do Tipo de Bolsa',
+                description: 'Nova Descrição do Tipo de Bolsa',
+            };
+
+            // Aguarda o lançamento de um erro
+            await expect(typeStudentGrantServices.updateTypeGrant(typeGrantData)).rejects.toThrow('Type Grant not found');
+
+            // Verifica se a função existsTipoBolsa foi chamada com o ID correto
+            expect(mockTypeStudentGrantDALs.existsTipoBolsa).toHaveBeenCalledWith(typeGrantId);
+        });
     });
-
-    test('deve lançar um erro se o tipo de bolsa não for encontrado', async () => {
-      const typeGrantId = 123;
-
-      // Mock da função existsTipoBolsa para retornar false (tipo de bolsa não encontrado)
-      mockTypeStudentGrantDALs.existsTipoBolsa = jest.fn().mockResolvedValue(false);
-
-      const typeGrantData = {
-        id: typeGrantId,
-        name: 'Novo Nome do Tipo de Bolsa',
-        description: 'Nova Descrição do Tipo de Bolsa',
-      };
-
-      // Aguarda o lançamento de um erro
-      await expect(typeStudentGrantServices.updateTypeGrant(typeGrantData)).rejects.toThrow('Type Grant not found');
-
-      // Verifica se a função existsTipoBolsa foi chamada com o ID correto
-      expect(mockTypeStudentGrantDALs.existsTipoBolsa).toHaveBeenCalledWith(typeGrantId);
-    });
-
-    
-    });
-
 });

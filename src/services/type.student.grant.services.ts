@@ -1,5 +1,5 @@
 import {TypeStudentGrantDALs} from "../database/data.access/type.student.grant.dals";
-import {ITypeStudentGrantCreate} from "../intefaces/type.student.grant.interfaces";
+import {ITypeStudentGrantCreate, ITypeStudentGrantUpdate} from "../intefaces/type.student.grant.interfaces";
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -27,6 +27,16 @@ class TypeStudentGrantServices {
 
     async getAllTypeGrant() {
         const result = await this.typeStudentGrantDALs.getAllTypeGrant();
+        return result;
+    }
+
+    async updateTypeGrant({id, name, description}: ITypeStudentGrantUpdate){
+        const typeGrant = await this.typeStudentGrantDALs.existsTipoBolsa(id);
+        if(!typeGrant){
+            throw new Error('type Grant not found');
+        }
+
+        const result = await this.typeStudentGrantDALs.updateTypeGrant({id, name, description});
         return result;
     }
     async deleteTypeGrantById(id: string){

@@ -1,66 +1,73 @@
-import {prisma} from "../prisma.databases";
-import {IUserCreate} from "../../intefaces/user.interfaces";
+import { prisma } from '../prisma.databases';
+import { IUserCreate, IUserUpdate } from '../../intefaces/user.interfaces';
 
 class UserDALs {
+  async createUser({
+    name,
+    enrollment,
+    categoryId,
+    typeStudentGrantId,
+    dailyMeals,
+  }: IUserCreate) {
+    const result = await prisma.user.create({
+      data: {
+        name,
+        enrollment,
+        categoryId,
+        typeStudentGrantId,
+        dailyMeals,
+      },
+    });
 
-    async createUser(
-        {
-            name,
-            enrollment,
-            categoryId,
-            typeStudentGrantId,
-            dailyMeals
-        }: IUserCreate) {
+    return result;
+  }
 
-        const result = await prisma.user.create({
-            data: {
-                name,
-                enrollment,
-                categoryId,
-                typeStudentGrantId,
-                dailyMeals
-            },
-        });
+  async listAllUsers() {
+    const users = await prisma.user.findMany({
+      include: {
+        Category: true,
+        TypeStudentGrant: true,
+      },
+    });
+    return users;
+  }
 
-        return result;
-    }
+  async deleteAllUsers() {
+    const users = await prisma.user.deleteMany();
+    return users;
+  }
 
-    async listAllUsers() {
-        const users = await prisma.user.findMany({
-            include: {
-                Category: true,
-                TypeStudentGrant: true,
-            },
-        });
-        return users;
-    }
+  async existsUserByEnrollment(enrollment: string): Promise<boolean> {
+    const result = await prisma.user.findUnique({
+      where: {
+        enrollment,
+      },
+    });
 
-    async deleteAllUsers() {
-        const users = await prisma.user.deleteMany();
-        return users;
-    }
+    return !!result;
+  }
+  async findUserById(id: number) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    return user;
+  }
 
-    async existsUserByEnrollment(enrollment: string): Promise<boolean> {
-        const result = await prisma.user.findUnique({
-            where: {
-                enrollment,
-            },
-        });
-
-        return !!result;
-    }
-     async findUserById(id: number) {
-        const user = await prisma.user.findUnique({
-            where: {
-                id,
-            },
-        });
-        return user;
-    }
-    async deleteUserById(id: string){
-        const user = await prisma.user.delete({where: {id: Number(id)}});
-        return user;
-    }
+  async updateUser(data: IUserUpdate) {
+    const user = await prisma.user.update({
+      where: {
+        id: data.id,
+      },
+      data: data,
+    });
+    return user;
+  }
+  async deleteUserById(id: string) {
+    const user = await prisma.user.delete({ where: { id: Number(id) } });
+    return user;
+  }
 }
 
-export {UserDALs};
+export { UserDALs };

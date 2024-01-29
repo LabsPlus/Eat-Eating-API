@@ -1,5 +1,5 @@
 import {UserDALs} from "../database/data.access/user.dals";
-import {IUserCreate} from "../intefaces/user.interfaces";
+import {IUserCreate, IUserUpdate} from "../intefaces/user.interfaces";
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -53,7 +53,23 @@ class UserServices {
             return userWithoutUnwantedFields;
         });
     }
-    
+    async updateUser({id, name, enrollment, categoryId, typeStudentGrantId, dailyMeals}: IUserUpdate){
+        const user = await this.userDALs.findUserById(id);
+        if(!user){
+            throw new   Error("User not found");
+        }
+
+        if (enrollment === undefined || enrollment === null || enrollment === '') {
+            throw new Error('Enrollment is required');
+        }
+        
+        if(dailyMeals < 0 || dailyMeals > 3){
+            throw new Error('Daily meals must be between 0 and 3');
+        }
+
+        const result = await this.userDALs.updateUser({id, name, enrollment, categoryId, typeStudentGrantId, dailyMeals});
+        return result;
+    }
     async deleteById(id: string){
         const user = await this.userDALs.deleteUserById(id);
         if(!user){

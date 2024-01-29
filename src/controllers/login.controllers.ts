@@ -80,10 +80,7 @@ class LoginControllers {
         const {email} = request.body;
 
         try {
-            const ip =
-                request.socket.remoteAddress ||
-                request.socket.remoteAddress ||
-                request.socket.remoteAddress;
+            const ip =  request.socket.remoteAddress || request.socket.remoteAddress || request.socket.remoteAddress;
             const result = await this.loginServices.forgotPassword({email, ip});
             return response.status(200).json(result);
         } catch (error: any) {

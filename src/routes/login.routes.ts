@@ -30,12 +30,12 @@ class LoginRoutes {
     }
 
     patchRoutes() {
-        this.router.post(
+        this.router.patch(
             '/updatePasswordLogin',
             this.loginController.updatePassword.bind(this.loginController),
         );
 
-        this.router.post(
+        this.router.patch(
             '/forgotPasswordLogin',
             this.loginController.forgotPassword.bind(this.loginController),
         );

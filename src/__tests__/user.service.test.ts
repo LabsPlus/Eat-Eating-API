@@ -212,4 +212,58 @@ describe('userServices', () => {
             expect(mockUserDALs.deleteUserById).toHaveBeenCalledWith(userId);
         });
     });
+    describe('updateUser', () => {
+    test('deve atualizar um usuário existente com sucesso', async () => {
+      const userId = 123;
+
+      // Mock da função findUserById para retornar um usuário existente
+      mockUserDALs.findUserById = jest.fn().mockResolvedValue({ /* Seus dados de usuário aqui */ });
+
+      // Mock da função updateUser para retornar o usuário atualizado
+      mockUserDALs.updateUser = jest.fn().mockResolvedValue({ /* Seus dados de usuário atualizados aqui */ });
+
+      const userData = {
+        id: userId,
+        name: 'Novo Nome do Usuário',
+        enrollment: '456',
+        categoryId: 2,
+        typeStudentGrantId: 2,
+        dailyMeals: 2,
+      };
+
+      const result = await userServices.updateUser(userData);
+
+      // Verifica se as funções foram chamadas corretamente
+      expect(mockUserDALs.findUserById).toHaveBeenCalledWith(userId);
+      expect(mockUserDALs.updateUser).toHaveBeenCalledWith(userData);
+
+      // Verifica se o resultado é o usuário atualizado
+      expect(result).toEqual({ result });
+    });
+
+    test('deve lançar um erro se o usuário não for encontrado', async () => {
+      const userId = 123;
+
+      // Mock da função findUserById para retornar null (usuário não encontrado)
+      mockUserDALs.findUserById = jest.fn().mockResolvedValue(null);
+
+      const userData = {
+        id: userId,
+        name: 'Novo Nome do Usuário',
+        enrollment: '456',
+        categoryId: 2,
+        typeStudentGrantId: 2,
+        dailyMeals: 2,
+      };
+
+      // Aguarda o lançamento de um erro
+      await expect(userServices.updateUser(userData)).rejects.toThrow('User not found');
+
+      // Verifica se a função findUserById foi chamada com o ID correto
+      expect(mockUserDALs.findUserById).toHaveBeenCalledWith(userId);
+
+    });
+
+    
+  });
 });

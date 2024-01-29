@@ -26,7 +26,13 @@ class TypeStudentGrantRoutes {
         );
         return this.router;
     }
-
+    putRoutes(){
+        this.router.put(
+            '/updateTypeGrant/:id',
+            this.typeStudentGrantControllers.updateTypeGrant.bind(this.typeStudentGrantControllers),
+        );
+        return this.router;
+    }
     deleteRoutes() {
         this.router.delete(
             '/deleteAllTypeGrant',

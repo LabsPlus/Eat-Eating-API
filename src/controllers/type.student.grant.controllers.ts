@@ -33,6 +33,26 @@ class TypeStudentGrantControllers {
             return response.status(401).json(error.message);
         }
     }
+
+    async updateTypeGrant(request: Request, response: Response, next: NextFunction) {
+        const {id} = request.params;
+        const {name, description} = request.body;
+        
+        try {
+            const idnumber: number = parseInt(id);
+            const typeGrant = await this.typeStudentGrantServices.updateTypeGrant({
+                id: idnumber,
+                name,
+                description,
+            });
+
+            return response.status(201).json(typeGrant);
+        } catch (error: any) {
+            next(error);
+            return response.status(401).json(error.message);
+        }
+    }
+
     async deleteTypeGrantById(request: Request, response: Response, next: NextFunction) {
         try {
             const {id} = request.params;

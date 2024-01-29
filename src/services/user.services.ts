@@ -1,86 +1,119 @@
-import {UserDALs} from "../database/data.access/user.dals";
-import {IUserCreate, IUserUpdate} from "../intefaces/user.interfaces";
+import { UserDALs } from '../database/data.access/user.dals';
+import { ErrorsHelpers } from '../helpers/errors.helpers';
+import { IUserCreate, IUserUpdate } from '../intefaces/user.interfaces';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const {Link} = process.env;
+const { Link } = process.env;
 
 class UserServices {
+  userDALs: UserDALs;
 
-    userDALs: UserDALs;
+  constructor() {
+    this.userDALs = new UserDALs();
+  }
 
-    constructor() {
-        this.userDALs = new UserDALs();
+  async createUser({
+    name,
+    enrollment,
+    categoryId,
+    typeStudentGrantId,
+    dailyMeals,
+  }: IUserCreate) {
+    if (enrollment === undefined || enrollment === null || enrollment === '') {
+      throw new ErrorsHelpers('Enrollment is required', 401);
     }
 
-    async createUser({name, enrollment, categoryId, typeStudentGrantId, dailyMeals}: IUserCreate) {
-
-        if (enrollment === undefined || enrollment === null || enrollment === '') {
-            throw new Error('Enrollment is required');
-        }
-
-        if(dailyMeals < 0 || dailyMeals > 3){
-            throw new Error('Daily meals must be between 0 and 3');
-        }
-
-        const findUserByEnrollment = await this.userDALs.existsUserByEnrollment(enrollment);
-
-        if (findUserByEnrollment) {
-            throw new Error('User enrollment already exists');
-        }
-
-        const result = await this.userDALs.createUser({
-            name,
-            enrollment,
-            categoryId,
-            typeStudentGrantId,
-            dailyMeals
-        });
-
-        return result;
+    if (dailyMeals < 0 || dailyMeals > 3) {
+      throw new ErrorsHelpers('Daily meals must be between 0 and 3', 401);
     }
 
-    async findUserByEnrollment(enrollment: string) {
-        const result = await this.userDALs.existsUserByEnrollment(enrollment);
-        return result;
+    const findUserByEnrollment = await this.userDALs.existsUserByEnrollment(
+      enrollment,
+    );
+
+    if (findUserByEnrollment) {
+      throw new ErrorsHelpers('User enrollment already exists', 401);
     }
 
-    async listAllUsers() {
-        const users = await this.userDALs.listAllUsers();
-        return users.map((user:any) => {
-            const { typeStudentGrantId, categoryId, ...userWithoutUnwantedFields } = user;
-            return userWithoutUnwantedFields;
-        });
-    }
-    async updateUser({id, name, enrollment, categoryId, typeStudentGrantId, dailyMeals}: IUserUpdate){
-        const user = await this.userDALs.findUserById(id);
-        if(!user){
-            throw new   Error("User not found");
-        }
+    const result = await this.userDALs.createUser({
+      name,
+      enrollment,
+      categoryId,
+      typeStudentGrantId,
+      dailyMeals,
+    });
 
-        if (enrollment === undefined || enrollment === null || enrollment === '') {
-            throw new Error('Enrollment is required');
-        }
-        
-        if(dailyMeals < 0 || dailyMeals > 3){
-            throw new Error('Daily meals must be between 0 and 3');
-        }
+    return result;
+  }
 
-        const result = await this.userDALs.updateUser({id, name, enrollment, categoryId, typeStudentGrantId, dailyMeals});
-        return result;
+  async findUserByEnrollment(enrollment: string) {
+    const result = await this.userDALs.existsUserByEnrollment(enrollment);
+    if (!result) {
+      throw new ErrorsHelpers('User not found', 401);
     }
-    async deleteById(id: string){
-        const user = await this.userDALs.deleteUserById(id);
-        if(!user){
-            throw new Error("User not found");
-        }
-        return user;
+
+    return result;
+  }
+
+  async listAllUsers() {
+    const users = await this.userDALs.listAllUsers();
+    return users.map((user: any) => {
+      const { typeStudentGrantId, categoryId, ...userWithoutUnwantedFields } =
+        user;
+      return userWithoutUnwantedFields;
+    });
+  }
+
+  async updateUser({
+    id,
+    name,
+    enrollment,
+    categoryId,
+    typeStudentGrantId,
+    dailyMeals,
+  }: IUserUpdate) {
+    const user = await this.userDALs.findUserById(id);
+    if (!user) {
+      throw new ErrorsHelpers('User not found', 401);
     }
-    async deleteAllUsers() {
-        const users = await this.userDALs.deleteAllUsers();
-        return users;
+
+    if (enrollment === undefined || enrollment === null || enrollment === '') {
+      throw new ErrorsHelpers('Enrollment is required', 401);
     }
+
+    if (dailyMeals < 0 || dailyMeals > 3) {
+      throw new ErrorsHelpers('Daily meals must be between 0 and 3', 401);
+    }
+
+    const result = await this.userDALs.updateUser({
+      id,
+      name,
+      enrollment,
+      categoryId,
+      typeStudentGrantId,
+      dailyMeals,
+    });
+    return result;
+  }
+
+  async deleteById(id: string) {
+    const user = await this.userDALs.deleteUserById(id);
+    if (!user) {
+      throw new ErrorsHelpers('User not found', 401);
+    }
+    return user;
+  }
+
+  async deleteAllUsers() {
+    const users = await this.userDALs.deleteAllUsers();
+    if (!users) {
+      throw new ErrorsHelpers('Users not found', 401);
+    }
+
+    return users;
+  }
 }
 
-export {UserServices};
+export { UserServices };

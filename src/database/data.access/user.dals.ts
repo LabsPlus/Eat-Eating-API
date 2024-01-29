@@ -1,6 +1,5 @@
 import { prisma } from '../prisma.databases';
 import { IUserCreate, IUserUpdate } from '../../intefaces/user.interfaces';
-import { Prisma } from '@prisma/client';
 
 class UserDALs {
   async createUser({

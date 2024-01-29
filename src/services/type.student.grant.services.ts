@@ -36,7 +36,7 @@ class TypeStudentGrantServices {
         }
         return result;
     }
-    async deleteAllTypeGrant() {
+    async deleteAllTypeGrants() {
         const result = await this.typeStudentGrantDALs.deleteAllTypeGrant();
         return result;
     }

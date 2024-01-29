@@ -2,7 +2,7 @@ import {prisma} from "../prisma.databases";
 import {ICategoryCreate} from "../../intefaces/category.interfaces";
 
 class CategoryDALs {
-    async createCategoria(
+    async createCategory(
         {name, description}: ICategoryCreate) {
         const result = await prisma.category.create({
             data: {name, description},

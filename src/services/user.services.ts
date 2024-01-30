@@ -22,11 +22,17 @@ class UserServices {
     dailyMeals,
   }: IUserCreate) {
     if (enrollment === undefined || enrollment === null || enrollment === '') {
-      throw new ErrorsHelpers('Enrollment is required', 401);
+      throw new ErrorsHelpers({
+        message: 'Enrollment is required',
+        statusCode: 401,
+      });
     }
 
     if (dailyMeals < 0 || dailyMeals > 3) {
-      throw new ErrorsHelpers('Daily meals must be between 0 and 3', 401);
+      throw new ErrorsHelpers({
+        message: 'Daily meals must be between 0 and 3',
+        statusCode: 401,
+      });
     }
 
     const findUserByEnrollment = await this.userDALs.existsUserByEnrollment(
@@ -34,7 +40,10 @@ class UserServices {
     );
 
     if (findUserByEnrollment) {
-      throw new ErrorsHelpers('User enrollment already exists', 401);
+      throw new ErrorsHelpers({
+        message: 'User enrollment already exists',
+        statusCode: 401,
+      });
     }
 
     const result = await this.userDALs.createUser({
@@ -51,7 +60,7 @@ class UserServices {
   async findUserByEnrollment(enrollment: string) {
     const result = await this.userDALs.existsUserByEnrollment(enrollment);
     if (!result) {
-      throw new ErrorsHelpers('User not found', 401);
+      throw new ErrorsHelpers({ message: 'User not found', statusCode: 401 });
     }
 
     return result;
@@ -76,15 +85,21 @@ class UserServices {
   }: IUserUpdate) {
     const user = await this.userDALs.findUserById(id);
     if (!user) {
-      throw new ErrorsHelpers('User not found', 401);
+      throw new ErrorsHelpers({ message: 'User not found', statusCode: 401 });
     }
 
     if (enrollment === undefined || enrollment === null || enrollment === '') {
-      throw new ErrorsHelpers('Enrollment is required', 401);
+      throw new ErrorsHelpers({
+        message: 'Enrollment is required',
+        statusCode: 401,
+      });
     }
 
     if (dailyMeals < 0 || dailyMeals > 3) {
-      throw new ErrorsHelpers('Daily meals must be between 0 and 3', 401);
+      throw new ErrorsHelpers({
+        message: 'Daily meals must be between 0 and 3',
+        statusCode: 401,
+      });
     }
 
     const result = await this.userDALs.updateUser({
@@ -101,7 +116,7 @@ class UserServices {
   async deleteById(id: string) {
     const user = await this.userDALs.deleteUserById(id);
     if (!user) {
-      throw new ErrorsHelpers('User not found', 401);
+      throw new ErrorsHelpers({ message: 'User not found', statusCode: 401 });
     }
     return user;
   }
@@ -109,7 +124,7 @@ class UserServices {
   async deleteAllUsers() {
     const users = await this.userDALs.deleteAllUsers();
     if (!users) {
-      throw new ErrorsHelpers('Users not found', 401);
+      throw new ErrorsHelpers({ message: 'Users not found', statusCode: 401 });
     }
 
     return users;

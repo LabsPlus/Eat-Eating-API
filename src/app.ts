@@ -6,6 +6,8 @@ import { CategoryRoutes } from './routes/category.routes';
 import { UserRoutes } from './routes/user.routes';
 import { TypeStudentGrantRoutes } from './routes/type.student.grant.routes';
 import { errorMiddleware } from './middlewares/error.middlewares';
+import requestIp from 'request-ip'
+
 export class App {
   private app: Application;
 
@@ -73,5 +75,6 @@ export class App {
     this.app.use(express.json());
     this.app.use(cors(corsConfig));
     this.app.use(express.urlencoded({ extended: true }));
+     this.app.use(requestIp.mw());
   }
 }

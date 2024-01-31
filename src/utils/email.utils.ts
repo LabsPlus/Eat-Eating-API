@@ -22,7 +22,7 @@ class EmailUtils {
                 from: process.env.NODEMAILER_EMAIL,
                 to: destination,
                 subject: subject,
-                html: `<a href="${link}" style="display:inline-block;padding:10px 20px;background-color:#007BFF;color:#fff;text-decoration:none;border-radius:5px;"> ${content}</a>`,
+                html: `<a href="${link}" style="display:inline-block;padding:10px 20px;background-color:##008000;color:#fff;text-decoration:none;border-radius:5px;"> ${content}</a>`,
             };
 
             const info = await transporter.sendMail(mailOptions);

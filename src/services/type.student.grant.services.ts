@@ -19,7 +19,10 @@ class TypeStudentGrantServices {
     const findTypeGrantByName =
       await this.typeStudentGrantDALs.findTypeGrantByName(name);
     if (findTypeGrantByName) {
-      throw new ErrorsHelpers('Type grant name already exists', 401);
+      throw new ErrorsHelpers({
+        message: 'Type grant name already exists',
+        statusCode: 401,
+      });
     }
 
     const result = await this.typeStudentGrantDALs.createTypeGrant({
@@ -32,7 +35,10 @@ class TypeStudentGrantServices {
   async getAllTypeGrant() {
     const result = await this.typeStudentGrantDALs.getAllTypeGrant();
     if (!result) {
-      throw new ErrorsHelpers('Unable to search type grants', 401);
+      throw new ErrorsHelpers({
+        message: 'Unable to search type grants',
+        statusCode: 401,
+      });
     }
 
     return result;
@@ -41,7 +47,10 @@ class TypeStudentGrantServices {
   async updateTypeGrant({ id, name, description }: ITypeStudentGrantUpdate) {
     const typeGrant = await this.typeStudentGrantDALs.existsTipoBolsa(id);
     if (!typeGrant) {
-      throw new ErrorsHelpers('Type Grant not found', 401);
+      throw new ErrorsHelpers({
+        message: 'Type Grant not found',
+        statusCode: 401,
+      });
     }
 
     const result = await this.typeStudentGrantDALs.updateTypeGrant({
@@ -56,7 +65,10 @@ class TypeStudentGrantServices {
   async deleteTypeGrantById(id: string) {
     const result = await this.typeStudentGrantDALs.deleteTypeGrantById(id);
     if (!result) {
-      throw new ErrorsHelpers('Category not found', 401);
+      throw new ErrorsHelpers({
+        message: 'Category not found',
+        statusCode: 401,
+      });
     }
     return result;
   }
@@ -64,7 +76,10 @@ class TypeStudentGrantServices {
   async deleteAllTypeGrants() {
     const result = await this.typeStudentGrantDALs.deleteAllTypeGrant();
     if (!result) {
-      throw new ErrorsHelpers('Type Grant not found', 401);
+      throw new ErrorsHelpers({
+        message: 'Type Grant not found',
+        statusCode: 401,
+      });
     }
 
     return result;

@@ -22,6 +22,7 @@ export class App {
     this.app.listen(port, () => {
       console.log(`Servidor rodando na porta ${port}`);
     });
+    this.app.use(errorMiddleware);
   }
 
   private setupCategoryRoutes() {
@@ -72,6 +73,5 @@ export class App {
     this.app.use(express.json());
     this.app.use(cors(corsConfig));
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(errorMiddleware);
   }
 }

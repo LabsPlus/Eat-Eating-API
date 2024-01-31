@@ -19,7 +19,10 @@ class CategoryServices {
       name,
     );
     if (findCategoriaByName) {
-      throw new ErrorsHelpers('Category already exists', 401);
+      throw new ErrorsHelpers({
+        message: 'Category already exists',
+        statusCode: 401,
+      });
     }
 
     const result = await this.categoryDALs.createCategory({
@@ -32,7 +35,10 @@ class CategoryServices {
   async getAllCategories() {
     const result = await this.categoryDALs.getAllCategories();
     if (!result) {
-      throw new ErrorsHelpers('Unable to search categories', 401);
+      throw new ErrorsHelpers({
+        message: 'Unable to search categories',
+        statusCode: 401,
+      });
     }
 
     return result;
@@ -41,7 +47,10 @@ class CategoryServices {
   async updateCategory({ id, name, description }: ICategoryUpdate) {
     const category = await this.categoryDALs.existsCategory(id);
     if (!category) {
-      throw new ErrorsHelpers('Category not found', 401);
+      throw new ErrorsHelpers({
+        message: 'Category not found',
+        statusCode: 401,
+      });
     }
 
     const result = await this.categoryDALs.updateCategory({
@@ -55,7 +64,10 @@ class CategoryServices {
   async deleteById(id: string) {
     const result = await this.categoryDALs.deleteCategoryById(id);
     if (!result) {
-      throw new ErrorsHelpers('Category not found', 401);
+      throw new ErrorsHelpers({
+        message: 'Category not found',
+        statusCode: 401,
+      });
     }
     return result;
   }
@@ -63,7 +75,10 @@ class CategoryServices {
   async deleteAllCategories() {
     const result = await this.categoryDALs.deleteAllCategories();
     if (!result) {
-      throw new ErrorsHelpers('Unable to delete categories', 401);
+      throw new ErrorsHelpers({
+        message: 'Unable to delete categories',
+        statusCode: 401,
+      });
     }
 
     return result;

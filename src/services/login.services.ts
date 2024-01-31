@@ -31,7 +31,10 @@ class LoginServices {
   async createLogin({ email, password, emailRecovery }: ILoginCreate) {
     const findLoginByEmail = await this.loginDALs.findLoginByEmail(email);
     if (findLoginByEmail) {
-      throw new ErrorsHelpers('User email already exists', 401);
+      throw new ErrorsHelpers({
+        message: 'User email already exists',
+        statusCode: 401,
+      });
     }
 
     const passwordHash = await hash(password, 10);
@@ -47,23 +50,35 @@ class LoginServices {
   async authLogin({ email, password }: ILoginAuth) {
     const findLoginByEmail = await this.loginDALs.findLoginByEmail(email);
     if (!findLoginByEmail) {
-      throw new ErrorsHelpers('Invalid email or password', 401);
+      throw new ErrorsHelpers({
+        message: 'Invalid email or password',
+        statusCode: 401,
+      });
     }
 
     const passwordMatch = await compare(password, findLoginByEmail.password);
     if (!passwordMatch) {
-      throw new ErrorsHelpers('Invalid email or password', 401);
+      throw new ErrorsHelpers({
+        message: 'Invalid email or password',
+        statusCode: 401,
+      });
     }
 
     let secretKey: string | undefined = process.env.ACCESS_LOCAL_KEY_TOKEN;
     if (!secretKey) {
-      throw new ErrorsHelpers('There is no token key', 401);
+      throw new ErrorsHelpers({
+        message: 'There is no token key',
+        statusCode: 401,
+      });
     }
 
     let secretKeyRefresh: string | undefined =
       process.env.ACCESS_LOCAL_KEY_TOKEN_REFRESH;
     if (!secretKeyRefresh) {
-      throw new ErrorsHelpers('There is no refresh token key', 401);
+      throw new ErrorsHelpers({
+        message: 'There is no refresh token key',
+        statusCode: 401,
+      });
     }
 
     const token = sign({ email }, secretKey, {
@@ -87,17 +102,26 @@ class LoginServices {
 
   async refreshToken(refreshToken: string) {
     if (!refreshToken) {
-      throw new ErrorsHelpers('Refresh token missing', 401);
+      throw new ErrorsHelpers({
+        message: 'Refresh token missing',
+        statusCode: 401,
+      });
     }
     let secretKeyRefresh: string | undefined =
       process.env.ACCESS_LOCAL_KEY_TOKEN_REFRESH;
     if (!secretKeyRefresh) {
-      throw new ErrorsHelpers('There is no refresh token key', 401);
+      throw new ErrorsHelpers({
+        message: 'There is no refresh token key',
+        statusCode: 401,
+      });
     }
 
     let secretKey: string | undefined = process.env.ACCESS_LOCAL_KEY_TOKEN;
     if (!secretKey) {
-      throw new ErrorsHelpers('There is no refresh token key', 401);
+      throw new ErrorsHelpers({
+        message: 'There is no refresh token key',
+        statusCode: 401,
+      });
     }
 
     const verifyRefreshToken = verify(refreshToken, secretKeyRefresh);
@@ -118,11 +142,17 @@ class LoginServices {
 
   async updatePassword({ newPassword, token }: ILoginUpdatePassword) {
     if (token === undefined) {
-      throw new ErrorsHelpers('Token is Undefined', 401);
+      throw new ErrorsHelpers({
+        message: 'Token is Undefined',
+        statusCode: 401,
+      });
     }
     const findLoginByToken = await this.loginDALs.findLoginByToken(token);
     if (!findLoginByToken) {
-      throw new ErrorsHelpers('There is no user with this token', 401);
+      throw new ErrorsHelpers({
+        message: 'There is no user with this token',
+        statusCode: 401,
+      });
     }
 
     const now = new Date();
@@ -131,7 +161,10 @@ class LoginServices {
       findLoginByToken.resetTokenExpiry &&
       now > findLoginByToken.resetTokenExpiry
     ) {
-      throw new ErrorsHelpers('Sorry the token expired', 401);
+      throw new ErrorsHelpers({
+        message: 'Sorry the token expired',
+        statusCode: 401,
+      });
     }
 
     const passwordHash = await hash(newPassword, 10);
@@ -145,13 +178,13 @@ class LoginServices {
 
   async forgotPassword({ email, ip }: ILoginForgotPassword) {
     if (ip === undefined) {
-      throw new ErrorsHelpers('Cannot find ip', 401);
+      throw new ErrorsHelpers({ message: 'Cannot find ip', statusCode: 401 });
     }
     if (this.rateLimitUtils.verifyBlock(ip)) {
-      throw new ErrorsHelpers(
-        'Too many requests. This IP has been blocked for 15 minutes',
-        401,
-      );
+      throw new ErrorsHelpers({
+        message: 'Too many requests. This IP has been blocked for 15 minutes',
+        statusCode: 401,
+      });
     }
 
     const findLoginByEmail = await this.loginDALs.findLoginByEmail(email);
@@ -162,7 +195,7 @@ class LoginServices {
       if (actualAttempts + 1 === 3) {
         this.rateLimitUtils.blockIp(ip);
       }
-      throw new ErrorsHelpers('User not found', 401);
+      throw new ErrorsHelpers({ message: 'User not found', statusCode: 401 });
     }
 
     const resetToken = await hash(
@@ -187,7 +220,7 @@ class LoginServices {
     });
 
     if (!sendEmail) {
-      throw new ErrorsHelpers('Error send email', 401);
+      throw new ErrorsHelpers({ message: 'Error send email', statusCode: 401 });
     }
 
     return sendEmail;

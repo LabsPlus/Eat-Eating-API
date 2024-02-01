@@ -139,7 +139,7 @@ Crie um banco de dados com o nome "eateating" usando o PostgreSQL.
 ## Instalação
 
 1. Clone este repositório
-2. Na raiz do projeto, instale as dependências: `npm install`
+2. Na raiz do projeto, instale as dependências: `npm ci`
 3. Inicie a aplicação em desenvolvimento: `npm run dev`
 4. Gere o buld da aplicação com: `npm run build`
 5. Inicie a aplicação build: `npm run start`

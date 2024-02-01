@@ -2,7 +2,7 @@ import { CorsOptions } from 'cors';
 import { App } from './app';
 
 const corsConfig: CorsOptions = {
-  origin: ['https://eat-eating-web-app.vercel.app', 'http://localhost:3000'],
+  origin: ['https://eat-eating-web-app.vercel.app/', 'http://localhost:3000'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   preflightContinue: false,

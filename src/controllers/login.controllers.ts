@@ -56,9 +56,7 @@ class LoginControllers {
   ) {
     const { email } = request.body;
     const ip =
-      request.socket.remoteAddress ||
-      request.socket.remoteAddress ||
-      request.socket.remoteAddress;
+      request.clientIp;
 
     const result = await this.loginServices.forgotPassword({ email, ip });
 

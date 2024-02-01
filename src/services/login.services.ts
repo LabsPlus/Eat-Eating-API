@@ -222,7 +222,7 @@ class LoginServices {
     if (!sendEmail) {
       throw new ErrorsHelpers({ message: 'Error send email', statusCode: 401 });
     }
-
+    
     return sendEmail;
   }
 }

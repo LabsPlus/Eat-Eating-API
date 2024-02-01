@@ -1,15 +1,15 @@
 import 'express-async-errors';
 import express, { Application } from 'express';
 import { LoginRoutes } from './routes/login.routes';
-import cors, { CorsOptions } from 'cors';
 import { CategoryRoutes } from './routes/category.routes';
 import { UserRoutes } from './routes/user.routes';
 import { TypeStudentGrantRoutes } from './routes/type.student.grant.routes';
 import { errorMiddleware } from './middlewares/error.middlewares';
+import { CorsMiddleware } from './server'
 export class App {
   private app: Application;
 
-  constructor(corsConfig: CorsOptions) {
+  constructor(corsConfig: CorsMiddleware) {
     this.app = express();
     this.middleware(corsConfig);
     this.setupLoginRoutes();
@@ -69,9 +69,9 @@ export class App {
     this.app.use(loginBaseRoute, loginRoutes.postRoutes());
   }
 
-  private middleware(corsConfig: CorsOptions) {
+  private middleware(corsConfig: CorsMiddleware) {
     this.app.use(express.json());
-    this.app.use(cors(corsConfig));
+    this.app.use(corsConfig);
     this.app.use(express.urlencoded({ extended: true }));
   }
 }

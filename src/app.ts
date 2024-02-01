@@ -9,7 +9,7 @@ import { errorMiddleware } from './middlewares/error.middlewares';
 export class App {
   private app: Application;
 
-  constructor(corsConfig?: CorsOptions) {
+  constructor(corsConfig: CorsOptions) {
     this.app = express();
     this.middleware(corsConfig);
     this.setupLoginRoutes();
@@ -69,7 +69,7 @@ export class App {
     this.app.use(loginBaseRoute, loginRoutes.postRoutes());
   }
 
-  private middleware(corsConfig?: CorsOptions) {
+  private middleware(corsConfig: CorsOptions) {
     this.app.use(express.json());
     this.app.use(cors(corsConfig));
     this.app.use(express.urlencoded({ extended: true }));

@@ -1,6 +1,7 @@
 import { compare, hash } from 'bcrypt';
 import { LoginDALs } from '../database/data.access/login.dals';
 import { EmailUtils } from '../utils/email.utils';
+import {HtmlMessages} from '../utils/htmlMessages.utils';
 import {
   ILoginAuth,
   ILoginCreate,
@@ -20,12 +21,14 @@ class LoginServices {
   private emailUtils: EmailUtils;
   private rateLimitUtils: RateLimitUtils;
   private invalidAttempts: Map<string, number>;
+  private htmlMessages: HtmlMessages;
 
   constructor() {
     this.loginDALs = new LoginDALs();
     this.emailUtils = new EmailUtils();
     this.rateLimitUtils = new RateLimitUtils();
     this.invalidAttempts = new Map();
+    this.htmlMessages = new HtmlMessages();
   }
 
   async createLogin({ email, password, emailRecovery }: ILoginCreate) {
@@ -215,8 +218,7 @@ class LoginServices {
     const sendEmail = await this.emailUtils.sendEmail({
       destination: findLoginByEmail.emailRecovery,
       subject: 'Recuperação de senha',
-      content: `Clique aqui para redefinir sua senha `,
-      link: resetLink,
+      content: this.htmlMessages.forgotPasswordMessage(resetLink),
     });
 
     if (!sendEmail) {

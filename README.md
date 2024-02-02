@@ -71,10 +71,10 @@ ACCESS_LOCAL_KEY_TOKEN = 4567890
 PORT = numero da porta de preferencia
 
 #nodemailer credenciais para envio de email
-USER_EMAIL = 35e9b6df75846
-PASSWORD_EMAIL = a3f84dce442daf
-HOST = sandbox.smtp.mailtrap.io #transportador de email
-NODEMAILER_EMAIL = exemplo@gmail.com
+SMTP_USERNAME = Labsif (nome de usuario)
+SMTP_PASSWORD = (digite aqui sua api key do mailchinp)
+HOST =  smtp.mandrillapp.com #transportador de email
+NODEMAILER_EMAIL = exemplo@labsif.com.br
 SMTP_PORT = 587 (PRECISA SER OBRIGATORIAMENTE 587)
 
 LINK = localhost:3001 # link do front end onde sera usado no email para redirecionar para a pagina de redefinição de senha

@@ -10,7 +10,94 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Login {
+model LoginAdministrator {
+  id               Int           @id @default(autoincrement())
+  email            String        @unique
+  password         String
+  emailRecovery    String
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  administrator    Administrator @relation(fields: [adminId], references: [id])
+  adminId          Int           @unique
+}
+
+model Administrator {
+  id                 Int                 @id @default(autoincrement())
+  is_master          Boolean             @default(false)
+  loginAdministrator LoginAdministrator?
+  loginAdmId         Int                 @unique
+  person             Person              @relation(fields: [adminId], references: [id])
+  adminId            Int                 @unique
+}
+
+model Person {
+  id            Int            @id @default(autoincrement())
+  name          String         @default("")
+  cpf           String         @unique @default("")
+  born          DateTime       @default(now())
+  administrator Administrator?
+  adminId       Int            @unique
+  user          User           @relation(fields: [userId], references: [id])
+  userId        Int            @unique
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  name        String
+  enrollment  String    @unique
+  dailyMeals  Int
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
+  Category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  Int?
+  person      Person?
+  personId    Int       @unique
+  student     Student   @relation(fields: [studentId], references: [id])
+  studentId   Int       @unique
+  visitors    Visitors  @relation(fields: [visitorId], references: [id])
+  visitorId   Int       @unique
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  employeeId  Int       @unique
+  loginUser   LoginUser @relation(fields: [loginUserId], references: [id])
+  loginUserId Int       @unique
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  User      User[]
+}
+
+model Student {
+  id         Int     @id @default(autoincrement())
+  enrollment String  @unique
+  Course     Course? @relation(fields: [courseId], references: [id])
+  courseId   Int?
+  user       User?
+}
+
+model Course {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  Student Student[]
+}
+
+model Visitors {
+  id   Int   @id @default(autoincrement())
+  user User?
+}
+
+model Employee {
+  id         Int    @id @default(autoincrement())
+  enrollment String @unique
+  user       User?
+}
+
+model LoginUser {
   id               Int       @id @default(autoincrement())
   email            String    @unique
   password         String
@@ -19,36 +106,5 @@ model Login {
   resetTokenExpiry DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
-}
-
-model TypeStudentGrant {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  users       User[] // Associação com o modelo User. Um tipo de bolsa pode estar associado a vários usuários.
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Category {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  User        User[] // Associação com o modelo User. Uma categoria pode estar associada a vários usuários.
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @updatedAt
-}
-
-// O modelo User representa um usuário.
-model User {
-  id                 Int               @id @default(autoincrement())
-  name               String
-  enrollment         String            @unique
-  dailyMeals         Int
-  TypeStudentGrant   TypeStudentGrant? @relation(fields: [typeStudentGrantId], references: [id]) // Associação com o modelo TipoDeBolsa. Um usuário pode ter um tipo de bolsa.
-  typeStudentGrantId Int? // Campo para armazenar o identificador do tipo de bolsa associado ao usuário.
-  Category           Category?         @relation(fields: [categoryId], references: [id]) // Associação com o modelo Categoria. Um usuário pode ter uma categoria.
-  categoryId         Int? // Campo para armazenar o identificador da categoria associada ao usuário.
-  createdAt          DateTime?         @default(now())
-  updatedAt          DateTime?         @updatedAt
+  user             User?
 }

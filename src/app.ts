@@ -3,7 +3,6 @@ import express, { Application } from 'express';
 import { LoginRoutes } from './routes/login.routes';
 import { CategoryRoutes } from './routes/category.routes';
 import { UserRoutes } from './routes/user.routes';
-import { TypeStudentGrantRoutes } from './routes/type.student.grant.routes';
 import { errorMiddleware } from './middlewares/error.middlewares';
 import requestIp from 'request-ip'
 import { CorsMiddleware } from './server'
@@ -16,7 +15,6 @@ export class App {
     this.middleware(corsConfig);
     this.setupLoginRoutes();
     this.setupCategoryRoutes();
-    this.setupTypeStudentGrantRoutes();
     this.setupUserRoutes();
   }
 
@@ -47,21 +45,6 @@ export class App {
     this.app.use(userBaseRoute, userRoutes.deleteRoutes());
   }
 
-  private setupTypeStudentGrantRoutes() {
-    const typeStudentGrantRoutes = new TypeStudentGrantRoutes();
-    const typeStudentGrantBaseRoute = '/typeStudentGrant';
-
-    this.app.use(
-      typeStudentGrantBaseRoute,
-      typeStudentGrantRoutes.postRoutes(),
-    );
-    this.app.use(typeStudentGrantBaseRoute, typeStudentGrantRoutes.putRoutes());
-    this.app.use(typeStudentGrantBaseRoute, typeStudentGrantRoutes.getRoutes());
-    this.app.use(
-      typeStudentGrantBaseRoute,
-      typeStudentGrantRoutes.deleteRoutes(),
-    );
-  }
 
   private setupLoginRoutes() {
     const loginRoutes = new LoginRoutes();

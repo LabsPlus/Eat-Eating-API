@@ -52,24 +52,50 @@ model User {
   dailyMeals Int
 
   person      Person? // 1-1 : Um usuário está associado a uma pessoa
-  categoryId  Int? // 1-N : Um usuário está associado a uma categoria que possui vários usuários
   personId    Int     @unique // 1-1 : Um usuário está associado a uma pessoa
   studentId   Int     @unique // 1-1 : Um usuário está associado a um estudante
   visitorId   Int     @unique // 1-1 : Um usuário está associado a um visitante
   employeeId  Int     @unique // 1-1 : Um usuário está associado a um funcionário
   loginUserId Int     @unique // 1-1 : Um usuário está associado a um login
+  pictureId   Int     @unique // 1-1 : Um usuário está associado a uma foto
+  categoryId  Int     @unique // 1-1 : Um usuário está associado a uma categoria
+  typeGrantId Int     @unique // 1-1 : Um usuário está associado a um tipo de bolsa
 
-  Category  Category? @relation(fields: [categoryId], references: [id])
+  picture   Picture   @relation(fields: [pictureId], references: [id])
+  category  Category  @relation(fields: [categoryId], references: [id])
   student   Student   @relation(fields: [studentId], references: [id])
   visitors  Visitors  @relation(fields: [visitorId], references: [id])
   employee  Employee  @relation(fields: [employeeId], references: [id])
   loginUser LoginUser @relation(fields: [loginUserId], references: [id])
+  typeGrant TypeGrant @relation(fields: [typeGrantId], references: [id])
 }
 
 model Category {
   id   Int    @id @default(autoincrement())
-  name String
+  name String @unique
+
   User User[] // N-1 : Uma categoria tem vários usuários
+}
+
+model TypeGrant {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  User User[] // N-1 : Um tipo de bolsa tem vários usuários
+}
+
+model Picture {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  url  String
+
+  user User? // 1-1 : Uma foto está associada a um usuário
+}
+
+model Course {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  Student Student[] // N-1 : Um curso tem vários estudantes
 }
 
 model Student {
@@ -78,12 +104,6 @@ model Student {
   Course     Course? @relation(fields: [courseId], references: [id])
   courseId   Int? // 1-N : Um estudante está associado a um curso que possui vários estudantes
   user       User? // 1-1 : Um estudante está associado a um usuário
-}
-
-model Course {
-  id      Int       @id @default(autoincrement())
-  name    String    @unique
-  Student Student[] // N-1 : Um curso tem vários estudantes
 }
 
 model Visitors {

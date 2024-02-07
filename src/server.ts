@@ -4,7 +4,7 @@ import { App } from './app';
 export type CorsMiddleware = (req: Request, res: Response, next: NextFunction) => void;
 
 const corsConfig : CorsMiddleware = (req, res, next) => {
-  const allowedOrigins = ['https://eat-eating-web-app.vercel.app', 'http://localhost:3000'];
+  const allowedOrigins = [process.env.FRONTEND_URL_MAIN || '', process.env.FRONTEND_URL_DEV || 'http://localhost:3000'];
   const origin = req.headers.origin;
 
   if (allowedOrigins.includes(origin || '')) {

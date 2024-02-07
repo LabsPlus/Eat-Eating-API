@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,45 +7,126 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Login {
+model LoginAdministrator {
   id               Int       @id @default(autoincrement())
   email            String    @unique
   password         String
   emailRecovery    String
   resetToken       String?
   resetTokenExpiry DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+
+  administrator Administrator @relation(fields: [adminId], references: [id])
+  adminId       Int           @unique // 1-1 : Um LoginAdministrator está associado a um administrador
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model TypeStudentGrant {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  users       User[] // Associação com o modelo User. Um tipo de bolsa pode estar associado a vários usuários.
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Administrator {
+  id                 Int                 @id @default(autoincrement())
+  is_master          Boolean             @default(false)
+  loginAdministrator LoginAdministrator?
+  person             Person              @relation(fields: [adminId], references: [id])
+
+  loginAdmId Int @unique // 1-1 : Um administrador está associado a um login
+  adminId    Int @unique // 1-1 : Um administrador está associado a uma pessoa
+}
+
+model Person {
+  id   Int      @id @default(autoincrement())
+  name String   @default("")
+  cpf  String   @unique @default("")
+  born DateTime @default(now())
+
+  administrator Administrator?
+  user          User           @relation(fields: [userId], references: [id])
+
+  adminId Int @unique // 1-1 : Uma pessoa está associada a um administrador
+  userId  Int @unique // 1-1 : Uma pessoa está associada a um usuário
+}
+
+model User {
+  id         Int    @id @default(autoincrement())
+  name       String
+  enrollment String @unique
+  dailyMeals Int
+
+  person      Person? // 1-1 : Um usuário está associado a uma pessoa
+  personId    Int     @unique // 1-1 : Um usuário está associado a uma pessoa
+  studentId   Int     @unique // 1-1 : Um usuário está associado a um estudante
+  visitorId   Int     @unique // 1-1 : Um usuário está associado a um visitante
+  employeeId  Int     @unique // 1-1 : Um usuário está associado a um funcionário
+  loginUserId Int     @unique // 1-1 : Um usuário está associado a um login
+  pictureId   Int     @unique // 1-1 : Um usuário está associado a uma foto
+  categoryId  Int     @unique // 1-1 : Um usuário está associado a uma categoria
+  typeGrantId Int     @unique // 1-1 : Um usuário está associado a um tipo de bolsa
+
+  picture   Picture   @relation(fields: [pictureId], references: [id])
+  category  Category  @relation(fields: [categoryId], references: [id])
+  student   Student   @relation(fields: [studentId], references: [id])
+  visitors  Visitors  @relation(fields: [visitorId], references: [id])
+  employee  Employee  @relation(fields: [employeeId], references: [id])
+  loginUser LoginUser @relation(fields: [loginUserId], references: [id])
+  typeGrant TypeGrant @relation(fields: [typeGrantId], references: [id])
 }
 
 model Category {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  User        User[] // Associação com o modelo User. Uma categoria pode estar associada a vários usuários.
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @updatedAt
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  User User[] // N-1 : Uma categoria tem vários usuários
 }
 
-// O modelo User representa um usuário.
-model User {
-  id                 Int               @id @default(autoincrement())
-  name               String
-  enrollment         String            @unique
-  dailyMeals         Int
-  TypeStudentGrant   TypeStudentGrant? @relation(fields: [typeStudentGrantId], references: [id]) // Associação com o modelo TipoDeBolsa. Um usuário pode ter um tipo de bolsa.
-  typeStudentGrantId Int? // Campo para armazenar o identificador do tipo de bolsa associado ao usuário.
-  Category           Category?         @relation(fields: [categoryId], references: [id]) // Associação com o modelo Categoria. Um usuário pode ter uma categoria.
-  categoryId         Int? // Campo para armazenar o identificador da categoria associada ao usuário.
-  createdAt          DateTime?         @default(now())
-  updatedAt          DateTime?         @updatedAt
+model TypeGrant {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  User User[] // N-1 : Um tipo de bolsa tem vários usuários
+}
+
+model Picture {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  url  String
+
+  user User? // 1-1 : Uma foto está associada a um usuário
+}
+
+model Course {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  Student Student[] // N-1 : Um curso tem vários estudantes
+}
+
+model Student {
+  id         Int     @id @default(autoincrement())
+  enrollment String  @unique
+  Course     Course? @relation(fields: [courseId], references: [id])
+  courseId   Int? // 1-N : Um estudante está associado a um curso que possui vários estudantes
+  user       User? // 1-1 : Um estudante está associado a um usuário
+}
+
+model Visitors {
+  id   Int   @id @default(autoincrement())
+  user User? // 1-1 : Um visitante está associado a um usuário
+}
+
+model Employee {
+  id         Int    @id @default(autoincrement())
+  enrollment String @unique
+  user       User? // 1-1 : Um funcionário está associado a um usuário
+}
+
+model LoginUser {
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  password         String
+  emailRecovery    String
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  user User? // 1-1: Um LoginUser está associado a um usuário
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

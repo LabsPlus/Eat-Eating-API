@@ -74,6 +74,7 @@ VALUES (1),
        (2);
 
 --Exemplo de consultas com o intuito de validar as relações de PK e FK entre as tabelas
+
 -- Nome e e-mail de todos os administradores master
 SELECT p.name, l.email
 FROM "Person" p
@@ -92,11 +93,6 @@ SELECT p.name, EXTRACT(YEAR FROM AGE(p.born)) AS age
 FROM "Person" p
          JOIN "User" u ON p.id = u."personId";
 
-SELECT COUNT(*) AS "Total Users"
-FROM "User"
-UNION ALL
-SELECT COUNT(*) AS "Total Administrators"
-FROM "Administrator";
 
 -- Listar todas as pessoas com 'is_master' da tabela 'Administrator' com seus respectivos e-mails de login:
 SELECT p.name AS Nome,

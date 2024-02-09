@@ -47,8 +47,8 @@ model User {
 
   personId    Int  @unique // 1-1 : (Obrigatório) Um usuário está associado a uma pessoa
   loginUserId Int? @unique // 1-1 : (Opcional) Um usuário está associado a um login
-  categoryId  Int? @unique // 1-1 : (Opcional) Um usuário está associado a uma categoria
-  typeGrantId Int? @unique // 1-1 : (Opcional) Um usuário está associado a um tipo de bolsa
+  categoryId  Int? // 1-1 : (Opcional) Um usuário está associado a uma categoria
+  typeGrantId Int? // 1-1 : (Opcional) Um usuário está associado a um tipo de bolsa
 
   person    Person     @relation(fields: [personId], references: [id])
   category  Category?  @relation(fields: [categoryId], references: [id])
@@ -135,11 +135,11 @@ enum CourseName {
   TECNICO_SUBSEQUENTE_AGROPECUARIA
   TECNICO_SUBSEQUENTE_INFORMATICA
   TECNICO_SUBSEQUENTE_ALIMENTOS
-  BACHAREL_SISTEMA_DE_INFORMACAO
-  BACHAREL_LIBRAS
-  BACHAREL_ED_FISICA
+  BACHARELADO_SISTEMA_DE_INFORMACAO
+  BACHARELADO_LIBRAS
+  BACHARELADO_EDUCACAO_FISICA
   POS_ENSINO_DE_CIENCIAS_NATURAIS_E_MATEMATICA
-  POS_LEITURA_E_PRODUCAO_TEXTUAL_APLICADAS_A_EDUCACAO_DE_JOVENS_E_ADULTOS
+  POS_LEITURA_E_PRODUCAO_TEXTUAL_APLICADAS_A_EJA
 }
 
 model LoginUser {

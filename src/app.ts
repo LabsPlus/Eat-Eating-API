@@ -25,7 +25,7 @@ export class App {
 
     private setupUserRoutes() {
         const userRoutes = new UserRoutes();
-        const userBaseRoute = '/user';
+        const userBaseRoute = '/user.repositories';
 
         this.app.use(userBaseRoute, userRoutes.postRoutes());
         this.app.use(userBaseRoute, userRoutes.putRoutes());

@@ -35,8 +35,8 @@ model Administrator {
 model Person {
   id   Int      @id @default(autoincrement())
   name String
-  cpf  String   @unique
-  born DateTime
+  cpf  String   @unique @default("")
+  born DateTime @default(now())
 
   user          User? // 1-1 : (Opcional) Uma pessoa está associada a um usuário
   Administrator Administrator? // 1-1 : (Opcional) Uma pessoa está associada a um administrador
@@ -68,8 +68,8 @@ model Student {
   userId   Int @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
   courseId Int // 1-N : (Obrigatório) Um estudante está associado a um curso que possui vários estudantes
 
-  user   User   @relation(fields: [userId], references: [id])
-  Course Course @relation(fields: [courseId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+  Course Course? @relation(fields: [courseId], references: [id])
 }
 
 model Visitors {
@@ -122,24 +122,10 @@ model TypeGrant {
 }
 
 model Course {
-  id   Int        @id @default(autoincrement())
-  name CourseName @unique
+  id   Int    @id @default(autoincrement())
+  name String @unique @default("")
 
-  Student Student[] // N-1 : Um curso tem vários estudantes
-}
-
-enum CourseName {
-  TECNICO_AGROPECUARIA
-  TECNICO_AGROINDUSTRIA
-  TECNICO_MEIO_AMBIENTE
-  TECNICO_SUBSEQUENTE_AGROPECUARIA
-  TECNICO_SUBSEQUENTE_INFORMATICA
-  TECNICO_SUBSEQUENTE_ALIMENTOS
-  BACHARELADO_SISTEMA_DE_INFORMACAO
-  BACHARELADO_LIBRAS
-  BACHARELADO_EDUCACAO_FISICA
-  POS_ENSINO_DE_CIENCIAS_NATURAIS_E_MATEMATICA
-  POS_LEITURA_E_PRODUCAO_TEXTUAL_APLICADAS_A_EJA
+  Student Student[]
 }
 
 model LoginUser {

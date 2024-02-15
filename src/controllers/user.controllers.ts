@@ -1,75 +1,40 @@
-import { Request, Response, NextFunction } from 'express';
-import { UserServices } from '../services/user.services';
+import {VisitorService} from '../services/visitor.services';
+import {StudentService} from '../services/student.services';
+import {EmployeeService} from '../services/employee.services';
 
 class UserControllers {
-  private userServices: UserServices;
 
-  constructor() {
-    this.userServices = new UserServices();
-  }
+    private readonly visitorService: VisitorService;
+    private readonly studentService: StudentService;
+    private readonly employeeService: EmployeeService;
 
-  async createAnUser(request: Request, response: Response, next: NextFunction) {
-    const { name, enrollment, categoryId, typeStudentGrantId, dailyMeals } =
-      request.body;
-    const user = await this.userServices.createUser({
-      name,
-      enrollment,
-      categoryId,
-      typeStudentGrantId,
-      dailyMeals,
-    });
-
-    return response.status(201).json(user);
-  }
-
-  async updateUser(request: Request, response: Response, next: NextFunction) {
-    const { id } = request.params;
-    const { name, enrollment, categoryId, typeStudentGrantId, dailyMeals } =
-      request.body;
-
-    const idnumber: number = parseInt(id);
-    const user = await this.userServices.updateUser({
-      id: idnumber,
-      name,
-      enrollment,
-      categoryId,
-      typeStudentGrantId,
-      dailyMeals,
-    });
-
-    return response.status(201).json(user);
-  }
-
-  async listAllUsers(request: Request, response: Response, next: NextFunction) {
-    try {
-      const users = await this.userServices.listAllUsers();
-      return response.status(200).json(users);
-    } catch (error: any) {
-      next(error);
-      return response.status(401).json(error.message);
+    constructor() {
+        this.visitorService = new VisitorService();
+        this.studentService = new StudentService();
+        this.employeeService = new EmployeeService();
     }
-  }
 
-  async deleteUserById(
-    request: Request,
-    response: Response,
-    next: NextFunction,
-  ) {
-    const { id } = request.params;
-    const user = await this.userServices.deleteById(id);
+    /*
+    1 - Se chegar um aluno, vai para studentService:
+      1.1 Criar um novo aluno,
+     */
 
-    return response.status(200).json(user);
-  }
+    /*
+    2 - Se chegar um funcionário, vai para employeeService
+        2.1 criar um novo funcionario
+    */
 
-  async deleteAllUsers(
-    request: Request,
-    response: Response,
-    next: NextFunction,
-  ) {
-    const users = await this.userServices.deleteAllUsers();
+    /*
+    3 - Se chegar um visitante, vai para visitorService
+        3.1 criar um novo visitante
+     */
 
-    return response.status(204).json(users);
-  }
+    /*
+    4- O usuario vai conter as outras logicas
+      4.1 listar todos os usuários,
+      4.2 listar um usuario específico,
+      4.3 atualizar um usuário
+    */
 }
 
-export { UserControllers };
+export {UserControllers};

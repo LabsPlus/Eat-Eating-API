@@ -1,4 +1,4 @@
-import {LoginServices} from '../services/login.services';
+import {AdministratorServices} from '../services/administrator.services';
 import {LoginDALs} from '../database/data.access/login.dals';
 import {EmailUtils} from '../utils/email.utils';
 import {hash, compare} from 'bcrypt';
@@ -10,10 +10,10 @@ jest.mock('bcrypt');
 jest.mock('jsonwebtoken');
 
 describe('loginServices', () => {
-    let loginServices: LoginServices;
+    let loginServices: AdministratorServices;
 
     beforeEach(() => {
-        loginServices = new LoginServices();
+        loginServices = new AdministratorServices();
     });
 
     describe('updatePassword', () => {

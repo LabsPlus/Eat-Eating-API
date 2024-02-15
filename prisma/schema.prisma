@@ -15,106 +15,131 @@ model LoginAdministrator {
   resetToken       String?
   resetTokenExpiry DateTime?
 
-  administrator Administrator @relation(fields: [adminId], references: [id])
-  adminId       Int           @unique // 1-1 : Um LoginAdministrator está associado a um administrador
+  Administrator Administrator? // 1-1: Um LoginAdministrator está associado a um administrador
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Administrator {
-  id                 Int                 @id @default(autoincrement())
-  is_master          Boolean             @default(false)
-  loginAdministrator LoginAdministrator?
-  person             Person              @relation(fields: [adminId], references: [id])
+  id       Int     @id @default(autoincrement())
+  isMaster Boolean @default(false)
 
+  personId   Int @unique // 1-1 : Um administrador está associado a uma pessoa
   loginAdmId Int @unique // 1-1 : Um administrador está associado a um login
-  adminId    Int @unique // 1-1 : Um administrador está associado a uma pessoa
+
+  person Person             @relation(fields: [personId], references: [id])
+  login  LoginAdministrator @relation(fields: [loginAdmId], references: [id])
 }
 
 model Person {
   id   Int      @id @default(autoincrement())
-  name String   @default("")
-  cpf  String   @unique @default("")
-  born DateTime @default(now())
+  name String
+  cpf  String   @unique
+  born DateTime
 
-  administrator Administrator?
-  user          User           @relation(fields: [userId], references: [id])
-
-  adminId Int @unique // 1-1 : Uma pessoa está associada a um administrador
-  userId  Int @unique // 1-1 : Uma pessoa está associada a um usuário
+  user          User? // 1-1 : (Opcional) Uma pessoa está associada a um usuário
+  Administrator Administrator? // 1-1 : (Opcional) Uma pessoa está associada a um administrador
 }
 
 model User {
-  id         Int    @id @default(autoincrement())
-  name       String
-  enrollment String @unique
-  dailyMeals Int
+  id Int @id @default(autoincrement())
 
-  person      Person? // 1-1 : Um usuário está associado a uma pessoa
-  personId    Int     @unique // 1-1 : Um usuário está associado a uma pessoa
-  studentId   Int     @unique // 1-1 : Um usuário está associado a um estudante
-  visitorId   Int     @unique // 1-1 : Um usuário está associado a um visitante
-  employeeId  Int     @unique // 1-1 : Um usuário está associado a um funcionário
-  loginUserId Int     @unique // 1-1 : Um usuário está associado a um login
-  pictureId   Int     @unique // 1-1 : Um usuário está associado a uma foto
-  categoryId  Int     @unique // 1-1 : Um usuário está associado a uma categoria
-  typeGrantId Int     @unique // 1-1 : Um usuário está associado a um tipo de bolsa
+  personId    Int  @unique // 1-1 : (Obrigatório) Um usuário está associado a uma pessoa
+  loginUserId Int? @unique // 1-1 : (Opcional) Um usuário está associado a um login
+  categoryId  Int? // 1-1 : (Opcional) Um usuário está associado a uma categoria
+  typeGrantId Int? // 1-1 : (Opcional) Um usuário está associado a um tipo de bolsa
 
-  picture   Picture   @relation(fields: [pictureId], references: [id])
-  category  Category  @relation(fields: [categoryId], references: [id])
-  student   Student   @relation(fields: [studentId], references: [id])
-  visitors  Visitors  @relation(fields: [visitorId], references: [id])
-  employee  Employee  @relation(fields: [employeeId], references: [id])
-  loginUser LoginUser @relation(fields: [loginUserId], references: [id])
-  typeGrant TypeGrant @relation(fields: [typeGrantId], references: [id])
-}
+  person    Person     @relation(fields: [personId], references: [id])
+  category  Category?  @relation(fields: [categoryId], references: [id])
+  loginUser LoginUser? @relation(fields: [loginUserId], references: [id])
+  typeGrant TypeGrant? @relation(fields: [typeGrantId], references: [id])
 
-model Category {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-
-  User User[] // N-1 : Uma categoria tem vários usuários
-}
-
-model TypeGrant {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-
-  User User[] // N-1 : Um tipo de bolsa tem vários usuários
-}
-
-model Picture {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  url  String
-
-  user User? // 1-1 : Uma foto está associada a um usuário
-}
-
-model Course {
-  id      Int       @id @default(autoincrement())
-  name    String    @unique
-  Student Student[] // N-1 : Um curso tem vários estudantes
+  picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
+  student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
+  visitor  Visitors? // 1-1 : (Opcional) Um usuário está associado a um visitante
+  employee Employee? // 1-1 : (Opcional) Um usuário está associado a um funcionário
 }
 
 model Student {
-  id         Int     @id @default(autoincrement())
-  enrollment String  @unique
-  Course     Course? @relation(fields: [courseId], references: [id])
-  courseId   Int? // 1-N : Um estudante está associado a um curso que possui vários estudantes
-  user       User? // 1-1 : Um estudante está associado a um usuário
+  id         Int    @id @default(autoincrement())
+  enrollment String @unique
+
+  userId   Int @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
+  courseId Int // 1-N : (Obrigatório) Um estudante está associado a um curso que possui vários estudantes
+
+  user   User   @relation(fields: [userId], references: [id])
+  Course Course @relation(fields: [courseId], references: [id])
 }
 
 model Visitors {
-  id   Int   @id @default(autoincrement())
-  user User? // 1-1 : Um visitante está associado a um usuário
+  id Int @id @default(autoincrement())
+
+  userId Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
+  user   User @relation(fields: [userId], references: [id])
 }
 
 model Employee {
   id         Int    @id @default(autoincrement())
   enrollment String @unique
-  user       User? // 1-1 : Um funcionário está associado a um usuário
+
+  userId Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model Picture {
+  id  Int    @id @default(autoincrement())
+  url String @unique
+
+  userId Int  @unique // 1-1 : (Obrigatório) Uma imagem está associada a um usuário
+  user   User @relation(fields: [userId], references: [id])
+}
+
+enum CategoryName {
+  ESTUDANTE
+  FUNCIONARIO
+  VISITANTE
+}
+
+model Category {
+  id   Int          @id @default(autoincrement())
+  name CategoryName @unique
+
+  User User[] // N-1 : Uma categoria tem vários usuários
+}
+
+enum TypeGrantName {
+  INTEGRAL
+  PARCIAL
+  NAO_APLICAVEL
+}
+
+model TypeGrant {
+  id   Int           @id @default(autoincrement())
+  name TypeGrantName @unique
+
+  User User[] // N-1 : Um tipo de bolsa tem vários usuários
+}
+
+model Course {
+  id   Int        @id @default(autoincrement())
+  name CourseName @unique
+
+  Student Student[] // N-1 : Um curso tem vários estudantes
+}
+
+enum CourseName {
+  TECNICO_AGROPECUARIA
+  TECNICO_AGROINDUSTRIA
+  TECNICO_MEIO_AMBIENTE
+  TECNICO_SUBSEQUENTE_AGROPECUARIA
+  TECNICO_SUBSEQUENTE_INFORMATICA
+  TECNICO_SUBSEQUENTE_ALIMENTOS
+  BACHARELADO_SISTEMA_DE_INFORMACAO
+  BACHARELADO_LIBRAS
+  BACHARELADO_EDUCACAO_FISICA
+  POS_ENSINO_DE_CIENCIAS_NATURAIS_E_MATEMATICA
+  POS_LEITURA_E_PRODUCAO_TEXTUAL_APLICADAS_A_EJA
 }
 
 model LoginUser {
@@ -125,8 +150,8 @@ model LoginUser {
   resetToken       String?
   resetTokenExpiry DateTime?
 
-  user User? // 1-1: Um LoginUser está associado a um usuário
-
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
+
+  user User? // 1-1: Um LoginUser está associado a um usuário
 }

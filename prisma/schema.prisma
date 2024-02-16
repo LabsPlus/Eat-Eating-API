@@ -32,10 +32,11 @@ model Administrator {
   login  LoginAdministrator @relation(fields: [loginAdmId], references: [id])
 }
 
+// NÃO ESQUECER DE COLOCAR O cpf PARA @UNIQUE E RETIRAR O @default("") QUANDO ELE FOR IMPLEMENTADO
 model Person {
   id   Int      @id @default(autoincrement())
   name String
-  cpf  String   @unique @default("")
+  cpf  String   @default("")
   born DateTime @default(now())
 
   user          User? // 1-1 : (Opcional) Uma pessoa está associada a um usuário
@@ -95,28 +96,29 @@ model Picture {
   user   User @relation(fields: [userId], references: [id])
 }
 
-enum CategoryName {
-  ESTUDANTE
-  FUNCIONARIO
-  VISITANTE
-}
+// enum CategoryName {
+//   ESTUDANTE   @map("ESTUDANTE")
+//   FUNCIONARIO @map("FUNCIONARIO")
+//   VISITANTE   @map("VISITANTE")
+// }
 
 model Category {
-  id   Int          @id @default(autoincrement())
-  name CategoryName @unique
+  id   Int    @id @default(autoincrement())
+  name String @unique
 
   User User[] // N-1 : Uma categoria tem vários usuários
 }
 
-enum TypeGrantName {
-  INTEGRAL
-  PARCIAL
-  NAO_APLICAVEL
-}
+//
+// enum TypeGrantName {
+//   INTEGRAL
+//   PARCIAL
+//   NAO_APLICAVEL
+// }
 
 model TypeGrant {
-  id   Int           @id @default(autoincrement())
-  name TypeGrantName @unique
+  id   Int    @id @default(autoincrement())
+  name String @unique
 
   User User[] // N-1 : Um tipo de bolsa tem vários usuários
 }

@@ -1,8 +1,7 @@
 import {prisma} from "../prisma.databases";
-import {IPersonCreate} from "../../intefaces/person.interfaces";
 
 export class PersonRepositories {
-    async createPerson({name}: IPersonCreate) {
+    async createPerson(name: string) {
         const result = prisma.person.create({
             data: {
                 name,

@@ -54,18 +54,18 @@ class UserControllers {
             born
         };
 
-        const estudante = category.name.ESTUDANTE;
-        const visitante = category.name.VISITANTE;
-        const funcionario = category.name.FUNCIONARIO;
+        // const estudante: string = category.name.ESTUDANTE;
+        // const visitante: string = category.name.VISITANTE;
+        // const funcionario: string = category.name.FUNCIONARIO;
 
         switch (category) {
-            case estudante:
+            case "ESTUDANTE":
                 const result = await this.studentService.createStudent(users);
                 return response.status(201).json(result);
-            case funcionario:
+            case "FUNCIONARIO":
                 const resultEmployee = await this.employeeService.createEmployee(users);
                 return response.status(201).json(resultEmployee);
-            case visitante:
+            case "VISITANTE":
                 const resultVisitor = await this.visitorService.createVisitor(users);
                 return response.status(201).json(resultVisitor);
             default:

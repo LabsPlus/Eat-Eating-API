@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import { UserControllers } from '../controllers/user.controllers';
+import {Router} from 'express';
+import {UserControllers} from '../controllers/user.controllers';
 
 class UserRoutes {
 
-    private router: Router;
-    private userController: UserControllers;
+    private readonly router: Router;
+    private readonly userController: UserControllers;
 
     constructor() {
         this.router = Router();
@@ -20,10 +20,12 @@ class UserRoutes {
     }
 
     postRoutes() {
+        this.router.post('/create-user', this.userController.createUser.bind(this.userController))
+
         return this.router;
     }
 
-    putRoutes(){
+    putRoutes() {
         return this.router;
     }
 }

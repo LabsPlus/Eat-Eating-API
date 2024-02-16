@@ -23,7 +23,7 @@ class VisitorService {
     }
 
     async createVisitor({name, category, dailyMeals, typeGrant, picture}: IUserData) {
-        const createPerson = await this.personRepositories.createPerson({name});
+        const createPerson = await this.personRepositories.createPerson(name);
         const getCategory = await this.categoryDALs.getCategoryByName(category);
         const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
 
@@ -39,7 +39,12 @@ class VisitorService {
 
         const visitors = await this.visitorDALs.createVisitor(createUser.id);
 
-        return visitors;
+        return {
+            visitors: visitors.id,
+            createPerson: createPerson.name,
+            getCategory: getCategory.name,
+            getTypeGrant: getTypeGrant.name
+        }
     }
 }
 

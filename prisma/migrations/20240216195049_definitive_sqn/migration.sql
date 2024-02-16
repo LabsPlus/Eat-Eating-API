@@ -1,9 +1,3 @@
--- CreateEnum
-CREATE TYPE "CategoryName" AS ENUM ('ESTUDANTE', 'FUNCIONARIO', 'VISITANTE');
-
--- CreateEnum
-CREATE TYPE "TypeGrantName" AS ENUM ('INTEGRAL', 'PARCIAL', 'NAO_APLICAVEL');
-
 -- CreateTable
 CREATE TABLE "LoginAdministrator" (
     "id" SERIAL NOT NULL,
@@ -54,7 +48,7 @@ CREATE TABLE "Student" (
     "id" SERIAL NOT NULL,
     "enrollment" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
-    "courseId" INTEGER NOT NULL,
+    "courseId" INTEGER,
 
     CONSTRAINT "Student_pkey" PRIMARY KEY ("id")
 );
@@ -88,7 +82,7 @@ CREATE TABLE "Picture" (
 -- CreateTable
 CREATE TABLE "Category" (
     "id" SERIAL NOT NULL,
-    "name" "CategoryName" NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -96,7 +90,7 @@ CREATE TABLE "Category" (
 -- CreateTable
 CREATE TABLE "TypeGrant" (
     "id" SERIAL NOT NULL,
-    "name" "TypeGrantName" NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "TypeGrant_pkey" PRIMARY KEY ("id")
 );
@@ -131,9 +125,6 @@ CREATE UNIQUE INDEX "Administrator_personId_key" ON "Administrator"("personId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Administrator_loginAdmId_key" ON "Administrator"("loginAdmId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Person_cpf_key" ON "Person"("cpf");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_personId_key" ON "User"("personId");
@@ -196,7 +187,7 @@ ALTER TABLE "User" ADD CONSTRAINT "User_typeGrantId_fkey" FOREIGN KEY ("typeGran
 ALTER TABLE "Student" ADD CONSTRAINT "Student_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Student" ADD CONSTRAINT "Student_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Student" ADD CONSTRAINT "Student_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Visitor" ADD CONSTRAINT "Visitor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

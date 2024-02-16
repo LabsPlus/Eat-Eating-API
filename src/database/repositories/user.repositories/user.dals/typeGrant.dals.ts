@@ -1,8 +1,7 @@
 import {prisma} from "../../../prisma.databases";
-import {TypeGrantName} from "@prisma/client";
 
 export class TypeGrantDALs {
-    getTypeGrantByName(name: TypeGrantName) {
+    getTypeGrantByName(name: string) {
         return prisma.typeGrant.findUnique({
             where: {
                 name,

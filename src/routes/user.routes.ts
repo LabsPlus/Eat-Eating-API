@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import { UserControllers } from '../controllers/user.controllers';
+import {Router} from 'express';
+import {UserControllers} from '../controllers/user.controllers';
 
 class UserRoutes {
 
-    private router: Router;
-    private userController: UserControllers;
+    private readonly router: Router;
+    private readonly userController: UserControllers;
 
     constructor() {
         this.router = Router();
@@ -12,39 +12,20 @@ class UserRoutes {
     }
 
     getRoutes() {
-        this.router.get(
-            '/listAllUsers',
-            this.userController.listAllUsers.bind(this.userController),
-        );
         return this.router;
     }
 
     deleteRoutes() {
-        this.router.delete(
-            '/deleteAllUsers',
-            this.userController.deleteAllUsers.bind(this.userController),
-        );
-        this.router.delete(
-            '/deleteUser/:id',
-            this.userController.deleteUserById.bind(this.userController),
-        );
         return this.router;
     }
 
     postRoutes() {
-        this.router.post(
-            '/createUser',
-            this.userController.createAnUser.bind(this.userController),
-        );
+        this.router.post('/create-user', this.userController.createUser.bind(this.userController))
 
         return this.router;
     }
 
-    putRoutes(){
-        this.router.put(
-            '/updateUser/:id',
-            this.userController.updateUser.bind(this.userController),
-        );
+    putRoutes() {
         return this.router;
     }
 }

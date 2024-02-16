@@ -1,12 +1,3 @@
--- CreateEnum
-CREATE TYPE "CategoryName" AS ENUM ('ESTUDANTE', 'FUNCIONARIO', 'VISITANTE');
-
--- CreateEnum
-CREATE TYPE "TypeGrantName" AS ENUM ('INTEGRAL', 'PARCIAL', 'NAO_APLICAVEL');
-
--- CreateEnum
-CREATE TYPE "CourseName" AS ENUM ('TECNICO_AGROPECUARIA', 'TECNICO_AGROINDUSTRIA', 'TECNICO_MEIO_AMBIENTE', 'TECNICO_SUBSEQUENTE_AGROPECUARIA', 'TECNICO_SUBSEQUENTE_INFORMATICA', 'TECNICO_SUBSEQUENTE_ALIMENTOS', 'BACHARELADO_SISTEMA_DE_INFORMACAO', 'BACHARELADO_LIBRAS', 'BACHARELADO_ED_FISICA', 'POS_ENSINO_DE_CIENCIAS_NATURAIS_E_MATEMATICA', 'POS_LEITURA_E_PRODUCAO_TEXTUAL_APLICADAS_A_EJA');
-
 -- CreateTable
 CREATE TABLE "LoginAdministrator" (
     "id" SERIAL NOT NULL,
@@ -35,8 +26,8 @@ CREATE TABLE "Administrator" (
 CREATE TABLE "Person" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "cpf" TEXT NOT NULL,
-    "born" TIMESTAMP(3) NOT NULL,
+    "cpf" TEXT NOT NULL DEFAULT '',
+    "born" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Person_pkey" PRIMARY KEY ("id")
 );
@@ -57,17 +48,17 @@ CREATE TABLE "Student" (
     "id" SERIAL NOT NULL,
     "enrollment" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
-    "courseId" INTEGER NOT NULL,
+    "courseId" INTEGER,
 
     CONSTRAINT "Student_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Visitors" (
+CREATE TABLE "Visitor" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
 
-    CONSTRAINT "Visitors_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Visitor_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -91,7 +82,7 @@ CREATE TABLE "Picture" (
 -- CreateTable
 CREATE TABLE "Category" (
     "id" SERIAL NOT NULL,
-    "name" "CategoryName" NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -99,7 +90,7 @@ CREATE TABLE "Category" (
 -- CreateTable
 CREATE TABLE "TypeGrant" (
     "id" SERIAL NOT NULL,
-    "name" "TypeGrantName" NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "TypeGrant_pkey" PRIMARY KEY ("id")
 );
@@ -107,7 +98,7 @@ CREATE TABLE "TypeGrant" (
 -- CreateTable
 CREATE TABLE "Course" (
     "id" SERIAL NOT NULL,
-    "name" "CourseName" NOT NULL,
+    "name" TEXT NOT NULL DEFAULT '',
 
     CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
 );
@@ -136,19 +127,10 @@ CREATE UNIQUE INDEX "Administrator_personId_key" ON "Administrator"("personId");
 CREATE UNIQUE INDEX "Administrator_loginAdmId_key" ON "Administrator"("loginAdmId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Person_cpf_key" ON "Person"("cpf");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_personId_key" ON "User"("personId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_loginUserId_key" ON "User"("loginUserId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_categoryId_key" ON "User"("categoryId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_typeGrantId_key" ON "User"("typeGrantId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Student_enrollment_key" ON "Student"("enrollment");
@@ -157,7 +139,7 @@ CREATE UNIQUE INDEX "Student_enrollment_key" ON "Student"("enrollment");
 CREATE UNIQUE INDEX "Student_userId_key" ON "Student"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Visitors_userId_key" ON "Visitors"("userId");
+CREATE UNIQUE INDEX "Visitor_userId_key" ON "Visitor"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Employee_enrollment_key" ON "Employee"("enrollment");
@@ -205,10 +187,10 @@ ALTER TABLE "User" ADD CONSTRAINT "User_typeGrantId_fkey" FOREIGN KEY ("typeGran
 ALTER TABLE "Student" ADD CONSTRAINT "Student_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Student" ADD CONSTRAINT "Student_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Student" ADD CONSTRAINT "Student_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Visitors" ADD CONSTRAINT "Visitors_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Visitor" ADD CONSTRAINT "Visitor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Employee" ADD CONSTRAINT "Employee_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

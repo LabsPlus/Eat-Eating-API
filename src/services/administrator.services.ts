@@ -1,5 +1,5 @@
 import {compare, hash} from 'bcrypt';
-import {LoginDALs} from '../database/data.access/login.dals';
+import {LoginDals} from '../database/repositories/administrator.repositories/administator.dals/login.dals';
 import {EmailUtils} from '../utils/email.utils';
 import {HtmlMessages} from '../utils/htmlMessages.utils';
 import {
@@ -18,14 +18,14 @@ dotenv.config();
 const {Link} = process.env;
 
 class AdministratorServices {
-    private loginDALs: LoginDALs;
+    private loginDALs: LoginDals;
     private emailUtils: EmailUtils;
     private rateLimitUtils: RateLimitUtils;
     private invalidAttempts: Map<string, number>;
     private htmlMessages: HtmlMessages;
 
     constructor() {
-        this.loginDALs = new LoginDALs();
+        this.loginDALs = new LoginDals();
         this.emailUtils = new EmailUtils();
         this.rateLimitUtils = new RateLimitUtils();
         this.invalidAttempts = new Map();
@@ -154,7 +154,7 @@ class AdministratorServices {
         const findLoginByToken = await this.loginDALs.findLoginByToken(token);
         if (!findLoginByToken) {
             throw new ErrorsHelpers({
-                message: 'There is no user with this token',
+                message: 'There is no user.repositories with this token',
                 statusCode: 401,
             });
         }

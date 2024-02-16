@@ -1,11 +1,11 @@
-import {prisma} from '../prisma.databases';
+import {prisma} from '../../../prisma.databases';
 import {
     ILoginCreate,
     ILoginUpdatePassword,
     ILoginUpdateResetToken,
-} from '../../intefaces/login.interfaces';
+} from '../../../../intefaces/login.interfaces';
 
-class LoginDALs {
+class LoginDals {
     async createLogin(
         {email, password, emailRecovery}: ILoginCreate) {
         const result = await prisma.loginAdministrator.create({
@@ -50,4 +50,4 @@ class LoginDALs {
     }
 }
 
-export {LoginDALs};
+export {LoginDals};

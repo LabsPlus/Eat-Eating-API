@@ -52,6 +52,10 @@ VALUES ('TECNICO_AGROPECUARIA'),
        ('POS_ENSINO_DE_CIENCIAS_NATURAIS_E_MATEMATICA'),
        ('POS_LEITURA_E_PRODUCAO_TEXTUAL_APLICADAS_A_EJA');
 
+SELECT * FROM "Visitor";
+SELECT * FROM "Person";
+SELECT * FROM "User";
+
 --Inserindo na tabela 'Person'
 INSERT INTO "Person" (name, cpf, born)
 VALUES ('Carlos Santos', '072.845.330-48', '1982-07-10'),

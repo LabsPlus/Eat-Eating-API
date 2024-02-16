@@ -32,11 +32,12 @@ model Administrator {
   login  LoginAdministrator @relation(fields: [loginAdmId], references: [id])
 }
 
+// NÃO ESQUECER DE COLOCAR O cpf PARA @UNIQUE E RETIRAR O @default("") QUANDO ELE FOR IMPLEMENTADO
 model Person {
   id   Int      @id @default(autoincrement())
   name String
-  cpf  String   @unique
-  born DateTime
+  cpf  String   @default("")
+  born DateTime @default(now())
 
   user          User? // 1-1 : (Opcional) Uma pessoa está associada a um usuário
   Administrator Administrator? // 1-1 : (Opcional) Uma pessoa está associada a um administrador
@@ -57,7 +58,7 @@ model User {
 
   picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
-  visitor  Visitors? // 1-1 : (Opcional) Um usuário está associado a um visitante
+  visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante
   employee Employee? // 1-1 : (Opcional) Um usuário está associado a um funcionário
 }
 
@@ -65,14 +66,14 @@ model Student {
   id         Int    @id @default(autoincrement())
   enrollment String @unique
 
-  userId   Int @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
-  courseId Int // 1-N : (Obrigatório) Um estudante está associado a um curso que possui vários estudantes
+  userId   Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
+  courseId Int? // 1-N : (Obrigatório) Um estudante está associado a um curso que possui vários estudantes
 
-  user   User   @relation(fields: [userId], references: [id])
-  Course Course @relation(fields: [courseId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+  Course Course? @relation(fields: [courseId], references: [id])
 }
 
-model Visitors {
+model Visitor {
   id Int @id @default(autoincrement())
 
   userId Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
@@ -95,51 +96,38 @@ model Picture {
   user   User @relation(fields: [userId], references: [id])
 }
 
-enum CategoryName {
-  ESTUDANTE
-  FUNCIONARIO
-  VISITANTE
-}
+// enum CategoryName {
+//   ESTUDANTE   @map("ESTUDANTE")
+//   FUNCIONARIO @map("FUNCIONARIO")
+//   VISITANTE   @map("VISITANTE")
+// }
 
 model Category {
-  id   Int          @id @default(autoincrement())
-  name CategoryName @unique
+  id   Int    @id @default(autoincrement())
+  name String @unique
 
   User User[] // N-1 : Uma categoria tem vários usuários
 }
 
-enum TypeGrantName {
-  INTEGRAL
-  PARCIAL
-  NAO_APLICAVEL
-}
+//
+// enum TypeGrantName {
+//   INTEGRAL
+//   PARCIAL
+//   NAO_APLICAVEL
+// }
 
 model TypeGrant {
-  id   Int           @id @default(autoincrement())
-  name TypeGrantName @unique
+  id   Int    @id @default(autoincrement())
+  name String @unique
 
   User User[] // N-1 : Um tipo de bolsa tem vários usuários
 }
 
 model Course {
-  id   Int        @id @default(autoincrement())
-  name CourseName @unique
+  id   Int    @id @default(autoincrement())
+  name String @unique @default("")
 
-  Student Student[] // N-1 : Um curso tem vários estudantes
-}
-
-enum CourseName {
-  TECNICO_AGROPECUARIA
-  TECNICO_AGROINDUSTRIA
-  TECNICO_MEIO_AMBIENTE
-  TECNICO_SUBSEQUENTE_AGROPECUARIA
-  TECNICO_SUBSEQUENTE_INFORMATICA
-  TECNICO_SUBSEQUENTE_ALIMENTOS
-  BACHARELADO_SISTEMA_DE_INFORMACAO
-  BACHARELADO_LIBRAS
-  BACHARELADO_EDUCACAO_FISICA
-  POS_ENSINO_DE_CIENCIAS_NATURAIS_E_MATEMATICA
-  POS_LEITURA_E_PRODUCAO_TEXTUAL_APLICADAS_A_EJA
+  Student Student[]
 }
 
 model LoginUser {

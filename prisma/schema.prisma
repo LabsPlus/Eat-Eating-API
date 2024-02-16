@@ -57,7 +57,7 @@ model User {
 
   picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
-  visitor  Visitors? // 1-1 : (Opcional) Um usuário está associado a um visitante
+  visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante
   employee Employee? // 1-1 : (Opcional) Um usuário está associado a um funcionário
 }
 
@@ -65,14 +65,14 @@ model Student {
   id         Int    @id @default(autoincrement())
   enrollment String @unique
 
-  userId   Int @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
-  courseId Int // 1-N : (Obrigatório) Um estudante está associado a um curso que possui vários estudantes
+  userId   Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
+  courseId Int? // 1-N : (Obrigatório) Um estudante está associado a um curso que possui vários estudantes
 
   user   User    @relation(fields: [userId], references: [id])
   Course Course? @relation(fields: [courseId], references: [id])
 }
 
-model Visitors {
+model Visitor {
   id Int @id @default(autoincrement())
 
   userId Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário

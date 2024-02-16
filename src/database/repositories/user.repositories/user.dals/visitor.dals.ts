@@ -1,3 +1,17 @@
-class VisitorDals {}
+import {prisma} from "../../../prisma.databases";
 
-export {VisitorDals}
+class VisitorDALs {
+
+    async createVisitor(userId: number) {
+        const result = await prisma.visitor.create({
+            data: {
+                userId
+            }
+        });
+
+        return result
+    }
+
+}
+
+export {VisitorDALs}

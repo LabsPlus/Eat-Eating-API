@@ -1,18 +1,110 @@
+import {Request, Response, NextFunction} from 'express';
+
 import {VisitorService} from '../services/visitor.services';
 import {StudentService} from '../services/student.services';
 import {EmployeeService} from '../services/employee.services';
+import {UserServices} from "../services/user.services";
+import {BadRequestError} from "../helpers/errors.helpers";
 
 class UserControllers {
 
     private readonly visitorService: VisitorService;
     private readonly studentService: StudentService;
     private readonly employeeService: EmployeeService;
+    private readonly userServices: UserServices;
 
     constructor() {
         this.visitorService = new VisitorService();
         this.studentService = new StudentService();
         this.employeeService = new EmployeeService();
+        this.userServices = new UserServices();
     }
+
+    /*
+    model User {
+        id Int @id @default(autoincrement())
+
+        personId    Int  @unique // 1-1 : (Obrigatório) Um usuário está associado a uma pessoa
+        loginUserId Int? @unique // 1-1 : (Opcional) Um usuário está associado a um login
+        categoryId  Int? // 1-1 : (Opcional) Um usuário está associado a uma categoria
+        typeGrantId Int? // 1-1 : (Opcional) Um usuário está associado a um tipo de bolsa
+
+        person    Person     @relation(fields: [personId], references: [id])
+        category  Category?  @relation(fields: [categoryId], references: [id])
+        loginUser LoginUser? @relation(fields: [loginUserId], references: [id])
+        typeGrant TypeGrant? @relation(fields: [typeGrantId], references: [id])
+
+        picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
+        student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
+        visitor  Visitors? // 1-1 : (Opcional) Um usuário está associado a um visitante
+        employee Employee? // 1-1 : (Opcional) Um usuário está associado a um funcionário
+    }
+     */
+    async createUser(request: Request, response: Response, next: NextFunction) {
+        const {name, enrollment, category, typeGrant, dailyMeals, picture, course, cpf, born, userId} = request.body;
+        const users = {
+            userId,
+            name,
+            enrollment,
+            category,
+            typeGrant,
+            dailyMeals,
+            picture,
+            course,
+            cpf,
+            born
+        };
+
+        const estudante = category.name.ESTUDANTE;
+        const visitante = category.name.VISITANTE;
+        const funcionario = category.name.FUNCIONARIO;
+        
+        switch (category) {
+            case estudante:
+                const result = await this.studentService.createStudent(users);
+                return response.status(201).json(result);
+            case funcionario:
+                const resultEmployee = await this.employeeService.createEmployee(users);
+                return response.status(201).json(resultEmployee);
+            case visitante:
+                const resultVisitor = await this.visitorService.createVisitor(users);
+                return response.status(201).json(resultVisitor);
+            default:
+                throw new BadRequestError({message: 'Category NotFound'});
+        }
+    }
+
+    async getAllUsers(request: Request, response: Response, next: NextFunction) {
+        const result = await this.userServices.listAllUsers();
+
+        return response.status(200).json(result);
+    }
+
+    async updateUsers(request: Request, response: Response, next: NextFunction) {
+        const {id} = request.params;
+        const {name, enrollment, category, typeGrant, dailyMeals, picture, course} = request.body;
+        const result = await this.userServices.updateUser({
+            id,
+            name,
+            enrollment,
+            category,
+            typeGrant,
+            dailyMeals,
+            picture,
+            course
+        });
+
+        return response.status(201).json(result);
+
+    }
+
+    async deleteUserById(request: Request, response: Response, next: NextFunction) {
+        const {id} = request.params;
+        const result = await this.userServices.deleteById(Number(id));
+
+        return response.status(204).json(result);
+    }
+
 
     /*
     1 - Se chegar um aluno, vai para studentService:

@@ -1,7 +1,6 @@
 import {CategoryName, TypeGrantName} from "@prisma/client";
 
 export interface IUserData {
-    userId: number;
     name: string;
     enrollment?: string;
     cpf?: string;

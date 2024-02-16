@@ -10,8 +10,8 @@ export class StudentService {
         this.studentDALs = new StudentDALs()
     }
 
-    async createStudent({enrollment, userId}: IUserData) {
-        
+    async createStudent({enrollment}: IUserData) {
+
     }
 }
 

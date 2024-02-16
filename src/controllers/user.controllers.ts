@@ -41,9 +41,8 @@ class UserControllers {
     }
      */
     async createUser(request: Request, response: Response, next: NextFunction) {
-        const {name, enrollment, category, typeGrant, dailyMeals, picture, course, cpf, born, userId} = request.body;
+        const {name, enrollment, category, typeGrant, dailyMeals, picture, course, cpf, born} = request.body;
         const users = {
-            userId,
             name,
             enrollment,
             category,
@@ -58,7 +57,7 @@ class UserControllers {
         const estudante = category.name.ESTUDANTE;
         const visitante = category.name.VISITANTE;
         const funcionario = category.name.FUNCIONARIO;
-        
+
         switch (category) {
             case estudante:
                 const result = await this.studentService.createStudent(users);

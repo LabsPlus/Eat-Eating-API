@@ -1,8 +1,8 @@
 import {VisitorDALs} from '../database/repositories/user.repositories/user.dals/visitor.dals'
 import {PersonRepositories} from '../database/repositories/person.repositories'
-import  {CategoryDALs} from '../database/repositories/user.repositories/user.dals/category.dals'
+import {CategoryDALs} from '../database/repositories/user.repositories/user.dals/category.dals'
 import {TypeGrantDALs} from '../database/repositories/user.repositories/user.dals/typeGrant.dals'
-import  {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
+import {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
 import {IUserData} from '../intefaces/user.interfaces'
 import {NotFoundError} from "../helpers/errors.helpers";
 
@@ -12,7 +12,7 @@ class VisitorService {
     private readonly personRepositories: PersonRepositories
     private readonly categoryDALs: CategoryDALs
     private readonly typeGrantDALs: TypeGrantDALs;
-    private readonly  userDALs: UserDALs
+    private readonly userDALs: UserDALs
 
     constructor() {
         this.visitorDALs = new VisitorDALs()
@@ -22,13 +22,12 @@ class VisitorService {
         this.userDALs = new UserDALs()
     }
 
-    async createVisitor({name, category, dailyMeals, typeGrant, picture, userId}: IUserData) {
-        const createPerson = await this.personRepositories.createPerson({name})
-        await this.visitorDALs.createVisitor(userId);
+    async createVisitor({name, category, dailyMeals, typeGrant, picture}: IUserData) {
+        const createPerson = await this.personRepositories.createPerson({name});
         const getCategory = await this.categoryDALs.getCategoryByName(category);
         const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
 
-        if(getCategory === null || getTypeGrant === null) {
+        if (getCategory === null || getTypeGrant === null) {
             throw new NotFoundError({message: 'Category or Type Grant not found'})
         }
 
@@ -38,7 +37,9 @@ class VisitorService {
             personId: createPerson.id
         });
 
-        return createUser
+        const visitors = await this.visitorDALs.createVisitor(createUser.id);
+
+        return visitors;
     }
 }
 

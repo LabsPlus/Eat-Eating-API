@@ -7,7 +7,7 @@ DELETE FROM "TypeGrant";
 DELETE FROM "Picture";
 DELETE FROM "Course";
 DELETE FROM "Student";
-DELETE FROM "Visitors";
+DELETE FROM "Visitor";
 DELETE FROM "Employee";
 DELETE FROM "LoginUser";
 DELETE FROM "User";
@@ -21,7 +21,7 @@ SELECT * FROM "TypeGrant";
 SELECT * FROM "Picture";
 SELECT * FROM "Course";
 SELECT * FROM "Student";
-SELECT * FROM "Visitors";
+SELECT * FROM "Visitor";
 SELECT * FROM "Employee";
 SELECT * FROM "LoginUser";
 SELECT * FROM "User";
@@ -116,7 +116,7 @@ VALUES (9, 1, 1, 1),
 INSERT INTO "Student" (enrollment, "courseId", "userId")
 VALUES ('22333', 7, 9);
 
-INSERT INTO "Visitors" ("userId")
+INSERT INTO "Visitor" ("userId")
 VALUES (10);
 
 INSERT INTO "Employee" (enrollment,"userId")
@@ -176,7 +176,7 @@ BEGIN
     VALUES (_personId, _typeGrantId, 2)
     RETURNING id INTO _userId;
     INSERT INTO "LoginUser" (email, password, "emailRecovery") VALUES (_email, _password, _emailRecovery);
-    INSERT INTO "Visitors" ("userId") VALUES (_userId);
+    INSERT INTO "Visitor" ("userId") VALUES (_userId);
 END;
 $$;
 CALL add_visitor('Carlos Santos',
@@ -276,4 +276,4 @@ GROUP BY c.name;
 SELECT u.id AS user_id, p.name AS visitor_name
 FROM "Person" p
          JOIN "User" u ON p.id = u."personId"
-         JOIN "Visitors" v ON u.id = v."userId";
+         JOIN "Visitor" v ON u.id = v."userId";

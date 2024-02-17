@@ -1,6 +1,4 @@
 import {UserDALs} from '../database/repositories/user.repositories/user.dals/user.dals';
-import {ErrorsHelpers} from '../helpers/errors.helpers';
-import {IUserData} from '../intefaces/user.interfaces';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -16,16 +14,10 @@ class UserServices {
 
     async listAllUsers() {
         return this.userDALs.listAllUsers();
-
     }
 
     async deleteById(id: number) {
         return this.userDALs.deleteUserById(id);
-    }
-
-
-    async updateUser({}) {
-
     }
 }
 

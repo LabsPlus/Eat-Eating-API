@@ -1,18 +1,11 @@
 import {prisma} from "../../../prisma.databases";
+import {TypeGrantName} from "@prisma/client";
 
-export class TypeGrantDALs {
-    getTypeGrantByName(name: string) {
-        return prisma.typeGrant.findUnique({
-            where: {
-                name,
-            }
-        })
-    }
-
-    async getTypeGrantById(id: number) {
+class TypeGrantDALs {
+    async getTypeGrantByName(name: TypeGrantName) {
         const result = await prisma.typeGrant.findUnique({
             where: {
-                id
+                name
             }
         })
 
@@ -20,4 +13,4 @@ export class TypeGrantDALs {
     }
 }
 
-export default {TypeGrantDALs};
+export {TypeGrantDALs};

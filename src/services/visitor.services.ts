@@ -1,5 +1,5 @@
 import {VisitorDALs} from '../database/repositories/user.repositories/user.dals/visitor.dals'
-import {PersonRepositories} from '../database/repositories/person.repositories'
+import {PersonDALs} from '../database/repositories/person.dals'
 import {CategoryDALs} from '../database/repositories/user.repositories/user.dals/category.dals'
 import {TypeGrantDALs} from '../database/repositories/user.repositories/user.dals/typeGrant.dals'
 import {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
@@ -9,14 +9,14 @@ import {NotFoundError} from "../helpers/errors.helpers";
 class VisitorService {
 
     private readonly visitorDALs: VisitorDALs;
-    private readonly personRepositories: PersonRepositories
+    private readonly personRepositories: PersonDALs
     private readonly categoryDALs: CategoryDALs
     private readonly typeGrantDALs: TypeGrantDALs;
     private readonly userDALs: UserDALs
 
     constructor() {
         this.visitorDALs = new VisitorDALs()
-        this.personRepositories = new PersonRepositories()
+        this.personRepositories = new PersonDALs()
         this.categoryDALs = new CategoryDALs()
         this.typeGrantDALs = new TypeGrantDALs()
         this.userDALs = new UserDALs()
@@ -40,10 +40,10 @@ class VisitorService {
         const visitors = await this.visitorDALs.createVisitor(createUser.id);
 
         return {
-            visitors: visitors.id,
-            createPerson: createPerson.name,
-            getCategory: getCategory.name,
-            getTypeGrant: getTypeGrant.name
+            visitorId: visitors.id,
+            personName: createPerson.name,
+            categoryName: getCategory.name,
+            typeGrantName: getTypeGrant.name
         }
     }
 }

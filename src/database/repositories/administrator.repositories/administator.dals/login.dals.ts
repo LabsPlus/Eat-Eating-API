@@ -5,7 +5,7 @@ import {
     ILoginUpdateResetToken,
 } from '../../../../intefaces/login.interfaces';
 
-class LoginDals {
+class LoginDALs {
     async createLogin(
         {email, password, emailRecovery}: ILoginCreate) {
         const result = await prisma.loginAdministrator.create({
@@ -50,4 +50,4 @@ class LoginDals {
     }
 }
 
-export {LoginDals};
+export {LoginDALs};

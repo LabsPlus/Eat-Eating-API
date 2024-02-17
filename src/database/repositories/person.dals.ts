@@ -1,6 +1,6 @@
 import {prisma} from "../prisma.databases";
 
-export class PersonRepositories {
+class PersonDALs {
     async createPerson(name: string) {
         const result = prisma.person.create({
             data: {
@@ -11,4 +11,6 @@ export class PersonRepositories {
         return result
     }
 }
+
+export {PersonDALs};
 

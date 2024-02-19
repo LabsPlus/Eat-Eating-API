@@ -7,7 +7,7 @@ class StudentDALs {
         const result = await prisma.student.create({
             data: {
                 userId,
-                enrollment
+                enrollment,
             }
         });
 

@@ -56,20 +56,10 @@ class EmployeeService {
             id: employees.id,
             userId: createUser.id,
             employeesEnrollment: employees.enrollment,
-            createPerson: createPerson.name,
-            getCategory: getCategory.name,
-            getTypeGrant: getTypeGrant.name,
+            personName: createPerson.name,
+            categoryName: getCategory.name,
+            typeGrantName: getTypeGrant.name
         }
-    }
-
-    async listAllEmployees() {
-        const employees = await this.employeeDALs.listAllEmployees();
-        return employees;
-    }
-
-    async getEmployeeByEnrollment(enrollment: string) {
-        const employee = await this.employeeDALs.getEmployeeByEnrollment(enrollment);
-        return employee;
     }
 }
 

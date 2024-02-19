@@ -55,17 +55,6 @@ class UserControllers {
         return response.status(200).json(result);
     }
 
-    async getAllEmployees(request: Request, response: Response, next: NextFunction) {
-        const result = await this.employeeService.listAllEmployees();
-        return response.status(200).json(result);
-    }
-
-    async getEmployeeByEnrollment(request: Request, response: Response, next: NextFunction) {
-        const {enrollment} = request.params;
-        const result = await this.employeeService.getEmployeeByEnrollment(enrollment);
-        return response.status(200).json(result);
-    }
-
     async deleteUserById(request: Request, response: Response, next: NextFunction) {
         const {id} = request.params;
         const result = await this.userServices.deleteById(Number(id));

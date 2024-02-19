@@ -13,6 +13,17 @@ class StudentDALs {
 
         return result
     }
+
+    async checkEnrollmentUnique(enrollment: string): Promise<boolean> {
+        const existingStudent = await prisma.student.findUnique({
+            where: {
+                enrollment: enrollment
+            }
+        });
+
+        return !existingStudent; // Retorna true se o estudante não existir, caso contrário retorna false
+
+    }
 }
 
 export {StudentDALs}

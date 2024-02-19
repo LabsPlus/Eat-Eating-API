@@ -1,31 +1,131 @@
 import {prisma} from '../../../prisma.databases';
 import {IUserCreate} from '../../../../intefaces/user.interfaces';
+import {BadRequestError, NotFoundError} from "../../../../helpers/errors.helpers";
 
 class UserDALs {
-    async createUser({categoryId, personId, typeGrantId}: IUserCreate){
+    async createUser({categoryId, personId, typeGrantId}: IUserCreate) {
+
         const result = await prisma.user.create({
-            data:{
+            data: {
                 categoryId,
                 personId,
                 typeGrantId,
-            }
-        })
+            },
+        });
 
-        return result
+        return result;
     }
 
     async listAllUsers() {
-        const result = await  prisma.user.findMany()
+        let results = await prisma.user.findMany({
+            select: {
+                id: true,
+                categoryId: false,
+                personId: false,
+                typeGrantId: false,
+                person: {
+                    select: {
+                        name: true,
+                        cpf: true,
+                        born: true,
+                        Administrator: {
+                            select: {
+                                isMaster: true,
+                                login: true
+                            }
+                        },
+                    }
+                },
+                category: {
+                    select: {
+                        name: true
+                    }
+                },
+                typeGrant: {
+                    select: {
+                        name: true
+                    }
+                },
+                loginUser: {
+                    select: {
+                        email: true,
+                        emailRecovery: true,
+                    }
+                }
+            },
+        });
+
+        return results;
+    }
+
+    async getUserCategoryNameByUserId(id: number) {
+        const result = await prisma.user.findUnique({
+            where: {
+                id
+            },
+            select: {
+                category: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        })
+
+        return result?.category?.name || 'Categoria não encontrada';
+    }
+
+    async existsUserById(id: number) {
+        const result = await prisma.user.findUnique({
+            where: {
+                id
+            }
+        });
 
         return result;
     }
 
     async deleteUserById(id: number) {
-        const result = await   prisma.user.delete({
-            where: {id},
+
+        const user = await this.existsUserById(id);
+
+        if (!user) {
+            throw new NotFoundError({message: 'Usuário não encontrado'});
+        }
+
+        const category = await this.getUserCategoryNameByUserId(id);
+
+        switch (category) {
+            case String('ESTUDANTE'):
+                await prisma.student.deleteMany({
+                    where: {
+                        userId: id
+                    }
+                });
+                break;
+            case String('FUNCIONARIO'):
+                await prisma.employee.deleteMany({
+                    where: {
+                        userId: id
+                    }
+                });
+                break;
+            case String('VISITANTE'):
+                await prisma.visitor.deleteMany({
+                    where: {
+                        userId: id
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+
+        const result = await prisma.user.delete({
+            where: {id: id}
         });
 
-        return result
+        return result;
     }
 }
 

@@ -4,7 +4,7 @@ import {PersonDALs} from "../database/repositories/person.dals";
 import {CategoryDALs} from "../database/repositories/user.repositories/user.dals/category.dals";
 import {TypeGrantDALs} from "../database/repositories/user.repositories/user.dals/typeGrant.dals";
 import {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
-import {BadRequestError} from "../helpers/errors.helpers";
+import {BadRequestError, NotFoundError} from "../helpers/errors.helpers";
 
 class EmployeeService {
 
@@ -28,7 +28,7 @@ class EmployeeService {
         const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
 
         if (!getCategory || !getTypeGrant) {
-            throw new Error('Category or Type Grant not found')
+            throw new NotFoundError({message: 'Category or Type Grant not found'});
         }
 
         const createUser = await this.userDALs.createUser({

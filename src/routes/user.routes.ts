@@ -13,8 +13,6 @@ class UserRoutes {
 
     getRoutes() {
         this.router.get('/list-all-users', this.userController.getAllUsers.bind(this.userController))
-        this.router.get('/list-all-employees', this.userController.getAllEmployees.bind(this.userController))
-        this.router.get('/list-employee-by-enrollment/:enrollment', this.userController.getEmployeeByEnrollment.bind(this.userController))
         return this.router;
     }
 

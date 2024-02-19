@@ -1,7 +1,7 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
 import * as nodemailer from 'nodemailer';
 import { ISendEmail } from '../intefaces/email.interfaces';
-
+dotenv.config();
 class EmailUtils {
   constructor() {}
 

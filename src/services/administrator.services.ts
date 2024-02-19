@@ -1,5 +1,5 @@
 import {compare, hash} from 'bcrypt';
-import {LoginDals} from '../database/repositories/administrator.repositories/administator.dals/login.dals';
+import {LoginDALs} from '../database/repositories/administrator.repositories/administator.dals/login.dals';
 import {EmailUtils} from '../utils/email.utils';
 import {HtmlMessages} from '../utils/htmlMessages.utils';
 import {
@@ -18,14 +18,14 @@ dotenv.config();
 const {Link} = process.env;
 
 class AdministratorServices {
-    private loginDALs: LoginDals;
+    private loginDALs: LoginDALs;
     private emailUtils: EmailUtils;
     private rateLimitUtils: RateLimitUtils;
     private invalidAttempts: Map<string, number>;
     private htmlMessages: HtmlMessages;
 
     constructor() {
-        this.loginDALs = new LoginDals();
+        this.loginDALs = new LoginDALs();
         this.emailUtils = new EmailUtils();
         this.rateLimitUtils = new RateLimitUtils();
         this.invalidAttempts = new Map();

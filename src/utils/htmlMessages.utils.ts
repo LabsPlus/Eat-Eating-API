@@ -1,10 +1,7 @@
-class HtmlMessages{
-    contructor(){
+class HtmlMessages {
 
-    }
-
-forgotPasswordMessage(link: String) {
-   return `
+    forgotPasswordMessage(link: String) {
+        return `
       <p>Prezado usuário,</br>
         Você recebeu este e-mail porque solicitou a recuperação de senha na aplicação EatEating.
         O link expira em 1 hora. Se não solicitou a recuperação, ignore este e-mail.
@@ -14,6 +11,7 @@ forgotPasswordMessage(link: String) {
           Recuperação de senha
         </a>
       </center>`;
-  }
+    }
 }
+
 export {HtmlMessages};

@@ -1,5 +1,5 @@
 import {AdministratorServices} from '../services/administrator.services';
-import {LoginRepositories} from '../database/repositories/administrator.repositories/administator.dals/loginDALs';
+import {LoginDALs} from '../database/repositories/administrator.repositories/administator.dals/login.dals';
 import {EmailUtils} from '../utils/email.utils';
 import {hash, compare} from 'bcrypt';
 import {sign} from 'jsonwebtoken';
@@ -20,8 +20,7 @@ describe('loginServices', () => {
         it('should throw an error if the user.repositories does not exist', async () => {
             // Alterando o mock apenas para este teste
             jest
-                .spyOn(LoginRepositories.prototype, 'findLoginByToken')
-                .mockResolvedValue(null);
+                .spyOn(LoginDALs.prototype, 'findLoginByToken');
 
             // Utilize uma função async para aguardar a execução da expectativa
             await expect(
@@ -37,7 +36,7 @@ describe('loginServices', () => {
         it('should throw an error if the user.repositories does not exist', async () => {
             // Alterando o mock apenas para este teste
             jest
-                .spyOn(LoginRepositories.prototype, 'findLoginByEmail')
+                .spyOn(LoginDALs.prototype, 'findLoginByEmail')
                 .mockResolvedValue(null);
 
             // Utilize uma função async para aguardar a execução da expectativa
@@ -51,7 +50,7 @@ describe('loginServices', () => {
 
         it('should throw an error if the email is not sent successfully', async () => {
             // Mock findUserByEmail to return a valid user.repositories
-            LoginRepositories.prototype.findLoginByEmail = jest.fn().mockResolvedValue({
+            LoginDALs.prototype.findLoginByEmail = jest.fn().mockResolvedValue({
                 id: 1,
                 email: 'test@example.com',
             });
@@ -60,7 +59,7 @@ describe('loginServices', () => {
             (hash as jest.Mock).mockResolvedValue('hashedResetToken');
 
             // Mock updateResetToken to return the updated user.repositories
-            LoginRepositories.prototype.updateResetToken = jest.fn().mockResolvedValue({
+            LoginDALs.prototype.updateResetToken = jest.fn().mockResolvedValue({
                 id: 1,
                 resetToken: 'hashedResetToken',
                 resetTokenExpiry: new Date(Date.now() + 3600000),

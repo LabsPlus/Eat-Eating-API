@@ -1,4 +1,3 @@
-import {Student} from "@prisma/client";
 import {prisma} from "../../../prisma.databases";
 import {IStudentCreate} from "../../../../intefaces/student.interfaces";
 

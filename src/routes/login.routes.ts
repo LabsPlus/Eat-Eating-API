@@ -2,8 +2,8 @@ import {Router} from 'express';
 import {LoginControllers} from '../controllers/login.controllers';
 
 class LoginRoutes {
-    private router: Router;
-    private loginController: LoginControllers;
+    private readonly router: Router;
+    private readonly loginController: LoginControllers;
 
     constructor() {
         this.router = Router();

@@ -1,7 +1,6 @@
 import {prisma} from '../../../prisma.databases';
 import {IUserCreate} from '../../../../intefaces/user.interfaces';
 
-
 class UserDALs {
     async createUser({categoryId, personId, typeGrantId}: IUserCreate){
         const result = await prisma.user.create({
@@ -19,10 +18,6 @@ class UserDALs {
         const result = await  prisma.user.findMany()
 
         return result;
-    }
-
-    async updateUser(data: any) {
-
     }
 
     async deleteUserById(id: number) {

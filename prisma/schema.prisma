@@ -96,38 +96,51 @@ model Picture {
   user   User @relation(fields: [userId], references: [id])
 }
 
-// enum CategoryName {
-//   ESTUDANTE   @map("ESTUDANTE")
-//   FUNCIONARIO @map("FUNCIONARIO")
-//   VISITANTE   @map("VISITANTE")
-// }
+enum CategoryName {
+  ESTUDANTE
+  FUNCIONARIO
+  VISITANTE
+}
 
 model Category {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id   Int          @id @default(autoincrement())
+  name CategoryName @unique
 
   User User[] // N-1 : Uma categoria tem vários usuários
 }
 
-//
-// enum TypeGrantName {
-//   INTEGRAL
-//   PARCIAL
-//   NAO_APLICAVEL
-// }
+enum TypeGrantName {
+  INTEGRAL
+  PARCIAL
+  NAO_APLICAVEL
+}
 
 model TypeGrant {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id   Int           @id @default(autoincrement())
+  name TypeGrantName @unique
 
   User User[] // N-1 : Um tipo de bolsa tem vários usuários
 }
 
 model Course {
-  id   Int    @id @default(autoincrement())
-  name String @unique @default("")
+  id   Int        @id @default(autoincrement())
+  name CourseName @unique
 
-  Student Student[]
+  Student Student[] // N-1 : Um curso tem vários estudantes
+}
+
+enum CourseName {
+  TECNICO_AGROPECUARIA
+  TECNICO_AGROINDUSTRIA
+  TECNICO_MEIO_AMBIENTE
+  TECNICO_SUBSEQUENTE_AGROPECUARIA
+  TECNICO_SUBSEQUENTE_INFORMATICA
+  TECNICO_SUBSEQUENTE_ALIMENTOS
+  BACHARELADO_SISTEMA_DE_INFORMACAO
+  BACHARELADO_LIBRAS
+  BACHARELADO_EDUCACAO_FISICA
+  POS_ENSINO_DE_CIENCIAS_NATURAIS_E_MATEMATICA
+  POS_LEITURA_E_PRODUCAO_TEXTUAL_APLICADAS_A_EJA
 }
 
 model LoginUser {

@@ -28,7 +28,7 @@ class EmailUtils {
       transporter.close();
       return `E-mail sent with success ${info.response}`;
     } catch (error) {
-      console.log(error);
+      console.log(error + "erro aqui");
       throw new Error('email not sended');
     }
   }

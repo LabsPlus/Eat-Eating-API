@@ -4,7 +4,7 @@ import {CategoryDALs} from '../database/repositories/user.repositories/user.dals
 import {TypeGrantDALs} from '../database/repositories/user.repositories/user.dals/typeGrant.dals'
 import {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
 import {IUserData} from '../intefaces/user.interfaces'
-import {NotFoundError} from "../helpers/errors.helpers";
+import {NotFoundError, UnprocessedEntityError} from "../helpers/errors.helpers";
 
 class VisitorService {
 
@@ -23,6 +23,10 @@ class VisitorService {
     }
 
     async createVisitor({name, category, dailyMeals, typeGrant, picture}: IUserData) {
+         if(dailyMeals < 1 || dailyMeals > 3){
+            throw new UnprocessedEntityError({message: "Daily meals must be between 1 and 3"});
+        }
+        
         const createPerson = await this.personRepositories.createPerson(name);
         const getCategory = await this.categoryDALs.getCategoryByName(category);
         const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
@@ -34,7 +38,8 @@ class VisitorService {
         const createUser = await this.userDALs.createUser({
             categoryId: getCategory.id,
             typeGrantId: getTypeGrant.id,
-            personId: createPerson.id
+            personId: createPerson.id,
+            dailyMeals: dailyMeals
         });
 
         const visitors = await this.visitorDALs.createVisitor(createUser.id);
@@ -43,7 +48,8 @@ class VisitorService {
             visitorId: visitors.id,
             personName: createPerson.name,
             categoryName: getCategory.name,
-            typeGrantName: getTypeGrant.name
+            typeGrantName: getTypeGrant.name,
+            dailyMeals: dailyMeals
         }
     }
 }

@@ -50,7 +50,7 @@ model User {
   loginUserId Int? @unique // 1-1 : (Opcional) Um usuário está associado a um login
   categoryId  Int? // 1-1 : (Opcional) Um usuário está associado a uma categoria
   typeGrantId Int? // 1-1 : (Opcional) Um usuário está associado a um tipo de bolsa
-
+  dailyMeals Int 
   person    Person     @relation(fields: [personId], references: [id])
   category  Category?  @relation(fields: [categoryId], references: [id])
   loginUser LoginUser? @relation(fields: [loginUserId], references: [id])
@@ -60,6 +60,7 @@ model User {
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
   visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante
   employee Employee? // 1-1 : (Opcional) Um usuário está associado a um funcionário
+
 }
 
 model Student {

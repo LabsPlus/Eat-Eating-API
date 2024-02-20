@@ -4,7 +4,7 @@ import {PersonDALs} from "../database/repositories/person.dals";
 import {CategoryDALs} from "../database/repositories/user.repositories/user.dals/category.dals";
 import {TypeGrantDALs} from "../database/repositories/user.repositories/user.dals/typeGrant.dals";
 import {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
-import {BadRequestError, NotFoundError} from "../helpers/errors.helpers";
+import {BadRequestError, NotFoundError, UnprocessedEntityError} from "../helpers/errors.helpers";
 
 class EmployeeService {
 
@@ -23,6 +23,9 @@ class EmployeeService {
     }
 
     async createEmployee({name, category, dailyMeals, typeGrant, picture, enrollment}: IUserData) {
+         if(dailyMeals < 1 || dailyMeals > 3){
+            throw new UnprocessedEntityError({message: "Daily meals must be between 1 and 3"});
+        }
         const createPerson = await this.personRepositories.createPerson(name);
         const getCategory = await this.categoryDALs.getCategoryByName(category);
         const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
@@ -34,7 +37,8 @@ class EmployeeService {
         const createUser = await this.userDALs.createUser({
             categoryId: getCategory.id,
             typeGrantId: getTypeGrant.id,
-            personId: createPerson.id
+            personId: createPerson.id,
+            dailyMeals: dailyMeals
         });
 
         if (!enrollment) {
@@ -58,7 +62,8 @@ class EmployeeService {
             employeesEnrollment: employees.enrollment,
             personName: createPerson.name,
             categoryName: getCategory.name,
-            typeGrantName: getTypeGrant.name
+            typeGrantName: getTypeGrant.name,
+            dailyMeals: dailyMeals
         }
     }
 }

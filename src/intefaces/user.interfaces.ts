@@ -17,4 +17,5 @@ export interface IUserCreate {
     categoryId: number;
     typeGrantId: number;
     loginUserId?: number
+    dailyMeals: number;
 }

@@ -9,10 +9,10 @@ import {BadRequestError, NotFoundError, UnprocessedEntityError} from "../helpers
 class EmployeeService {
 
     private readonly employeeDALs: EmployeeDALs;
-    private readonly personRepositories: PersonDALs;
-    private readonly categoryDALs: CategoryDALs;
-    private readonly typeGrantDALs: TypeGrantDALs;
-    private readonly userDALs: UserDALs;
+    readonly personRepositories: PersonDALs;
+    readonly categoryDALs: CategoryDALs;
+    readonly typeGrantDALs: TypeGrantDALs;
+    readonly userDALs: UserDALs;
 
     constructor() {
         this.employeeDALs = new EmployeeDALs();
@@ -23,7 +23,7 @@ class EmployeeService {
     }
 
     async createEmployee({name, category, dailyMeals, typeGrant, picture, enrollment}: IUserData) {
-         if(dailyMeals < 1 || dailyMeals > 3){
+        if (dailyMeals < 1 || dailyMeals > 3) {
             throw new UnprocessedEntityError({message: "Daily meals must be between 1 and 3"});
         }
         const createPerson = await this.personRepositories.createPerson(name);

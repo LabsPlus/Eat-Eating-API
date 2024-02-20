@@ -3,13 +3,14 @@ import {IUserCreate} from '../../../../intefaces/user.interfaces';
 import {BadRequestError, NotFoundError} from "../../../../helpers/errors.helpers";
 
 class UserDALs {
-    async createUser({categoryId, personId, typeGrantId}: IUserCreate) {
+    async createUser({categoryId, personId, typeGrantId, dailyMeals}: IUserCreate) {
 
         const result = await prisma.user.create({
             data: {
                 categoryId,
                 personId,
                 typeGrantId,
+                dailyMeals
             },
         });
 
@@ -23,6 +24,7 @@ class UserDALs {
                 categoryId: false,
                 personId: false,
                 typeGrantId: false,
+                dailyMeals: true,
                 person: {
                     select: {
                         name: true,

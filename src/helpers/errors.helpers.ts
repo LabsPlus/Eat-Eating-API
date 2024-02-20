@@ -105,5 +105,14 @@ export class VariantAlsoNegotiatesError extends ErrorsHelpers {
     constructor({message}: errorsInterfaces.IMoreErrorsHelpers) {
         super({message, statusCode: 506});
     }
+
 }
+/**
+ * Classe para erros de unsprocessed entity (422).
+ * @extends {ErrorsHelpers}
+ */
+export class UnprocessedEntityError extends ErrorsHelpers {
+    constructor({message}: errorsInterfaces.IMoreErrorsHelpers) {
+        super({message, statusCode: 422});
+}}
 

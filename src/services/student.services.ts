@@ -4,7 +4,7 @@ import {CategoryDALs} from '../database/repositories/user.repositories/user.dals
 import {TypeGrantDALs} from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
 import {UserDALs} from '../database/repositories/user.repositories/user.dals/user.dals';
 import {IUserData} from '../intefaces/user.interfaces';
-import {BadRequestError, NotFoundError} from '../helpers/errors.helpers';
+import {BadRequestError, NotFoundError, UnprocessedEntityError} from '../helpers/errors.helpers';
 
 class StudentService {
     private readonly studentDALs: StudentDALs;
@@ -29,6 +29,9 @@ class StudentService {
                             typeGrant,
                             picture,
                         }: IUserData) {
+         if(dailyMeals < 1 || dailyMeals > 3){
+            throw new UnprocessedEntityError({message: "Daily meals must be between 1 and 3"});
+        }
         const createPerson = await this.personRepositories.createPerson(name);
         const getCategory = await this.categoryDALs.getCategoryByName(category);
         const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
@@ -38,11 +41,13 @@ class StudentService {
         if (getCategory === null || getTypeGrant === null) {
             throw new NotFoundError({message: 'Category or Type Grant not found'});
         }
+       
 
         const createUser = await this.userDALs.createUser({
             categoryId: getCategory.id,
             typeGrantId: getTypeGrant.id,
             personId: createPerson.id,
+            dailyMeals: dailyMeals
         });
 
         if(!enrollment){
@@ -67,6 +72,7 @@ class StudentService {
             personName: createPerson.name,
             categoryName: getCategory.name,
             typeGrantName: getTypeGrant.name,
+            dailyMeals: dailyMeals
         }
     }
 }

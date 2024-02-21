@@ -1,3 +1,4 @@
+
 import { prisma } from '../../../prisma.databases';
 import {
   IUserCreate,
@@ -7,6 +8,7 @@ import {
   BadRequestError,
   NotFoundError,
 } from '../../../../helpers/errors.helpers';
+
 
 class UserDALs {
   async createUser({

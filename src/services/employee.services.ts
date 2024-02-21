@@ -19,6 +19,7 @@ class EmployeeService {
     private readonly visitorDALs: VisitorDALs;
     private readonly studentDALs: StudentDALs;
 
+
     constructor() {
         this.employeeDALs = new EmployeeDALs();
         this.personRepositories = new PersonDALs();
@@ -30,7 +31,7 @@ class EmployeeService {
     }
 
     async createEmployee({name, category, dailyMeals, typeGrant, picture, enrollment}: IUserData) {
-         if(dailyMeals < 1 || dailyMeals > 3){
+        if (dailyMeals < 1 || dailyMeals > 3) {
             throw new UnprocessedEntityError({message: "Daily meals must be between 1 and 3"});
         }
         const createPerson = await this.personRepositories.createPerson(name);

@@ -1,6 +1,6 @@
 import {prisma} from '../../../prisma.databases';
 import {IUserCreate} from '../../../../intefaces/user.interfaces';
-import {BadRequestError, NotFoundError} from "../../../../helpers/errors.helpers";
+import {NotFoundError} from "../../../../helpers/errors.helpers";
 
 class UserDALs {
     async createUser({categoryId, personId, typeGrantId, dailyMeals}: IUserCreate) {

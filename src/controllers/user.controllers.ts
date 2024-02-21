@@ -48,7 +48,14 @@ class UserControllers {
                 throw new BadRequestError({message: 'Category NotFound'});
         }
     }
-
+    async updateAnUser(request: Request, response: Response, next: NextFunction){
+        const {name, enrollment, category, typeGrant, dailyMeals, picture, course, cpf, born} = request.body;
+        const {id} = request.params;
+         
+        const result = await this.userServices.updateAnUser({name, category, dailyMeals, typeGrant, picture, enrollment}, Number(id));
+       
+        return response.status(200).json(result);
+    }
     async getAllUsers(request: Request, response: Response, next: NextFunction) {
         const result = await this.userServices.listAllUsers();
 

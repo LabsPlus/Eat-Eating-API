@@ -1,10 +1,13 @@
 import {EmployeeDALs} from "../database/repositories/user.repositories/user.dals/employee.dals";
+import { VisitorDALs } from '../database/repositories/user.repositories/user.dals/visitor.dals';
+import { StudentDALs } from "../database/repositories/user.repositories/user.dals/student.dals";
 import {IUserData} from "../intefaces/user.interfaces";
 import {PersonDALs} from "../database/repositories/person.dals";
 import {CategoryDALs} from "../database/repositories/user.repositories/user.dals/category.dals";
 import {TypeGrantDALs} from "../database/repositories/user.repositories/user.dals/typeGrant.dals";
 import {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
 import {BadRequestError, NotFoundError, UnprocessedEntityError} from "../helpers/errors.helpers";
+import { IVerifyUpdateByCategory } from "../intefaces/verify.interfaces";
 
 class EmployeeService {
 
@@ -13,6 +16,8 @@ class EmployeeService {
     private readonly categoryDALs: CategoryDALs;
     private readonly typeGrantDALs: TypeGrantDALs;
     private readonly userDALs: UserDALs;
+    private readonly visitorDALs: VisitorDALs;
+    private readonly studentDALs: StudentDALs;
 
     constructor() {
         this.employeeDALs = new EmployeeDALs();
@@ -20,6 +25,8 @@ class EmployeeService {
         this.categoryDALs = new CategoryDALs();
         this.typeGrantDALs = new TypeGrantDALs();
         this.userDALs = new UserDALs();
+         this.visitorDALs = new VisitorDALs();
+         this.studentDALs = new StudentDALs();
     }
 
     async createEmployee({name, category, dailyMeals, typeGrant, picture, enrollment}: IUserData) {
@@ -66,6 +73,22 @@ class EmployeeService {
             dailyMeals: dailyMeals
         }
     }
+    async updatetoEmployee({
+    userId,
+    oldCategory,
+    enrollment,
+  }: IVerifyUpdateByCategory) {
+    switch (oldCategory) {
+      case 'ESTUDANTE':
+        await this.studentDALs.deleteByUserId(userId); 
+        return await this.employeeDALs.createEmployee({ userId, enrollment });
+      case 'VISITANTE':
+        await this.visitorDALs.deleteByUserId(userId);
+        return await this.employeeDALs.createEmployee({ userId, enrollment }); 
+      default:
+        throw new BadRequestError({ message: 'Old Category NotFound' });
+    }
+  }
 }
 
 export {EmployeeService};

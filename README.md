@@ -96,13 +96,13 @@ LINK = localhost:3001 # link do front end onde sera usado no email para redireci
 
 #### Rotas de user
 
-user/createUser `rota post` recebe um nome, matricula, tipo de bolsa, categoria e refeições diarias e retorna o usuario criado no banco com esses dados.
+user/create-user `rota post` recebe um nome, matricula, tipo de bolsa, categoria e refeições diarias e retorna o usuario criado no banco com esses dados.
 
-user/updateUser/:id `rota put` recebe um id por parametro e recebe nome, matricula, tipo de bolsa, categoria e refeições diarias no body, busca um usuario a ser atualizado, e retorna o usuario com seus dados atualizados.
+user/update-user/:id `rota put` recebe um id por parametro e recebe nome, matricula, tipo de bolsa, categoria e refeições diarias no body, busca um usuario a ser atualizado, e retorna o usuario com seus dados atualizados.
 
-user/listAllUsers `rota get` retorna todos os usuarios do banco de dados
+user//list-all-users `rota get` retorna todos os usuarios do banco de dados
 
-user/deleteUser/:id `rota delete` recebe um id por parametro procura um usuario no banco de dados e deleta esse usuario
+user/delete-user/:id `rota delete` recebe um id por parametro procura um usuario no banco de dados e deleta esse usuario
 
 user/deleteAllUsers `rota delete` deleta todos os usuarios do banco de dados
 

@@ -1,5 +1,5 @@
 import {prisma} from "../../../prisma.databases";
-import {IStudentCreate} from "../../../../intefaces/student.interfaces";
+import {IStudentCreate, IStudentUpdate} from "../../../../intefaces/student.interfaces";
 
 class StudentDALs {
 
@@ -14,6 +14,23 @@ class StudentDALs {
         return result
     }
 
+    async updateStudent({ enrollment, userId}: IStudentUpdate){
+        const result = await prisma.student.update({
+                where: {userId: userId},
+                data:{
+                    enrollment: enrollment,
+                }
+        })
+        return result;
+    }
+    async deleteByUserId(userId: number){
+        const result = await prisma.student.deleteMany({
+            where:{
+                userId: userId,
+            }
+        });
+        return result;
+    }
     async checkEnrollmentUnique(enrollment: string): Promise<boolean> {
         const existingStudent = await prisma.student.findUnique({
             where: {

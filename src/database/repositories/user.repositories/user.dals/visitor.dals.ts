@@ -12,6 +12,15 @@ class VisitorDALs {
         return result
     }
 
+    async deleteByUserId(userId: number){
+        const result = await prisma.visitor.deleteMany({
+            where:{
+                userId: userId,
+            }
+        });
+        return result;
+    }
+
 }
 
 export {VisitorDALs}

@@ -20,13 +20,14 @@ class UserRoutes {
         this.router.delete('/delete-user/:id', this.userController.deleteUserById.bind(this.userController))
         return this.router;
     }
-
+   
     postRoutes() {
         this.router.post('/create-user', this.userController.createUser.bind(this.userController))
         return this.router;
     }
 
     putRoutes() {
+        this.router.put('/update-user/:id', this.userController.updateAnUser.bind(this.userController))
         return this.router;
     }
 }

@@ -19,3 +19,19 @@ export interface IUserCreate {
     loginUserId?: number
     dailyMeals: number;
 }
+
+export interface IUserUpdate{
+    id: number;
+    name: string;
+    enrollment?: string;
+    cpf?: string;
+    born?: Date;
+    categoryId: number;
+    typeGrantId: number;
+    dailyMeals: number;
+    picture?: string;
+    course?: string
+}
+
+
+

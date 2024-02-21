@@ -1,5 +1,5 @@
 import {prisma} from "../../../prisma.databases";
-import {IEmployeeCreate} from "../../../../intefaces/employee.interfaces";
+import {IEmployeeCreate, IEmployeeUpdate} from "../../../../intefaces/employee.interfaces";
 
 class EmployeeDALs {
     async createEmployee({userId, enrollment}: IEmployeeCreate) {
@@ -12,7 +12,15 @@ class EmployeeDALs {
 
         return result
     }
-
+    async updateEmployee({ enrollment, userId}: IEmployeeUpdate){
+        const result = await prisma.student.update({
+                where: {userId: userId},
+                data:{
+                    enrollment: enrollment,
+                }
+        })
+        return result;
+    }
     async checkEnrollmentUnique(enrollment: string): Promise<boolean> {
         const existingEmployee = await prisma.employee.findUnique({
             where: {
@@ -21,6 +29,15 @@ class EmployeeDALs {
         });
 
         return !existingEmployee; // Retorna true se o funcionário não existir, caso contrário retorna false
+    }
+
+    async deleteByUserId(userId: number){
+        const result = await prisma.employee.deleteMany({
+            where:{
+                userId: userId,
+            }
+        });
+        return result;
     }
 }
 

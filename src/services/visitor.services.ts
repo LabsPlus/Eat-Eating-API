@@ -1,10 +1,13 @@
 import {VisitorDALs} from '../database/repositories/user.repositories/user.dals/visitor.dals'
+import { StudentDALs } from '../database/repositories/user.repositories/user.dals/student.dals';
+import { EmployeeDALs } from '../database/repositories/user.repositories/user.dals/employee.dals';
 import {PersonDALs} from '../database/repositories/person.dals'
 import {CategoryDALs} from '../database/repositories/user.repositories/user.dals/category.dals'
 import {TypeGrantDALs} from '../database/repositories/user.repositories/user.dals/typeGrant.dals'
 import {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
 import {IUserData} from '../intefaces/user.interfaces'
-import {NotFoundError, UnprocessedEntityError} from "../helpers/errors.helpers";
+import {BadRequestError, NotFoundError, UnprocessedEntityError} from "../helpers/errors.helpers";
+import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 
 class VisitorService {
 
@@ -13,13 +16,16 @@ class VisitorService {
     private readonly categoryDALs: CategoryDALs
     private readonly typeGrantDALs: TypeGrantDALs;
     private readonly userDALs: UserDALs
-
+    private readonly studentDALs: StudentDALs;
+    private readonly employeeDALs: EmployeeDALs
     constructor() {
         this.visitorDALs = new VisitorDALs()
         this.personRepositories = new PersonDALs()
         this.categoryDALs = new CategoryDALs()
         this.typeGrantDALs = new TypeGrantDALs()
         this.userDALs = new UserDALs()
+        this.studentDALs = new StudentDALs()
+        this.employeeDALs= new EmployeeDALs()
     }
 
     async createVisitor({name, category, dailyMeals, typeGrant, picture}: IUserData) {
@@ -52,6 +58,23 @@ class VisitorService {
             dailyMeals: dailyMeals
         }
     }
+
+    async updatetoVisitor({
+    userId,
+    oldCategory,
+  }: IVerifyUpdateByCategory) {
+    let result;
+    switch (oldCategory) {
+      case 'FUNCIONARIO':
+        await this.employeeDALs.deleteByUserId(userId);
+        result = await this.visitorDALs.createVisitor(userId);
+      case 'ESTUDANTE':
+        await this.studentDALs.deleteByUserId(userId);
+        result = await this.visitorDALs.createVisitor(userId);
+      default:
+        throw new BadRequestError({ message: 'Old Category NotFound' });
+    }
+  }
 }
 
 export {VisitorService};

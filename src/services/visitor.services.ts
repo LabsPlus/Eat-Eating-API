@@ -1,68 +1,97 @@
-import {VisitorDALs} from '../database/repositories/user.repositories/user.dals/visitor.dals'
+import { VisitorDALs } from '../database/repositories/user.repositories/user.dals/visitor.dals';
 import { StudentDALs } from '../database/repositories/user.repositories/user.dals/student.dals';
 import { EmployeeDALs } from '../database/repositories/user.repositories/user.dals/employee.dals';
-import {PersonDALs} from '../database/repositories/person.dals'
-import {CategoryDALs} from '../database/repositories/user.repositories/user.dals/category.dals'
-import {TypeGrantDALs} from '../database/repositories/user.repositories/user.dals/typeGrant.dals'
-import {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
-import {IUserData} from '../intefaces/user.interfaces'
-import {BadRequestError, NotFoundError, UnprocessedEntityError} from "../helpers/errors.helpers";
+import { PersonDALs } from '../database/repositories/person.dals';
+import { CategoryDALs } from '../database/repositories/user.repositories/user.dals/category.dals';
+import { TypeGrantDALs } from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
+import { UserDALs } from '../database/repositories/user.repositories/user.dals/user.dals';
+import { IUserData, IUserDataCreate } from '../intefaces/user.interfaces';
+import {
+  BadRequestError,
+  NotFoundError,
+  UnprocessedEntityError,
+} from '../helpers/errors.helpers';
 import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
+import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
+import { ILoginCreate } from '../intefaces/login.interfaces';
+import { hash } from 'bcrypt';
 
 class VisitorService {
+  private readonly visitorDALs: VisitorDALs;
+  private readonly loginDALs: LoginDALs;
+  private readonly personRepositories: PersonDALs;
+  private readonly categoryDALs: CategoryDALs;
+  private readonly typeGrantDALs: TypeGrantDALs;
+  private readonly userDALs: UserDALs;
+  private readonly studentDALs: StudentDALs;
+  private readonly employeeDALs: EmployeeDALs;
+  constructor() {
+    this.visitorDALs = new VisitorDALs();
+    this.loginDALs = new LoginDALs();
+    this.personRepositories = new PersonDALs();
+    this.categoryDALs = new CategoryDALs();
+    this.typeGrantDALs = new TypeGrantDALs();
+    this.userDALs = new UserDALs();
+    this.studentDALs = new StudentDALs();
+    this.employeeDALs = new EmployeeDALs();
+  }
 
-    private readonly visitorDALs: VisitorDALs;
-    private readonly personRepositories: PersonDALs
-    private readonly categoryDALs: CategoryDALs
-    private readonly typeGrantDALs: TypeGrantDALs;
-    private readonly userDALs: UserDALs
-    private readonly studentDALs: StudentDALs;
-    private readonly employeeDALs: EmployeeDALs
-    constructor() {
-        this.visitorDALs = new VisitorDALs()
-        this.personRepositories = new PersonDALs()
-        this.categoryDALs = new CategoryDALs()
-        this.typeGrantDALs = new TypeGrantDALs()
-        this.userDALs = new UserDALs()
-        this.studentDALs = new StudentDALs()
-        this.employeeDALs= new EmployeeDALs()
+  async createVisitor({
+    name,
+    category,
+    dailyMeals,
+    typeGrant,
+    picture,
+    email,
+    emailRecovery,
+    password,
+  }: IUserDataCreate) {
+    if (dailyMeals < 1 || dailyMeals > 3) {
+      throw new UnprocessedEntityError({
+        message: 'Daily meals must be between 1 and 3',
+      });
     }
 
-    async createVisitor({name, category, dailyMeals, typeGrant, picture}: IUserData) {
-         if(dailyMeals < 1 || dailyMeals > 3){
-            throw new UnprocessedEntityError({message: "Daily meals must be between 1 and 3"});
-        }
-        
-        const createPerson = await this.personRepositories.createPerson(name);
-        const getCategory = await this.categoryDALs.getCategoryByName(category);
-        const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
+    const passwordHash = await hash(password, 10);
 
-        if (getCategory === null || getTypeGrant === null) {
-            throw new NotFoundError({message: 'Category or Type Grant not found'})
-        }
+    const createLogin = await this.loginDALs.createLogin({
+      email,
+      emailRecovery,
+      password: passwordHash,
+    });
 
-        const createUser = await this.userDALs.createUser({
-            categoryId: getCategory.id,
-            typeGrantId: getTypeGrant.id,
-            personId: createPerson.id,
-            dailyMeals: dailyMeals
-        });
+    const createPerson = await this.personRepositories.createPerson(name);
+    const getCategory = await this.categoryDALs.getCategoryByName(category);
+    const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
 
-        const visitors = await this.visitorDALs.createVisitor(createUser.id);
-
-        return {
-            visitorId: visitors.id,
-            personName: createPerson.name,
-            categoryName: getCategory.name,
-            typeGrantName: getTypeGrant.name,
-            dailyMeals: dailyMeals
-        }
+    if (getCategory === null || getTypeGrant === null) {
+      throw new NotFoundError({ message: 'Category or Type Grant not found' });
     }
 
-    async updatetoVisitor({
-    userId,
-    oldCategory,
-  }: IVerifyUpdateByCategory) {
+    const createUser = await this.userDALs.createUser({
+      categoryId: getCategory.id,
+      typeGrantId: getTypeGrant.id,
+      personId: createPerson.id,
+      dailyMeals: dailyMeals,
+      loginUserId: createLogin.id,
+    });
+
+    const visitors = await this.visitorDALs.createVisitor(createUser.id);
+
+    return {
+      visitorId: visitors.id,
+      personName: createPerson.name,
+      categoryName: getCategory.name,
+      typeGrantName: getTypeGrant.name,
+      dailyMeals: dailyMeals,
+      loginData: {
+        email: createLogin.email,
+        emailRecovery: createLogin.emailRecovery,
+      },
+    };
+  }
+
+  async updatetoVisitor({ userId, oldCategory }: IVerifyUpdateByCategory) {
     let result;
     switch (oldCategory) {
       case 'FUNCIONARIO':
@@ -77,4 +106,4 @@ class VisitorService {
   }
 }
 
-export {VisitorService};
+export { VisitorService };

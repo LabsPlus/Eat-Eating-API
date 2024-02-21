@@ -5,16 +5,19 @@ import { PersonDALs } from '../database/repositories/person.dals';
 import { CategoryDALs } from '../database/repositories/user.repositories/user.dals/category.dals';
 import { TypeGrantDALs } from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
 import { UserDALs } from '../database/repositories/user.repositories/user.dals/user.dals';
-import { IUserData } from '../intefaces/user.interfaces';
+import { IUserData, IUserDataCreate } from '../intefaces/user.interfaces';
 import {
   BadRequestError,
   NotFoundError,
   UnprocessedEntityError,
 } from '../helpers/errors.helpers';
 import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
+import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
+import { hash } from 'bcrypt';
 
 class StudentService {
   private readonly studentDALs: StudentDALs;
+  private readonly loginDALs: LoginDALs;
   private readonly employeeDALs: EmployeeDALs;
   private readonly visitorDALs: VisitorDALs;
   private readonly personRepositories: PersonDALs;
@@ -24,6 +27,7 @@ class StudentService {
 
   constructor() {
     this.studentDALs = new StudentDALs();
+    this.loginDALs = new LoginDALs();
     this.personRepositories = new PersonDALs();
     this.categoryDALs = new CategoryDALs();
     this.typeGrantDALs = new TypeGrantDALs();
@@ -39,12 +43,24 @@ class StudentService {
     dailyMeals,
     typeGrant,
     picture,
-  }: IUserData) {
+    email,
+    emailRecovery,
+    password,
+  }: IUserDataCreate) {
     if (dailyMeals < 1 || dailyMeals > 3) {
       throw new UnprocessedEntityError({
         message: 'Daily meals must be between 1 and 3',
       });
     }
+
+    const passwordHash = await hash(password, 10);
+
+    const createLogin = await this.loginDALs.createLogin({
+      email,
+      emailRecovery,
+      password: passwordHash,
+    });
+
     const createPerson = await this.personRepositories.createPerson(name);
     const getCategory = await this.categoryDALs.getCategoryByName(category);
     const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
@@ -60,6 +76,7 @@ class StudentService {
       typeGrantId: getTypeGrant.id,
       personId: createPerson.id,
       dailyMeals: dailyMeals,
+      loginUserId: createLogin.id,
     });
 
     if (!enrollment) {
@@ -89,6 +106,10 @@ class StudentService {
       categoryName: getCategory.name,
       typeGrantName: getTypeGrant.name,
       dailyMeals: dailyMeals,
+      loginData: {
+        email: createLogin.email,
+        emailRecovery: createLogin.emailRecovery,
+      },
     };
   }
 
@@ -103,7 +124,7 @@ class StudentService {
         return await this.studentDALs.createStudent({ userId, enrollment });
       case 'VISITANTE':
         await this.visitorDALs.deleteByUserId(userId);
-        return await this.studentDALs.createStudent({ userId, enrollment }); 
+        return await this.studentDALs.createStudent({ userId, enrollment });
       default:
         throw new BadRequestError({ message: 'Old Category NotFound' });
     }

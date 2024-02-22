@@ -17,6 +17,10 @@ export interface IUserDataCreate extends IUserData {
   password: string;
   emailRecovery: string;
 }
+export interface IUSerDataUpdate extends IUserData{
+  emailRecovery: string;
+  password: string;
+}
 
 export interface IUserCreate {
   personId: number;

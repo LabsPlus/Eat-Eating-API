@@ -75,6 +75,8 @@ class UserControllers {
       course,
       cpf,
       born,
+      emailRecovery,
+      password
     } = request.body;
     const { id } = request.params;
 
@@ -86,6 +88,8 @@ class UserControllers {
         typeGrant,
         picture,
         enrollment,
+        emailRecovery, 
+        password
       },
       Number(id),
     );

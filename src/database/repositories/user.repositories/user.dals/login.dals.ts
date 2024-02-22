@@ -1,5 +1,5 @@
 import { prisma } from '../../../prisma.databases';
-import { ILoginCreate } from '../../../../intefaces/login.interfaces';
+import { ILoginCreate, ILoginUserUpdate } from '../../../../intefaces/login.interfaces';
 
 class LoginDALs {
   async createLogin({ email, emailRecovery, password }: ILoginCreate) {
@@ -12,6 +12,28 @@ class LoginDALs {
     });
 
     return result;
+  }
+
+  async findLoginByEmail(email: string){
+    const result = await prisma.loginUser.findUnique({
+      where:{
+        email,
+      }
+    });
+
+    return result;
+  }
+
+  async updateLogin({id, emailRecovery, password}: ILoginUserUpdate){
+      
+      const result = await prisma.loginUser.update({
+        where: {id: id},
+        data: {
+          emailRecovery,
+          password
+        }
+      });
+      return result;
   }
 }
 

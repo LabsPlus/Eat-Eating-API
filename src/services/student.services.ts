@@ -52,7 +52,12 @@ class StudentService {
         message: 'Daily meals must be between 1 and 3',
       });
     }
-
+    const loginByEmail = await this.loginDALs.findLoginByEmail(email);
+    if(loginByEmail){
+      throw new BadRequestError({
+        message: 'email already exists, only one email is allowed.',
+      });
+    }
     const passwordHash = await hash(password, 10);
 
     const createLogin = await this.loginDALs.createLogin({

@@ -126,16 +126,21 @@ class UserServices {
         console.log(user);
         if (user.category?.name === 'ESTUDANTE') {
           const result = await this.studentDALs.findStudentByUserId(user.id);
-
+          if (result && result.enrollment) {
           usersArray.push({ user: user, enrrolment: result!.enrollment });
+          }
         }
         if (user.category?.name === 'FUNCIONARIO') {
+          
           const result = await this.employeeDALs.findEmployeeByUserId(user.id);
-
-          usersArray.push({ user: user, enrrolment: result!.enrollment });
+          if (result && result.enrollment) {
+              usersArray.push({ user: user, enrrolment: result!.enrollment });
+          }
         }
-
-        usersArray.push({ user: user, enrrolment: '' });
+        if (user.category?.name === 'VISITANTE') {
+          usersArray.push({ user: user, enrrolment: '' });
+        }
+    
       }),
     );
     return usersArray;

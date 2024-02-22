@@ -30,3 +30,11 @@ export interface ILoginUpdateResetToken {
   resetTokenExpiry: Date;
   email: string;
 }
+
+export interface ILoginUserUpdate {
+  id: number;
+  emailRecovery: string;
+  password: string;
+}
+
+

@@ -15,6 +15,7 @@ class UserDALs {
     categoryId,
     personId,
     typeGrantId,
+    loginUserId,
     dailyMeals,
   }: IUserCreate) {
     const result = await prisma.user.create({
@@ -23,6 +24,7 @@ class UserDALs {
         personId,
         typeGrantId,
         dailyMeals,
+        loginUserId,
       },
     });
 

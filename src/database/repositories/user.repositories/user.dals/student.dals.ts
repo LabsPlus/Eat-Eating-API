@@ -41,6 +41,14 @@ class StudentDALs {
         return !existingStudent; // Retorna true se o estudante não existir, caso contrário retorna false
 
     }
+
+    async findStudentByUserId(userId: number){
+        const result = await prisma.student.findUnique(
+            {where: {userId}},
+        )
+
+        return result;
+    }
 }
 
 export {StudentDALs}

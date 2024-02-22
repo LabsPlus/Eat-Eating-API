@@ -11,6 +11,8 @@ import {
   UnprocessedEntityError,
 } from '../helpers/errors.helpers';
 import { hash } from 'bcrypt';
+import { StudentDALs } from '../database/repositories/user.repositories/user.dals/student.dals';
+import { EmployeeDALs } from '../database/repositories/user.repositories/user.dals/employee.dals';
 
 dotenv.config();
 
@@ -22,18 +24,30 @@ class UserServices {
   typeGrantDALs: TypeGrantDALs;
   verifyHelpers: VerifyHelpers;
   loginDALs: LoginDALs;
- 
+  employeeDALs: EmployeeDALs;
+  studentDALs: StudentDALs;
+
   constructor() {
     this.userDALs = new UserDALs();
     this.categoryDALs = new CategoryDALs();
     this.typeGrantDALs = new TypeGrantDALs();
     this.verifyHelpers = new VerifyHelpers();
-     this.loginDALs = new LoginDALs();
+    this.loginDALs = new LoginDALs();
+    this.studentDALs = new StudentDALs();
+    this.employeeDALs = new EmployeeDALs();
   }
 
   async updateAnUser(
-    { name, category, dailyMeals, typeGrant, picture, enrollment, emailRecovery,
-    password }: IUserDataUpdate,
+    {
+      name,
+      category,
+      dailyMeals,
+      typeGrant,
+      picture,
+      enrollment,
+      emailRecovery,
+      password,
+    }: IUserDataUpdate,
     id: number,
   ) {
     if (dailyMeals < 1 || dailyMeals > 3) {
@@ -42,8 +56,8 @@ class UserServices {
       });
     }
     const oldUser = await this.userDALs.existsUserById(id);
-    if(!oldUser){
-      throw new NotFoundError({message: 'User not Found!'});
+    if (!oldUser) {
+      throw new NotFoundError({ message: 'User not Found!' });
     }
     const passwordHash = await hash(password, 10);
     const updateLogin = await this.loginDALs.updateLogin({
@@ -51,7 +65,7 @@ class UserServices {
       emailRecovery: emailRecovery,
       password: passwordHash,
     });
-    
+
     const oldCategory = await this.categoryDALs.getCategoryById(
       oldUser!.categoryId!,
     );
@@ -78,14 +92,17 @@ class UserServices {
     if (oldCategory === null) {
       throw new NotFoundError({ message: 'old category not founded' });
     }
-    if (oldCategory.name !== category) {
-      await this.verifyHelpers.verifyUpdateByCategory({
-        userId: id,
-        oldCategory: oldCategory.name,
-        category: category,
-        enrollment: enrollment,
+    if (oldCategory.name === category) {
+      throw new UnprocessedEntityError({
+        message: 'enrrolment cannot be update without category',
       });
     }
+    await this.verifyHelpers.verifyUpdateByCategory({
+      userId: id,
+      oldCategory: oldCategory.name,
+      category: category,
+      enrollment: enrollment,
+    });
 
     return {
       id: updateUser.id,
@@ -102,7 +119,26 @@ class UserServices {
   }
 
   async listAllUsers() {
-    return this.userDALs.listAllUsers();
+    const users = await this.userDALs.listAllUsers();
+    const usersArray: { user: any; enrrolment: any }[] = [];
+    await Promise.all(
+      users.map(async (user) => {
+        console.log(user);
+        if (user.category?.name === 'ESTUDANTE') {
+          const result = await this.studentDALs.findStudentByUserId(user.id);
+
+          usersArray.push({ user: user, enrrolment: result!.enrollment });
+        }
+        if (user.category?.name === 'FUNCIONARIO') {
+          const result = await this.employeeDALs.findEmployeeByUserId(user.id);
+
+          usersArray.push({ user: user, enrrolment: result!.enrollment });
+        }
+
+        usersArray.push({ user: user, enrrolment: '' });
+      }),
+    );
+    return usersArray;
   }
 
   async deleteById(id: number) {

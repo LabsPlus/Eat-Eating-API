@@ -39,6 +39,13 @@ class EmployeeDALs {
         });
         return result;
     }
+
+    async findEmployeeByUserId(userId: number){
+        const result = await prisma.employee.findUnique(
+            {where: {userId}},
+        )
+        return result;
+    }
 }
 
 export {EmployeeDALs}

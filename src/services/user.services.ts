@@ -13,6 +13,7 @@ import {
 import {hash} from 'bcrypt';
 import {StudentDALs} from '../database/repositories/user.repositories/user.dals/student.dals';
 import {EmployeeDALs} from '../database/repositories/user.repositories/user.dals/employee.dals';
+import {EnrollmentDALs} from "../database/repositories/user.repositories/user.dals/enrollment.dals";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ class UserServices {
     loginDALs: LoginDALs;
     employeeDALs: EmployeeDALs;
     studentDALs: StudentDALs;
+    enrollmentDALs: EnrollmentDALs;
 
     constructor() {
         this.userDALs = new UserDALs();
@@ -35,6 +37,7 @@ class UserServices {
         this.loginDALs = new LoginDALs();
         this.studentDALs = new StudentDALs();
         this.employeeDALs = new EmployeeDALs();
+        this.enrollmentDALs = new EnrollmentDALs();
     }
 
     async updateAnUser(
@@ -101,7 +104,7 @@ class UserServices {
             userId: id,
             oldCategory: oldCategory.name,
             category: category,
-            enrollment: enrollment,
+            enrollmentId: enrollment,
         });
 
         return {
@@ -127,7 +130,7 @@ class UserServices {
                 if (user.category?.name === 'ESTUDANTE') {
                     const result = await this.studentDALs.findStudentByUserId(user.id);
                     if (result && result.enrollment) {
-                        usersArray.push({user: user, enrrolment: result!.enrollment});
+                        usersArray.push({user: user, enrrolment: result.enrollment!});
                     }
                 }
                 if (user.category?.name === 'FUNCIONARIO') {
@@ -166,8 +169,19 @@ class UserServices {
             throw new NotFoundError({message: 'Usuário não encontrado'});
         }
 
-        const result = await this.userDALs.deleteUserById(id);
-        return {message: 'User successfully deleted', id: result.id};
+        /*
+        Preciso deletar loginUser de 3:
+            estudante,
+            funcionário,
+            visitante
+
+        Preciso deletar enrollment de 2:
+            estudante
+            funcionário
+         */
+
+        const deleteUser = await this.userDALs.deleteUserById(id);
+        return {message: 'User successfully deleted', id: deleteUser.id};
     }
 }
 

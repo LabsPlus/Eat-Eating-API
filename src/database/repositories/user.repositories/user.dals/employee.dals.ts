@@ -2,49 +2,52 @@ import {prisma} from "../../../prisma.databases";
 import {IEmployeeCreate, IEmployeeUpdate} from "../../../../intefaces/employee.interfaces";
 
 class EmployeeDALs {
-    async createEmployee({userId, enrollment}: IEmployeeCreate) {
+    async createEmployee({userId, enrollmentId}: IEmployeeCreate) {
         const result = await prisma.employee.create({
             data: {
                 userId,
-                enrollment
+                enrollmentId
             }
         });
 
         return result
     }
-    async updateEmployee({ enrollment, userId}: IEmployeeUpdate){
+
+    async updateEmployee({enrollmentId, userId}: IEmployeeUpdate) {
         const result = await prisma.student.update({
-                where: {userId: userId},
-                data:{
-                    enrollment: enrollment,
-                }
+            where: {userId: userId},
+            data: {
+                enrollmentId: enrollmentId,
+            }
         })
         return result;
     }
-    async checkEnrollmentUnique(enrollment: string): Promise<boolean> {
-        const existingEmployee = await prisma.employee.findUnique({
-            where: {
-                enrollment: enrollment
-            }
-        });
 
-        return !existingEmployee; // Retorna true se o funcionário não existir, caso contrário retorna false
-    }
-
-    async deleteByUserId(userId: number){
+    async deleteByUserId(userId: number) {
         const result = await prisma.employee.deleteMany({
-            where:{
+            where: {
                 userId: userId,
             }
         });
         return result;
     }
 
-    async findEmployeeByUserId(userId: number){
+    async findEmployeeByUserId(userId: number) {
         const result = await prisma.employee.findUnique(
             {where: {userId}},
         )
-        return result;
+
+        const student = await prisma.employee.findUnique({
+            where: {userId},
+            select: {
+                enrollment: {
+                    select: {
+                        enrollment: true
+                    }
+                }
+            }
+        })
+        return student?.enrollment;
     }
 }
 

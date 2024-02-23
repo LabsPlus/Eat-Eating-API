@@ -13,19 +13,19 @@ class VerifyHelpers{
         this.visitorService = new VisitorService();
     }
      async verifyUpdateByCategory({userId, oldCategory, category, enrollment}: IVerifyUpdateByCategory): Promise<any>{
-        
+
             switch (category) {
                 case "ESTUDANTE":
                     return await this.studentService.updatetoStudent({userId, oldCategory, category, enrollment});
                 case "FUNCIONARIO":
-                   return await this.employeeService.updatetoEmployee({userId, oldCategory, category, enrollment});
+                   return await this.employeeService.updateToEmployee({userId, oldCategory, category, enrollment});
                 case "VISITANTE":
                     return await this.visitorService.updatetoVisitor({userId, oldCategory, category, enrollment});
                 default:
                     throw new BadRequestError({message: 'Category NotFound'});
             }
-        
-        
+
+
     }
 }
 

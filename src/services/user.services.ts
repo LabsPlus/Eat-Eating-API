@@ -120,7 +120,7 @@ class UserServices {
 
   async listAllUsers() {
     const users = await this.userDALs.listAllUsers();
-    const usersArray: { user: any; enrrollment: any }[] = [];
+    const usersArray: { user: any; enrollment: any }[] = [];
     await Promise.all(
       users.map(async (user) => {
         if (user.category?.name === 'ESTUDANTE') {
@@ -133,11 +133,11 @@ class UserServices {
           
           const result = await this.employeeDALs.findEmployeeByUserId(user.id);
           if (result && result.enrollment) {
-              usersArray.push({ user: user, enrrollment: result!.enrollment });
+              usersArray.push({ user: user, enrollment: result!.enrollment });
           }
         }
         if (user.category?.name === 'VISITANTE') {
-          usersArray.push({ user: user, enrrollment: '' });
+          usersArray.push({ user: user, enrollment: '' });
         }
     
       }),

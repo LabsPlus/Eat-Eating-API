@@ -120,25 +120,24 @@ class UserServices {
 
   async listAllUsers() {
     const users = await this.userDALs.listAllUsers();
-    const usersArray: { user: any; enrrolment: any }[] = [];
+    const usersArray: { user: any; enrollment: any }[] = [];
     await Promise.all(
       users.map(async (user) => {
-        console.log(user);
         if (user.category?.name === 'ESTUDANTE') {
           const result = await this.studentDALs.findStudentByUserId(user.id);
           if (result && result.enrollment) {
-          usersArray.push({ user: user, enrrolment: result!.enrollment });
+          usersArray.push({ user: user, enrrollment: result!.enrollment });
           }
         }
         if (user.category?.name === 'FUNCIONARIO') {
           
           const result = await this.employeeDALs.findEmployeeByUserId(user.id);
           if (result && result.enrollment) {
-              usersArray.push({ user: user, enrrolment: result!.enrollment });
+              usersArray.push({ user: user, enrollment: result!.enrollment });
           }
         }
         if (user.category?.name === 'VISITANTE') {
-          usersArray.push({ user: user, enrrolment: '' });
+          usersArray.push({ user: user, enrollment: '' });
         }
     
       }),

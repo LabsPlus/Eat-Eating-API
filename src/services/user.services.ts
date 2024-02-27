@@ -167,6 +167,7 @@ class UserServices {
 
         if (!user) {
             throw new NotFoundError({message: 'Usuário não encontrado'});
+
         }
 
         /*

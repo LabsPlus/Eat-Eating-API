@@ -48,6 +48,7 @@ CREATE TABLE "User" (
     "loginUserId" INTEGER,
     "categoryId" INTEGER,
     "typeGrantId" INTEGER,
+    "dailyMeals" INTEGER NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -55,11 +56,28 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Student" (
     "id" SERIAL NOT NULL,
-    "enrollment" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
     "courseId" INTEGER,
+    "enrollmentId" INTEGER NOT NULL,
 
     CONSTRAINT "Student_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Enrollment" (
+    "id" SERIAL NOT NULL,
+    "enrollment" TEXT NOT NULL,
+
+    CONSTRAINT "Enrollment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Employee" (
+    "id" SERIAL NOT NULL,
+    "enrollmentId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+
+    CONSTRAINT "Employee_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -68,15 +86,6 @@ CREATE TABLE "Visitor" (
     "userId" INTEGER NOT NULL,
 
     CONSTRAINT "Visitor_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Employee" (
-    "id" SERIAL NOT NULL,
-    "enrollment" TEXT NOT NULL,
-    "userId" INTEGER NOT NULL,
-
-    CONSTRAINT "Employee_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -142,19 +151,22 @@ CREATE UNIQUE INDEX "User_personId_key" ON "User"("personId");
 CREATE UNIQUE INDEX "User_loginUserId_key" ON "User"("loginUserId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Student_enrollment_key" ON "Student"("enrollment");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Student_userId_key" ON "Student"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Visitor_userId_key" ON "Visitor"("userId");
+CREATE UNIQUE INDEX "Student_enrollmentId_key" ON "Student"("enrollmentId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Employee_enrollment_key" ON "Employee"("enrollment");
+CREATE UNIQUE INDEX "Enrollment_enrollment_key" ON "Enrollment"("enrollment");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Employee_enrollmentId_key" ON "Employee"("enrollmentId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Employee_userId_key" ON "Employee"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Visitor_userId_key" ON "Visitor"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Picture_url_key" ON "Picture"("url");
@@ -181,13 +193,13 @@ ALTER TABLE "Administrator" ADD CONSTRAINT "Administrator_personId_fkey" FOREIGN
 ALTER TABLE "Administrator" ADD CONSTRAINT "Administrator_loginAdmId_fkey" FOREIGN KEY ("loginAdmId") REFERENCES "LoginAdministrator"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_loginUserId_fkey" FOREIGN KEY ("loginUserId") REFERENCES "LoginUser"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_loginUserId_fkey" FOREIGN KEY ("loginUserId") REFERENCES "LoginUser"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_typeGrantId_fkey" FOREIGN KEY ("typeGrantId") REFERENCES "TypeGrant"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -199,10 +211,16 @@ ALTER TABLE "Student" ADD CONSTRAINT "Student_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Student" ADD CONSTRAINT "Student_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Visitor" ADD CONSTRAINT "Visitor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Student" ADD CONSTRAINT "Student_enrollmentId_fkey" FOREIGN KEY ("enrollmentId") REFERENCES "Enrollment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Employee" ADD CONSTRAINT "Employee_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Employee" ADD CONSTRAINT "Employee_enrollmentId_fkey" FOREIGN KEY ("enrollmentId") REFERENCES "Enrollment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Visitor" ADD CONSTRAINT "Visitor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Picture" ADD CONSTRAINT "Picture_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

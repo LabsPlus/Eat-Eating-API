@@ -1,9 +1,9 @@
 export interface IStudentCreate {
     userId: number;
-    enrollment: string;
+    enrollmentId: number;
 }
 export interface IStudentUpdate {
     userId: number;
-    enrollment: string;
-    
+    enrollmentId: number;
+
 }

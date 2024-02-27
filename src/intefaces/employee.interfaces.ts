@@ -1,9 +1,9 @@
 export interface IEmployeeCreate {
     userId: number;
-    enrollment: string;
+    enrollmentId: number;
 }
 export interface IEmployeeUpdate {
     userId: number;
-    enrollment: string;
-   
+    enrollmentId: number;
+
 }

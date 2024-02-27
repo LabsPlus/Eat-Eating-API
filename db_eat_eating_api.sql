@@ -2,8 +2,6 @@
 DELETE FROM "Person";
 DELETE FROM "LoginAdministrator";
 DELETE FROM "Administrator";
-DELETE FROM "Category";
-DELETE FROM "TypeGrant";
 DELETE FROM "Picture";
 DELETE FROM "Course";
 DELETE FROM "Student";
@@ -11,6 +9,10 @@ DELETE FROM "Visitor";
 DELETE FROM "Employee";
 DELETE FROM "LoginUser";
 DELETE FROM "User";
+DELETE FROM "Enrollment";
+
+DELETE FROM "Category";
+DELETE FROM "TypeGrant";
 
 --Visualização de todas as tabelas
 SELECT * FROM "LoginAdministrator";
@@ -23,8 +25,9 @@ SELECT * FROM "Course";
 SELECT * FROM "Student";
 SELECT * FROM "Visitor";
 SELECT * FROM "Employee";
-SELECT * FROM "LoginUser";
 SELECT * FROM "User";
+SELECT * FROM "Enrollment";
+SELECT * FROM "LoginUser";
 
 --Inserindo na tabela 'Category'
 INSERT INTO "Category" (name)
@@ -113,13 +116,16 @@ VALUES (9, 1, 1, 1),
        (10, 2, 2, 2),
        (11, 3, 3, 3);
 
-INSERT INTO "Student" (enrollment, "courseId", "userId")
-VALUES ('22333', 7, 9);
+INSERT INTO "Student" ("userId", "enrollmentId")
+VALUES (1, 1);
+
+INSERT INTO "Enrollment"(enrollment)
+VALUES ('22333');
 
 INSERT INTO "Visitor" ("userId")
 VALUES (10);
 
-INSERT INTO "Employee" (enrollment,"userId")
+INSERT INTO "Employee" ("enrollmentId","userId")
 VALUES ('33222' , 11);
 
 -- Stored Procedure para Inserir um Estudante

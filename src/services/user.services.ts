@@ -1,153 +1,189 @@
-import { UserDALs } from '../database/repositories/user.repositories/user.dals/user.dals';
-import { CategoryDALs } from '../database/repositories/user.repositories/user.dals/category.dals';
-import { TypeGrantDALs } from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
+import {UserDALs} from '../database/repositories/user.repositories/user.dals/user.dals';
+import {CategoryDALs} from '../database/repositories/user.repositories/user.dals/category.dals';
+import {TypeGrantDALs} from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
 import dotenv from 'dotenv';
-import { IUserData, IUserDataUpdate } from '../intefaces/user.interfaces';
-import { VerifyHelpers } from '../helpers/verify.helpers';
-import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
+import {IUserData, IUserDataUpdate} from '../intefaces/user.interfaces';
+import {VerifyHelpers} from '../helpers/verify.helpers';
+import {LoginDALs} from '../database/repositories/user.repositories/user.dals/login.dals';
 import {
-  BadRequestError,
-  NotFoundError,
-  UnprocessedEntityError,
+    BadRequestError,
+    NotFoundError,
+    UnprocessedEntityError,
 } from '../helpers/errors.helpers';
-import { hash } from 'bcrypt';
-import { StudentDALs } from '../database/repositories/user.repositories/user.dals/student.dals';
-import { EmployeeDALs } from '../database/repositories/user.repositories/user.dals/employee.dals';
+import {hash} from 'bcrypt';
+import {StudentDALs} from '../database/repositories/user.repositories/user.dals/student.dals';
+import {EmployeeDALs} from '../database/repositories/user.repositories/user.dals/employee.dals';
+import {EnrollmentDALs} from "../database/repositories/user.repositories/user.dals/enrollment.dals";
 
 dotenv.config();
 
-const { Link } = process.env;
+const {Link} = process.env;
 
 class UserServices {
-  userDALs: UserDALs;
-  categoryDALs: CategoryDALs;
-  typeGrantDALs: TypeGrantDALs;
-  verifyHelpers: VerifyHelpers;
-  loginDALs: LoginDALs;
-  employeeDALs: EmployeeDALs;
-  studentDALs: StudentDALs;
+    userDALs: UserDALs;
+    categoryDALs: CategoryDALs;
+    typeGrantDALs: TypeGrantDALs;
+    verifyHelpers: VerifyHelpers;
+    loginDALs: LoginDALs;
+    employeeDALs: EmployeeDALs;
+    studentDALs: StudentDALs;
+    enrollmentDALs: EnrollmentDALs;
 
-  constructor() {
-    this.userDALs = new UserDALs();
-    this.categoryDALs = new CategoryDALs();
-    this.typeGrantDALs = new TypeGrantDALs();
-    this.verifyHelpers = new VerifyHelpers();
-    this.loginDALs = new LoginDALs();
-    this.studentDALs = new StudentDALs();
-    this.employeeDALs = new EmployeeDALs();
-  }
-
-  async updateAnUser(
-    {
-      name,
-      category,
-      dailyMeals,
-      typeGrant,
-      picture,
-      enrollment,
-      emailRecovery,
-      password,
-    }: IUserDataUpdate,
-    id: number,
-  ) {
-    if (dailyMeals < 1 || dailyMeals > 3) {
-      throw new UnprocessedEntityError({
-        message: 'Daily meals must be between 1 and 3',
-      });
-    }
-    const oldUser = await this.userDALs.existsUserById(id);
-    if (!oldUser) {
-      throw new NotFoundError({ message: 'User not Found!' });
-    }
-    const passwordHash = await hash(password, 10);
-    const updateLogin = await this.loginDALs.updateLogin({
-      id: oldUser.loginUserId!,
-      emailRecovery: emailRecovery,
-      password: passwordHash,
-    });
-
-    const oldCategory = await this.categoryDALs.getCategoryById(
-      oldUser!.categoryId!,
-    );
-    const getCategory = await this.categoryDALs.getCategoryByName(category);
-    const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
-    if (enrollment === undefined) {
-      throw new NotFoundError({ message: 'Enrollment is undefined' });
-    }
-    if (getCategory === null || getTypeGrant === null) {
-      throw new NotFoundError({ message: 'Category or Type Grant not found' });
+    constructor() {
+        this.userDALs = new UserDALs();
+        this.categoryDALs = new CategoryDALs();
+        this.typeGrantDALs = new TypeGrantDALs();
+        this.verifyHelpers = new VerifyHelpers();
+        this.loginDALs = new LoginDALs();
+        this.studentDALs = new StudentDALs();
+        this.employeeDALs = new EmployeeDALs();
+        this.enrollmentDALs = new EnrollmentDALs();
     }
 
-    const updateUser = await this.userDALs.updateUser({
-      id: id,
-      categoryId: getCategory.id,
-      typeGrantId: getTypeGrant.id,
-      name: name,
-      dailyMeals: dailyMeals,
-    });
-    if (!enrollment) {
-      throw new BadRequestError({ message: 'Enrollment is required' });
-    }
-
-    if (oldCategory === null) {
-      throw new NotFoundError({ message: 'old category not founded' });
-    }
-    if (oldCategory.name === category) {
-      throw new UnprocessedEntityError({
-        message: 'enrrolment cannot be update without category',
-      });
-    }
-    await this.verifyHelpers.verifyUpdateByCategory({
-      userId: id,
-      oldCategory: oldCategory.name,
-      category: category,
-      enrollment: enrollment,
-    });
-
-    return {
-      id: updateUser.id,
-      enrollment: enrollment,
-      personName: name,
-      categoryName: getCategory.name,
-      typeGrantName: getTypeGrant.name,
-      dailyMeals: dailyMeals,
-      loginData: {
-        email: updateLogin.email,
-        emailRecovery: updateLogin.emailRecovery,
-      },
-    };
-  }
-
-  async listAllUsers() {
-    const users = await this.userDALs.listAllUsers();
-    const usersArray: { user: any; enrollment: any }[] = [];
-    await Promise.all(
-      users.map(async (user) => {
-        if (user.category?.name === 'ESTUDANTE') {
-          const result = await this.studentDALs.findStudentByUserId(user.id);
-          if (result && result.enrollment) {
-          usersArray.push({ user: user, enrrollment: result!.enrollment });
-          }
+    async updateAnUser(
+        {
+            name,
+            category,
+            dailyMeals,
+            typeGrant,
+            picture,
+            enrollment,
+            emailRecovery,
+            password,
+        }: IUserDataUpdate,
+        id: number,
+    ) {
+        if (dailyMeals < 1 || dailyMeals > 3) {
+            throw new UnprocessedEntityError({
+                message: 'Daily meals must be between 1 and 3',
+            });
         }
-        if (user.category?.name === 'FUNCIONARIO') {
-          
-          const result = await this.employeeDALs.findEmployeeByUserId(user.id);
-          if (result && result.enrollment) {
-              usersArray.push({ user: user, enrollment: result!.enrollment });
-          }
+        const oldUser = await this.userDALs.existsUserById(id);
+        if (!oldUser) {
+            throw new NotFoundError({message: 'User not Found!'});
         }
-        if (user.category?.name === 'VISITANTE') {
-          usersArray.push({ user: user, enrollment: '' });
-        }
-    
-      }),
-    );
-    return usersArray;
-  }
+        const passwordHash = await hash(password, 10);
+        const updateLogin = await this.loginDALs.updateLogin({
+            id: oldUser.loginUserId!,
+            emailRecovery: emailRecovery,
+            password: passwordHash,
+        });
 
-  async deleteById(id: number) {
-    return this.userDALs.deleteUserById(id);
-  }
+        const oldCategory = await this.categoryDALs.getCategoryById(
+            oldUser!.categoryId!,
+        );
+        const getCategory = await this.categoryDALs.getCategoryByName(category);
+        const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
+        if (enrollment === undefined) {
+            throw new NotFoundError({message: 'Enrollment is undefined'});
+        }
+        if (getCategory === null || getTypeGrant === null) {
+            throw new NotFoundError({message: 'Category or Type Grant not found'});
+        }
+
+        const updateUser = await this.userDALs.updateUser({
+            id: id,
+            categoryId: getCategory.id,
+            typeGrantId: getTypeGrant.id,
+            name: name,
+            dailyMeals: dailyMeals,
+        });
+        if (!enrollment) {
+            throw new BadRequestError({message: 'Enrollment is required'});
+        }
+
+        if (oldCategory === null) {
+            throw new NotFoundError({message: 'old category not founded'});
+        }
+        if (oldCategory.name === category) {
+            throw new UnprocessedEntityError({
+                message: 'enrrolment cannot be update without category',
+            });
+        }
+        await this.verifyHelpers.verifyUpdateByCategory({
+            userId: id,
+            oldCategory: oldCategory.name,
+            category: category,
+            enrollmentId: enrollment,
+        });
+
+        return {
+            id: updateUser.id,
+            enrollment: enrollment,
+            personName: name,
+            categoryName: getCategory.name,
+            typeGrantName: getTypeGrant.name,
+            dailyMeals: dailyMeals,
+            loginData: {
+                email: updateLogin.email,
+                emailRecovery: updateLogin.emailRecovery,
+            },
+        };
+    }
+
+    async listAllUsers() {
+        const users = await this.userDALs.listAllUsers();
+        const usersArray: { user: any; enrrolment: any }[] = [];
+        await Promise.all(
+            users.map(async (user) => {
+                console.log(user);
+                if (user.category?.name === 'ESTUDANTE') {
+                    const result = await this.studentDALs.findStudentByUserId(user.id);
+                    if (result && result.enrollment) {
+                        usersArray.push({user: user, enrrolment: result.enrollment!});
+                    }
+                }
+                if (user.category?.name === 'FUNCIONARIO') {
+
+                    const result = await this.employeeDALs.findEmployeeByUserId(user.id);
+                    if (result && result.enrollment) {
+                        usersArray.push({user: user, enrrolment: result!.enrollment});
+                    }
+                }
+                if (user.category?.name === 'VISITANTE') {
+                    usersArray.push({user: user, enrrolment: ''});
+                }
+
+            }),
+        );
+        return usersArray;
+    }
+
+    /**
+     * Método assíncrono para deletar um usuário pelo ID.
+     *
+     * @async
+     * @param {number} id - O ID do usuário a ser deletado.
+     * @returns {Promise<{message: string, id: number}>} - Um objeto contendo uma mensagem de sucesso e o ID do usuário deletado.
+     * @throws {NotFoundError} Se o usuário com o ID fornecido não for encontrado.
+     * @description
+     * Este método primeiro verifica se o usuário existe chamando o método `existsUserById` da classe `UserDALs`.
+     * Se o usuário não existir, um erro `NotFoundError` é lançado.
+     * Se o usuário existir, o método `deleteUserById` da classe `UserDALs` é chamado para deletar o usuário.
+     * Finalmente, um objeto contendo uma mensagem de sucesso e o ID do usuário deletado é retornado.
+     */
+    async deleteById(id: number): Promise<{ message: string; id: number; }> {
+        const user = await this.userDALs.existsUserById(id);
+
+        if (!user) {
+            throw new NotFoundError({message: 'Usuário não encontrado'});
+
+        }
+
+        /*
+        Preciso deletar loginUser de 3:
+            estudante,
+            funcionário,
+            visitante
+
+        Preciso deletar enrollment de 2:
+            estudante
+            funcionário
+         */
+
+        const deleteUser = await this.userDALs.deleteUserById(id);
+        return {message: 'User successfully deleted', id: deleteUser.id};
+    }
 }
 
-export { UserServices };
+export {UserServices};

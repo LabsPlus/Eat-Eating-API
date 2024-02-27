@@ -3,52 +3,57 @@ import {IStudentCreate, IStudentUpdate} from "../../../../intefaces/student.inte
 
 class StudentDALs {
 
-    async createStudent({userId, enrollment}: IStudentCreate) {
+    async createStudent({userId, enrollmentId}: IStudentCreate) {
         const result = await prisma.student.create({
             data: {
                 userId,
-                enrollment,
+                enrollmentId,
             }
         });
 
         return result
     }
 
-    async updateStudent({ enrollment, userId}: IStudentUpdate){
+    async updateStudent({enrollmentId, userId}: IStudentUpdate) {
         const result = await prisma.student.update({
-                where: {userId: userId},
-                data:{
-                    enrollment: enrollment,
-                }
+            where: {userId: userId},
+            data: {
+                enrollmentId: enrollmentId,
+            }
         })
         return result;
     }
-    async deleteByUserId(userId: number){
+
+    async deleteByUserId(userId: number) {
         const result = await prisma.student.deleteMany({
-            where:{
+            where: {
                 userId: userId,
             }
         });
         return result;
     }
-    async checkEnrollmentUnique(enrollment: string): Promise<boolean> {
-        const existingStudent = await prisma.student.findUnique({
-            where: {
-                enrollment: enrollment
-            }
-        });
 
-        return !existingStudent; // Retorna true se o estudante não existir, caso contrário retorna false
 
-    }
-
-    async findStudentByUserId(userId: number){
+    async findStudentByUserId(userId: number) {
         const result = await prisma.student.findUnique(
             {where: {userId}},
         )
 
-        return result;
+        const student = await prisma.student.findUnique({
+            where: { userId },
+            select: {
+                enrollment: {
+                    select: {
+                        enrollment: true
+                    }
+                }
+            }
+        });
+
+        return student?.enrollment;
     }
+
+
 }
 
 export {StudentDALs}

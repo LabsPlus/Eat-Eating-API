@@ -10,6 +10,7 @@ export interface IUserData {
   dailyMeals: number;
   picture?: string;
   course?: string;
+  enrollmentId?: number;
 }
 
 export interface IUserDataCreate extends IUserData {

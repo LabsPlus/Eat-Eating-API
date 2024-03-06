@@ -6,6 +6,7 @@ import { CategoryDALs } from '../database/repositories/user.repositories/user.da
 import { TypeGrantDALs } from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
 import { UserDALs } from '../database/repositories/user.repositories/user.dals/user.dals';
 import { IUserData, IUserDataCreate } from '../intefaces/user.interfaces';
+import { EnrollmentDALs } from '../database/repositories/user.repositories/user.dals/enrollment.dals';
 import {
   BadRequestError,
   NotFoundError,
@@ -24,6 +25,7 @@ class StudentService {
   private readonly categoryDALs: CategoryDALs;
   private readonly typeGrantDALs: TypeGrantDALs;
   private readonly userDALs: UserDALs;
+  private readonly enrollmentDALs: EnrollmentDALs;
 
   constructor() {
     this.studentDALs = new StudentDALs();
@@ -34,6 +36,7 @@ class StudentService {
     this.userDALs = new UserDALs();
     this.visitorDALs = new VisitorDALs();
     this.employeeDALs = new EmployeeDALs();
+    this.enrollmentDALs = new EnrollmentDALs();
   }
 
   async createStudent({
@@ -52,8 +55,22 @@ class StudentService {
         message: 'Daily meals must be between 1 and 3',
       });
     }
+
+    if (!enrollment) {
+      throw new BadRequestError({ message: 'Enrollment is required' });
+    }
+    const isEnrollmentUnique = await this.enrollmentDALs.checkEnrollmentUnique(
+      enrollment,
+    );
+
+    if (!isEnrollmentUnique) {
+      throw new BadRequestError({
+        message: 'Enrollment already exists, only one enrollment is allowed.',
+      });
+    }
     const loginByEmail = await this.loginDALs.findLoginByEmail(email);
-    if(loginByEmail){
+
+    if (loginByEmail) {
       throw new BadRequestError({
         message: 'email already exists, only one email is allowed.',
       });
@@ -67,6 +84,9 @@ class StudentService {
     });
 
     const createPerson = await this.personRepositories.createPerson(name);
+    const createEnrollment = await this.enrollmentDALs.createEnrollment(
+      enrollment,
+    );
     const getCategory = await this.categoryDALs.getCategoryByName(category);
     const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
     if (enrollment === undefined) {
@@ -88,25 +108,15 @@ class StudentService {
       throw new BadRequestError({ message: 'Enrollment is required' });
     }
 
-    const isEnrollmentUnique = await this.studentDALs.checkEnrollmentUnique(
-      enrollment,
-    );
-
-    if (!isEnrollmentUnique) {
-      throw new BadRequestError({
-        message: 'Enrollment already exists, only one enrollment is allowed.',
-      });
-    }
-
     const student = await this.studentDALs.createStudent({
       userId: createUser.id,
-      enrollment: enrollment,
+      enrollmentId: createEnrollment.id,
     });
 
     return {
       id: createUser.id,
       studentId: student.id,
-      enrollment: student.enrollment,
+      enrollment: student.enrollmentId,
       personName: createPerson.name,
       categoryName: getCategory.name,
       typeGrantName: getTypeGrant.name,
@@ -122,14 +132,64 @@ class StudentService {
     userId,
     oldCategory,
     enrollment,
+    category,
   }: IVerifyUpdateByCategory) {
+    if (!enrollment) {
+      throw new BadRequestError({ message: 'Enrollment is required' });
+    }
+   
     switch (oldCategory) {
       case 'FUNCIONARIO':
-        await this.employeeDALs.deleteByUserId(userId);
-        return await this.studentDALs.createStudent({ userId, enrollment });
+        const oldEnrollmentEmployee = await this.employeeDALs.findEnrrolmentByUserId(
+          userId,
+        );
+         if (!oldEnrollmentEmployee) {
+          throw new BadRequestError({ message: 'OldEnrollment is required' });
+        }
+        
+        if(oldEnrollmentEmployee.enrollment === enrollment){
+             throw new UnprocessedEntityError({
+            message: 'category cannot be update without enrrolment',
+          }); 
+        }
+        
+        const employee = await this.employeeDALs.deleteByUserId(userId);
+        const updateEnrollment = await this.enrollmentDALs.updateEnrollment(
+          employee.enrollmentId,
+          enrollment,
+        );
+        return await this.studentDALs.createStudent({
+          userId,
+          enrollmentId: updateEnrollment.id,
+        });
       case 'VISITANTE':
         await this.visitorDALs.deleteByUserId(userId);
-        return await this.studentDALs.createStudent({ userId, enrollment });
+        const createEnrollment = await this.enrollmentDALs.createEnrollment(
+          enrollment,
+        );
+        return await this.studentDALs.createStudent({
+          userId,
+          enrollmentId: createEnrollment.id,
+        });
+
+      case 'ESTUDANTE':
+        const oldEnrollmentStudent = await this.studentDALs.findEnrrolmentByUserId(
+          userId,
+        );
+        
+         if (!oldEnrollmentStudent) {
+          throw new BadRequestError({ message: 'OldEnrollment is required' });
+        }
+      
+       if (
+            oldCategory !== category || oldEnrollmentStudent.enrollment !== enrollment
+        ) {
+          throw new UnprocessedEntityError({
+            message: 'enrrolment cannot be update without category',
+          });
+          
+        }
+        return await this.studentDALs.findStudentByUserId( userId );
       default:
         throw new BadRequestError({ message: 'Old Category NotFound' });
     }

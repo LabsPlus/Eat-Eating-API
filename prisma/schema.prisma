@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  
 }
 
 datasource db {
@@ -46,47 +47,58 @@ model Person {
 model User {
   id Int @id @default(autoincrement())
 
-  personId    Int  @unique // 1-1 : (Obrigatório) Um usuário está associado a uma pessoa
-  loginUserId Int? @unique // 1-1 : (Opcional) Um usuário está associado a um login
+  personId    Int        @unique // 1-1 : (Obrigatório) Um usuário está associado a uma pessoa
+  loginUserId Int?       @unique // 1-1 : (Opcional) Um usuário está associado a um login
   categoryId  Int? // 1-1 : (Opcional) Um usuário está associado a uma categoria
   typeGrantId Int? // 1-1 : (Opcional) Um usuário está associado a um tipo de bolsa
-  dailyMeals Int 
-  person    Person     @relation(fields: [personId], references: [id])
-  category  Category?  @relation(fields: [categoryId], references: [id])
-  loginUser LoginUser? @relation(fields: [loginUserId], references: [id])
-  typeGrant TypeGrant? @relation(fields: [typeGrantId], references: [id])
+  dailyMeals  Int
+  person      Person     @relation(fields: [personId], references: [id], onDelete: Cascade)
+  loginUser   LoginUser? @relation(fields: [loginUserId], references: [id], onDelete: Cascade)
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  typeGrant   TypeGrant? @relation(fields: [typeGrantId], references: [id])
 
   picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
   visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante
   employee Employee? // 1-1 : (Opcional) Um usuário está associado a um funcionário
-
 }
 
 model Student {
+  id Int @id @default(autoincrement())
+
+  userId       Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
+  courseId     Int? // 1-N : (Obrigatório) Um estudante está associado a um curso que possui vários estudantes
+  enrollmentId Int  @unique // 1-1 : (Obrigatório) Um estudante está associado a uma matrícula
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Course Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+}
+
+model Enrollment {
   id         Int    @id @default(autoincrement())
   enrollment String @unique
 
-  userId   Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
-  courseId Int? // 1-N : (Obrigatório) Um estudante está associado a um curso que possui vários estudantes
+  student  Student? // 1-1 : (Opcional) Uma matrícula está associada a um estudante
+  employee Employee? // 1-1 : (Opcional) Uma matrícula está associada a um funcionário
+}
 
-  user   User    @relation(fields: [userId], references: [id])
-  Course Course? @relation(fields: [courseId], references: [id])
+model Employee {
+  id           Int @id @default(autoincrement())
+  enrollmentId Int @unique // 1-1 : (Obrigatório) Um estudante está associado a uma matrícula
+
+  userId Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 }
 
 model Visitor {
   id Int @id @default(autoincrement())
 
   userId Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
-  user   User @relation(fields: [userId], references: [id])
-}
-
-model Employee {
-  id         Int    @id @default(autoincrement())
-  enrollment String @unique
-
-  userId Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Picture {

@@ -4,5 +4,5 @@ export interface IVerifyUpdateByCategory{
     userId: number,
     oldCategory: CategoryName,
     category: CategoryName,
-    enrollment: string
+    enrollment?: string
 }

@@ -10,6 +10,16 @@ class PersonDALs {
 
         return result
     }
+
+    async deletePerson(id: number){
+        const result = prisma.person.delete({
+            where: {
+                id: id,
+            }
+        })
+
+        return result
+    }
 }
 
 export {PersonDALs};

@@ -6,6 +6,7 @@ import { CategoryDALs } from '../database/repositories/user.repositories/user.da
 import { TypeGrantDALs } from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
 import { UserDALs } from '../database/repositories/user.repositories/user.dals/user.dals';
 import { IUserData, IUserDataCreate } from '../intefaces/user.interfaces';
+import {EnrollmentDALs} from "../database/repositories/user.repositories/user.dals/enrollment.dals";
 import {
   BadRequestError,
   NotFoundError,
@@ -25,6 +26,7 @@ class VisitorService {
   private readonly userDALs: UserDALs;
   private readonly studentDALs: StudentDALs;
   private readonly employeeDALs: EmployeeDALs;
+  private readonly enrollmentDALs: EnrollmentDALs;
   constructor() {
     this.visitorDALs = new VisitorDALs();
     this.loginDALs = new LoginDALs();
@@ -34,6 +36,7 @@ class VisitorService {
     this.userDALs = new UserDALs();
     this.studentDALs = new StudentDALs();
     this.employeeDALs = new EmployeeDALs();
+    this.enrollmentDALs = new EnrollmentDALs();
   }
 
   async createVisitor({
@@ -100,11 +103,13 @@ class VisitorService {
     let result;
     switch (oldCategory) {
       case 'FUNCIONARIO':
-        await this.employeeDALs.deleteByUserId(userId);
-        result = await this.visitorDALs.createVisitor(userId);
+        const employee = await this.employeeDALs.deleteByUserId(userId);
+         await this.enrollmentDALs.deleteEnrollmentById(employee.enrollmentId);
+        return await this.visitorDALs.createVisitor(userId);
       case 'ESTUDANTE':
-        await this.studentDALs.deleteByUserId(userId);
-        result = await this.visitorDALs.createVisitor(userId);
+        const student = await this.studentDALs.deleteByUserId(userId);
+        await this.enrollmentDALs.deleteEnrollmentById(student.enrollmentId);
+        return await this.visitorDALs.createVisitor(userId);
       default:
         throw new BadRequestError({ message: 'Old Category NotFound' });
     }

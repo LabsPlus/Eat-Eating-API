@@ -129,18 +129,26 @@ class StudentService {
     async updatetoStudent({
                               userId,
                               oldCategory,
-                              enrollmentId,
+                              enrollment,
                           }: IVerifyUpdateByCategory) {
+         if (!enrollment) {
+            throw new BadRequestError({message: 'Enrollment is required'});
+        }
         switch (oldCategory) {
             case 'FUNCIONARIO':
-                await this.employeeDALs.deleteByUserId(userId);
-                return await this.studentDALs.createStudent({userId, enrollmentId});
+                const employee = await this.employeeDALs.deleteByUserId(userId);
+                const updateEnrollment = await this.enrollmentDALs.updateEnrollment(employee.enrollmentId, enrollment)
+                return await this.studentDALs.createStudent({userId, enrollmentId: updateEnrollment.id});
             case 'VISITANTE':
                 await this.visitorDALs.deleteByUserId(userId);
-                return await this.studentDALs.createStudent({userId, enrollmentId});
+                const createEnrollment = await this.enrollmentDALs.createEnrollment(enrollment)
+                return await this.studentDALs.createStudent({userId, enrollmentId: createEnrollment.id});
             default:
                 throw new BadRequestError({message: 'Old Category NotFound'});
         }
+
+        
+
     }
 }
 

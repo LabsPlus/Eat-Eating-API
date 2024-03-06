@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  
 }
 
 datasource db {
@@ -69,8 +70,8 @@ model Student {
   courseId     Int? // 1-N : (Obrigatório) Um estudante está associado a um curso que possui vários estudantes
   enrollmentId Int  @unique // 1-1 : (Obrigatório) Um estudante está associado a uma matrícula
 
-  user   User    @relation(fields: [userId], references: [id])
-  Course Course? @relation(fields: [courseId], references: [id])
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Course Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 }
@@ -88,7 +89,7 @@ model Employee {
   enrollmentId Int @unique // 1-1 : (Obrigatório) Um estudante está associado a uma matrícula
 
   userId Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 }
@@ -97,7 +98,7 @@ model Visitor {
   id Int @id @default(autoincrement())
 
   userId Int  @unique // 1-1 : (Obrigatório) Um funcionário está associado a um usuário
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Picture {

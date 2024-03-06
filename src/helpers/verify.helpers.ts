@@ -18,6 +18,7 @@ class VerifyHelpers{
                 case "ESTUDANTE":
                     return await this.studentService.updatetoStudent({userId, oldCategory, category, enrollment});
                 case "FUNCIONARIO":
+                    
                    return await this.employeeService.updateToEmployee({userId, oldCategory, category, enrollment});
                 case "VISITANTE":
                     return await this.visitorService.updatetoVisitor({userId, oldCategory, category, enrollment});

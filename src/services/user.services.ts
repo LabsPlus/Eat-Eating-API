@@ -88,21 +88,18 @@ class UserServices {
         if (!enrollment && category !== "VISITANTE") {
             throw new BadRequestError({message: 'Enrollment is required'});
         }
-
+       
         if (oldCategory === null) {
             throw new NotFoundError({message: 'old category not founded'});
         }
-        if (oldCategory.name === category && category !== "VISITANTE") {
-            throw new UnprocessedEntityError({
-                message: 'enrrolment cannot be update without category',
-            });
-        }
+       
         await this.verifyHelpers.verifyUpdateByCategory({
             userId: id,
             oldCategory: oldCategory.name,
             category: category,
             enrollment: enrollment,
         });
+        
          const updateUser = await this.userDALs.updateUser({
             id: id,
             categoryId: getCategory.id,
@@ -130,7 +127,6 @@ class UserServices {
         const usersArray: { user: any; enrrolment: any }[] = [];
         await Promise.all(
             users.map(async (user) => {
-                console.log(user);
                 if (user.category?.name === 'ESTUDANTE') {
                     const result = await this.studentDALs.findEnrrolmentByUserId(user.id);
                     if (result && result.enrollment) {

@@ -1,5 +1,5 @@
 import {IVerifyUpdateByCategory} from '../intefaces/verify.interfaces'
-import { BadRequestError } from './errors.helpers';
+import { BadRequestError, UnprocessedEntityError } from './errors.helpers';
 import { StudentService } from '../services/student.services';
 import { EmployeeService } from '../services/employee.services';
 import { VisitorService } from '../services/visitor.services';
@@ -13,11 +13,12 @@ class VerifyHelpers{
         this.visitorService = new VisitorService();
     }
      async verifyUpdateByCategory({userId, oldCategory, category, enrollment}: IVerifyUpdateByCategory): Promise<any>{
-
+            
             switch (category) {
                 case "ESTUDANTE":
                     return await this.studentService.updatetoStudent({userId, oldCategory, category, enrollment});
                 case "FUNCIONARIO":
+                    
                    return await this.employeeService.updateToEmployee({userId, oldCategory, category, enrollment});
                 case "VISITANTE":
                     return await this.visitorService.updatetoVisitor({userId, oldCategory, category, enrollment});

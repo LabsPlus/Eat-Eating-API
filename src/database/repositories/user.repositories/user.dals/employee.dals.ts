@@ -24,7 +24,7 @@ class EmployeeDALs {
     }
 
     async deleteByUserId(userId: number) {
-        const result = await prisma.employee.deleteMany({
+        const result = await prisma.employee.delete({
             where: {
                 userId: userId,
             }
@@ -32,12 +32,12 @@ class EmployeeDALs {
         return result;
     }
 
-    async findEmployeeByUserId(userId: number) {
+    async findEnrrolmentByUserId(userId: number) {
         const result = await prisma.employee.findUnique(
             {where: {userId}},
         )
 
-        const student = await prisma.employee.findUnique({
+        const employee = await prisma.employee.findUnique({
             where: {userId},
             select: {
                 enrollment: {
@@ -47,7 +47,17 @@ class EmployeeDALs {
                 }
             }
         })
-        return student?.enrollment;
+        return employee?.enrollment;
+    }
+
+    async findEmployeeByUserId(userId: number){
+        const employee = await prisma.employee.findUnique({
+            where:{
+                userId: userId,
+            }
+        });
+
+        return employee;
     }
 }
 

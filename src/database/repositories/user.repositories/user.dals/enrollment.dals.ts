@@ -20,7 +20,18 @@ class EnrollmentDALs {
 
         return !existingEnrollment; // Retorna true se a matrícula não existir, caso contrário retorna false
     }
+    async updateEnrollment(id: number, enrollment: string){
+        const result = await prisma.enrollment.update({
+            where:{
+                id: id,
+            },
+            data:{
+                enrollment: enrollment,
+            }
+        })
 
+        return result;
+    }
     async deleteEnrollmentById(id: number) {
         const result = await prisma.enrollment.delete({
             where: {

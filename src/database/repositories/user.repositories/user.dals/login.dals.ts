@@ -24,6 +24,15 @@ class LoginDALs {
         return result;
     }
 
+    async findLoginById(id: number) {
+        const result = await prisma.loginUser.findUnique({
+            where: {
+                id,
+            }
+        });
+
+        return result;
+    }
     async updateLogin({id, emailRecovery, password}: ILoginUserUpdate) {
 
         const result = await prisma.loginUser.update({

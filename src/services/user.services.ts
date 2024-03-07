@@ -67,7 +67,16 @@ class UserServices {
         if (!oldUser) {
             throw new NotFoundError({message: 'User not Found!'});
         }
-        const passwordHash = await hash(password, 10);
+        const oldLogin = await this.loginDALs.findLoginById(oldUser.loginUserId!);
+        if(!oldLogin){
+            throw new NotFoundError({message: 'Login not Found!'});
+        }
+       
+        let passwordHash = oldLogin!.password // recebe por padrão a senha antiga do usuario caso o administrador não mande nenhuma senha para trocar
+    
+        if(password){
+             passwordHash = await hash(password, 10); // troca a senha se existir uma senha para trocar
+        }
         const updateLogin = await this.loginDALs.updateLogin({
             id: oldUser.loginUserId!,
             emailRecovery: emailRecovery,

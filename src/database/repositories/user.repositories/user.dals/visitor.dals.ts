@@ -12,6 +12,15 @@ class VisitorDALs {
         return result
     }
 
+    async findVisitorByUserId(userId: number){
+        const result = await prisma.visitor.findUnique({
+            where:{
+                userId: userId,
+            }
+        });
+        return result;
+    }
+
     async deleteByUserId(userId: number){
         const result = await prisma.visitor.delete({
             where:{

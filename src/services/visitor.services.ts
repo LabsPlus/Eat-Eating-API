@@ -110,6 +110,8 @@ class VisitorService {
         const student = await this.studentDALs.deleteByUserId(userId);
         await this.enrollmentDALs.deleteEnrollmentById(student.enrollmentId);
         return await this.visitorDALs.createVisitor(userId);
+      case 'VISITANTE':
+        return await this.visitorDALs.findVisitorByUserId(userId);
       default:
         throw new BadRequestError({ message: 'Old Category NotFound' });
     }

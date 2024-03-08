@@ -6,10 +6,16 @@ const options: swaggerJSDoc.Options = {
     info: {
       title: 'API Eat-Eating',
       version: '1.0.0',
-      description: `Esta API é responsável por gerenciar os accesos ao restaurante do IFBA.
+      description: `Esta API é responsável por gerenciar os acessos ao restaurante do IFBA.
       Utiliza TypeScript, Jest para testes, Express como framework, Nodemailer para o envio de e-mails,
       Swagger para documentação.`,
     },
+    servers: [
+      {
+        "url": "http://localhost:3003",
+        "description": "Servidor Local"
+      }
+    ],
   },
   apis: ['./src/routes/*.ts'],
 };

@@ -15,8 +15,10 @@ class LoginRoutes {
      * @swagger
      * /login/create-login:
      *   post:
-     *     summary: Cria um login para o Adminidastro de usuários
-     *     description: Cria um login para o Adminidastro de usuários
+     *     summary: Criar login para os administradores de usuários
+     *     description: Criar login para os administradores de usuários
+     *     tags:
+     *       - Login Admin
      *     requestBody:
      *       required: true
      *       content:

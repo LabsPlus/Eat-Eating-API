@@ -5,6 +5,8 @@ import { UserRoutes } from './routes/user.routes';
 import { errorMiddleware } from './middlewares/error.middlewares';
 import requestIp from 'request-ip';
 import { CorsMiddleware } from './server';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger';
 
 export class App {
   private app: Application;
@@ -25,6 +27,15 @@ export class App {
   private setupAllRoutes() {
     this.setupLoginRoutes();
     this.setupUserRoutes();
+    this.setupSwagger();
+  }
+
+  private setupSwagger() {
+    this.app.use(
+      '/documentation',
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerSpec),
+    );
   }
 
   private setupUserRoutes() {

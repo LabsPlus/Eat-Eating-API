@@ -11,6 +11,32 @@ class LoginRoutes {
   }
 
   postRoutes() {
+    /**
+     * @swagger
+     * /login/create-login:
+     *   post:
+     *     summary: Cria um login para o Adminidastro de usuários
+     *     description: Cria um login para o Adminidastro de usuários
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               email:
+     *                 type: string
+     *               password:
+     *                 type: string
+     *               emailRecovery:
+     *                 type: string
+     *     responses:
+     *       '201':
+     *         description: Login criado com sucesso
+     *       '401':
+     *         description: User email already exists
+     */
+
     this.router.post(
       '/create-login',
       this.loginController.createLogin.bind(this.loginController),

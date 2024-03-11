@@ -151,7 +151,12 @@ class EmployeeService {
             message: 'category cannot be update without enrrolment',
           });  
         }
-        
+        const IsEnrrolmentUnique = this.enrollmentDALs.checkEnrollmentUnique(enrollment);
+        if(!IsEnrrolmentUnique){
+          throw new BadRequestError({
+            message: 'Enrollment already exists, only one enrollment is allowed.',
+          }); 
+        }
         const student = await this.studentDALs.deleteByUserId(userId);
         const updateEnrollment = await this.enrollmentDALs.updateEnrollment(
           student.enrollmentId,

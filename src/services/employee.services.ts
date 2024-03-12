@@ -75,7 +75,7 @@ class EmployeeService {
 
     if (loginByEmail) {
       throw new BadRequestError({
-        message: 'email already exists, only one email is allowed.',
+        message: 'Email already exists, only one email is allowed.',
       });
     }
     const passwordHash = await hash(password, 10);
@@ -162,6 +162,7 @@ class EmployeeService {
           throw new UnprocessedEntityError({
             message: 'category cannot be update without enrrolment',
           });
+
         }
         const IsEnrrolmentUnique =
           this.enrollmentDALs.checkEnrollmentUnique(enrollment);
@@ -171,6 +172,7 @@ class EmployeeService {
               'Enrollment already exists, only one enrollment is allowed.',
           });
         }
+
         const student = await this.studentDALs.deleteByUserId(userId);
         const updateEnrollment = await this.enrollmentDALs.updateEnrollment(
           student.enrollmentId,

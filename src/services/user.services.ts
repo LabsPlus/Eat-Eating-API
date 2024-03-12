@@ -16,6 +16,7 @@ import {EmployeeDALs} from '../database/repositories/user.repositories/user.dals
 import {EnrollmentDALs} from "../database/repositories/user.repositories/user.dals/enrollment.dals";
 import { VisitorDALs } from '../database/repositories/user.repositories/user.dals/visitor.dals';
 import { PersonDALs } from '../database/repositories/person.dals';
+import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 dotenv.config();
 
 const {Link} = process.env;
@@ -31,6 +32,7 @@ class UserServices {
     enrollmentDALs: EnrollmentDALs;
     visitorDALs: VisitorDALs;
     personDALs: PersonDALs;
+    private readonly pictureDALs: PictureDALs;
 
     constructor() {
         this.userDALs = new UserDALs();
@@ -43,6 +45,7 @@ class UserServices {
         this.enrollmentDALs = new EnrollmentDALs();
         this.visitorDALs = new VisitorDALs();
         this.personDALs = new PersonDALs();
+        this.pictureDALs = new PictureDALs();
     }
 
     async updateAnUser(
@@ -133,24 +136,30 @@ class UserServices {
 
     async listAllUsers() {
         const users = await this.userDALs.listAllUsers();
-        const usersArray: { user: any; enrrolment: any }[] = [];
+        const usersArray: { user: any; enrrolment: any; picture: any }[] = [];
         await Promise.all(
             users.map(async (user) => {
+                const picture = await this.pictureDALs.findPictureByUserId(user.id);
+                let url = "";
+                if(picture){
+                    url = picture.url;
+                }
                 if (user.category?.name === 'ESTUDANTE') {
                     const result = await this.studentDALs.findEnrrolmentByUserId(user.id);
-                    if (result && result.enrollment) {
-                        usersArray.push({user: user, enrrolment: result.enrollment!});
+                    
+                    if (result && result.enrollment ) {
+                        usersArray.push({user: user, enrrolment: result.enrollment!, picture: url});
                     }
                 }
                 if (user.category?.name === 'FUNCIONARIO') {
 
                     const result = await this.employeeDALs.findEnrrolmentByUserId(user.id);
-                    if (result && result.enrollment) {
-                        usersArray.push({user: user, enrrolment: result!.enrollment});
+                    if (result && result.enrollment ) {
+                        usersArray.push({user: user, enrrolment: result!.enrollment, picture: url});
                     }
                 }
-                if (user.category?.name === 'VISITANTE') {
-                    usersArray.push({user: user, enrrolment: ''});
+                if (user.category?.name === 'VISITANTE' ) {
+                    usersArray.push({user: user, enrrolment: '', picture: url});
                 }
 
             }),

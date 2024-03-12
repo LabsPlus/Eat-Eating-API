@@ -15,6 +15,7 @@ import {
 import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
 import { hash } from 'bcrypt';
+import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 
 class StudentService {
   private readonly studentDALs: StudentDALs;
@@ -26,6 +27,7 @@ class StudentService {
   private readonly typeGrantDALs: TypeGrantDALs;
   private readonly userDALs: UserDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
+  private readonly pictureDALs: PictureDALs;
 
   constructor() {
     this.studentDALs = new StudentDALs();
@@ -37,6 +39,7 @@ class StudentService {
     this.visitorDALs = new VisitorDALs();
     this.employeeDALs = new EmployeeDALs();
     this.enrollmentDALs = new EnrollmentDALs();
+    this.pictureDALs = new PictureDALs();
   }
 
   async createStudent({
@@ -103,7 +106,16 @@ class StudentService {
       dailyMeals: dailyMeals,
       loginUserId: createLogin.id,
     });
+     let url = "";
 
+    if (picture) {
+      url = picture;
+    }
+
+    const createPicture = await this.pictureDALs.createPicture({
+      url: url,
+      userId: createUser.id,
+    });
     if (!enrollment) {
       throw new BadRequestError({ message: 'Enrollment is required' });
     }
@@ -120,6 +132,7 @@ class StudentService {
       personName: createPerson.name,
       categoryName: getCategory.name,
       typeGrantName: getTypeGrant.name,
+      picture: createPicture.url,
       dailyMeals: dailyMeals,
       loginData: {
         email: createLogin.email,

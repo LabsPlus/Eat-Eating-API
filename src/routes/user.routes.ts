@@ -178,7 +178,7 @@ class UserRoutes {
    *             - Category or Type Grant not found
    *             - Old category not founded
    *       '422':
-   *          description:
+   *          description: Daily meals must be between 1 and 3
    */
   putRoutes() {
     this.router.put(

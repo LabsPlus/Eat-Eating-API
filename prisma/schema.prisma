@@ -106,7 +106,7 @@ model Picture {
   url String @unique
 
   userId Int  @unique // 1-1 : (Obrigatório) Uma imagem está associada a um usuário
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum CategoryName {

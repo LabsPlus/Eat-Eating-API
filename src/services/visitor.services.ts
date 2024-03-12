@@ -6,7 +6,7 @@ import { CategoryDALs } from '../database/repositories/user.repositories/user.da
 import { TypeGrantDALs } from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
 import { UserDALs } from '../database/repositories/user.repositories/user.dals/user.dals';
 import { IUserData, IUserDataCreate } from '../intefaces/user.interfaces';
-import {EnrollmentDALs} from "../database/repositories/user.repositories/user.dals/enrollment.dals";
+import { EnrollmentDALs } from '../database/repositories/user.repositories/user.dals/enrollment.dals';
 import {
   BadRequestError,
   NotFoundError,
@@ -16,6 +16,7 @@ import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
 import { ILoginCreate } from '../intefaces/login.interfaces';
 import { hash } from 'bcrypt';
+import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 
 class VisitorService {
   private readonly visitorDALs: VisitorDALs;
@@ -27,6 +28,8 @@ class VisitorService {
   private readonly studentDALs: StudentDALs;
   private readonly employeeDALs: EmployeeDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
+  private readonly pictureDALs: PictureDALs;
+
   constructor() {
     this.visitorDALs = new VisitorDALs();
     this.loginDALs = new LoginDALs();
@@ -37,6 +40,7 @@ class VisitorService {
     this.studentDALs = new StudentDALs();
     this.employeeDALs = new EmployeeDALs();
     this.enrollmentDALs = new EnrollmentDALs();
+    this.pictureDALs = new PictureDALs();
   }
 
   async createVisitor({
@@ -55,9 +59,9 @@ class VisitorService {
       });
     }
     const loginByEmail = await this.loginDALs.findLoginByEmail(email);
-    if(loginByEmail){
+    if (loginByEmail) {
       throw new BadRequestError({
-        message: 'email already exists, only one email is allowed.',
+        message: 'Email already exists, only one email is allowed.',
       });
     }
     const passwordHash = await hash(password, 10);
@@ -83,7 +87,16 @@ class VisitorService {
       dailyMeals: dailyMeals,
       loginUserId: createLogin.id,
     });
+     let url = "";
 
+    if (picture) {
+      url = picture;
+    }
+
+    const createPicture = await this.pictureDALs.createPicture({
+      url: url,
+      userId: createUser.id,
+    });
     const visitors = await this.visitorDALs.createVisitor(createUser.id);
 
     return {
@@ -92,6 +105,7 @@ class VisitorService {
       categoryName: getCategory.name,
       typeGrantName: getTypeGrant.name,
       dailyMeals: dailyMeals,
+      picture: createPicture.url,
       loginData: {
         email: createLogin.email,
         emailRecovery: createLogin.emailRecovery,
@@ -104,7 +118,7 @@ class VisitorService {
     switch (oldCategory) {
       case 'FUNCIONARIO':
         const employee = await this.employeeDALs.deleteByUserId(userId);
-         await this.enrollmentDALs.deleteEnrollmentById(employee.enrollmentId);
+        await this.enrollmentDALs.deleteEnrollmentById(employee.enrollmentId);
         return await this.visitorDALs.createVisitor(userId);
       case 'ESTUDANTE':
         const student = await this.studentDALs.deleteByUserId(userId);

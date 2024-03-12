@@ -50,31 +50,91 @@ class UserServices {
 
     }
 
-    let passwordHash = oldLogin!.password; // recebe por padrão a senha antiga do usuario caso o administrador não mande nenhuma senha para trocar
+    async updateAnUser(
+        {
+            name,
+            category,
+            dailyMeals,
+            typeGrant,
+            picture,
+            enrollment,
+            emailRecovery,
+            password,
+        }: IUserDataUpdate,
+        id: number,
+    ) {
+        if (dailyMeals < 1 || dailyMeals > 3) {
+            throw new UnprocessedEntityError({
+                message: 'Daily meals must be between 1 and 3',
+            });
+        }
+        const oldUser = await this.userDALs.existsUserById(id);
+        if (!oldUser) {
+            throw new NotFoundError({message: 'User not Found!'});
+        }
+        const oldLogin = await this.loginDALs.findLoginById(oldUser.loginUserId!);
+        if(!oldLogin){
+            throw new NotFoundError({message: 'Login not Found!'});
+        }
+       
+        let passwordHash = oldLogin!.password // recebe por padrão a senha antiga do usuario caso o administrador não mande nenhuma senha para trocar
+    
+        if(password){
+             passwordHash = await hash(password, 10); // troca a senha se existir uma senha para trocar
+        }
+        const updateLogin = await this.loginDALs.updateLogin({
+            id: oldUser.loginUserId!,
+            emailRecovery: emailRecovery,
+            password: passwordHash,
+        });
 
-    if (password) {
-      passwordHash = await hash(password, 10); // troca a senha se existir uma senha para trocar
+        const oldCategory = await this.categoryDALs.getCategoryById(
+            oldUser!.categoryId!,
+        );
+        const getCategory = await this.categoryDALs.getCategoryByName(category);
+        const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
+       
+        if (getCategory === null || getTypeGrant === null) {
+            throw new NotFoundError({message: 'Category or Type Grant not found'});
+        }
+
+       
+        if (!enrollment && category !== "VISITANTE") {
+            throw new BadRequestError({message: 'Enrollment is required'});
+        }
+       
+        if (oldCategory === null) {
+            throw new NotFoundError({message: 'old category not founded'});
+        }
+       
+        await this.verifyHelpers.verifyUpdateByCategory({
+            userId: id,
+            oldCategory: oldCategory.name,
+            category: category,
+            enrollment: enrollment,
+        });
+        
+         const updateUser = await this.userDALs.updateUser({
+            id: id,
+            categoryId: getCategory.id,
+            typeGrantId: getTypeGrant.id,
+            name: name,
+            dailyMeals: dailyMeals,
+        });
+
+        return {
+            id: updateUser.id,
+            enrollment: enrollment,
+            personName: name,
+            categoryName: getCategory.name,
+            typeGrantName: getTypeGrant.name,
+            dailyMeals: dailyMeals,
+            loginData: {
+                email: updateLogin.email,
+                emailRecovery: updateLogin.emailRecovery,
+            },
+        };
     }
-    const updateLogin = await this.loginDALs.updateLogin({
-      id: oldUser.loginUserId!,
-      emailRecovery: emailRecovery,
-      password: passwordHash,
-    });
-
-    const oldCategory = await this.categoryDALs.getCategoryById(
-      oldUser!.categoryId!,
-    );
-    const getCategory = await this.categoryDALs.getCategoryByName(category);
-    const getTypeGrant = await this.typeGrantDALs.getTypeGrantByName(typeGrant);
-
-    if (getCategory === null || getTypeGrant === null) {
-      throw new NotFoundError({ message: 'Category or Type Grant not found' });
-    }
-
-    if (!enrollment && category !== 'VISITANTE') {
-      throw new BadRequestError({ message: 'Enrollment is required' });
-    }
-
 
     async listAllUsers() {
         const users = await this.userDALs.listAllUsers();

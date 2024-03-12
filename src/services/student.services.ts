@@ -72,7 +72,7 @@ class StudentService {
 
     if (loginByEmail) {
       throw new BadRequestError({
-        message: 'email already exists, only one email is allowed.',
+        message: 'Email already exists, only one email is allowed.',
       });
     }
     const passwordHash = await hash(password, 10);
@@ -137,22 +137,21 @@ class StudentService {
     if (!enrollment) {
       throw new BadRequestError({ message: 'Enrollment is required' });
     }
-   
+
     switch (oldCategory) {
       case 'FUNCIONARIO':
-        const oldEnrollmentEmployee = await this.employeeDALs.findEnrrolmentByUserId(
-          userId,
-        );
-         if (!oldEnrollmentEmployee) {
+        const oldEnrollmentEmployee =
+          await this.employeeDALs.findEnrrolmentByUserId(userId);
+        if (!oldEnrollmentEmployee) {
           throw new BadRequestError({ message: 'OldEnrollment is required' });
         }
-        
-        if(oldEnrollmentEmployee.enrollment === enrollment){
-             throw new UnprocessedEntityError({
+
+        if (oldEnrollmentEmployee.enrollment === enrollment) {
+          throw new UnprocessedEntityError({
             message: 'category cannot be update without enrrolment',
-          }); 
+          });
         }
-        
+
         const employee = await this.employeeDALs.deleteByUserId(userId);
         const updateEnrollment = await this.enrollmentDALs.updateEnrollment(
           employee.enrollmentId,
@@ -173,23 +172,22 @@ class StudentService {
         });
 
       case 'ESTUDANTE':
-        const oldEnrollmentStudent = await this.studentDALs.findEnrrolmentByUserId(
-          userId,
-        );
-        
-         if (!oldEnrollmentStudent) {
+        const oldEnrollmentStudent =
+          await this.studentDALs.findEnrrolmentByUserId(userId);
+
+        if (!oldEnrollmentStudent) {
           throw new BadRequestError({ message: 'OldEnrollment is required' });
         }
-      
-       if (
-            oldCategory !== category || oldEnrollmentStudent.enrollment !== enrollment
+
+        if (
+          oldCategory !== category ||
+          oldEnrollmentStudent.enrollment !== enrollment
         ) {
           throw new UnprocessedEntityError({
             message: 'enrrolment cannot be update without category',
           });
-          
         }
-        return await this.studentDALs.findStudentByUserId( userId );
+        return await this.studentDALs.findStudentByUserId(userId);
       default:
         throw new BadRequestError({ message: 'Old Category NotFound' });
     }

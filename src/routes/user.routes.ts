@@ -87,6 +87,20 @@ class UserRoutes {
    *                   loginData:
    *                     email: "emailtest@gmail.com"
    *                     emailRecovery: "emailrecoverytest@gmail.com"
+   *       '400':
+   *         description: |
+   *          Bad Request
+   *          - Enrollment is required
+   *          - Enrollment already exists, only one enrollment is allowed.
+   *          - Email already exists, only one email is allowed.
+   *          - Category NotFound
+   *       '404':
+   *         description: |
+   *            Not Found
+   *            - Enrollment is undefined
+   *            - Category or Type Grant not found
+   *       '422':
+   *         description: Daily meals must be between 1 and 3
    */
   postRoutes() {
     this.router.post(
@@ -154,6 +168,17 @@ class UserRoutes {
    *                   loginData:
    *                     email: "emailtest@gmail.com"
    *                     emailRecovery: "emailrecoverytest@gmail.com"
+   *       '400':
+   *          description: Enrollment is required
+   *       '404':
+   *          description: |
+   *            Not Found
+   *             - User not Found!
+   *             - Login not Found!
+   *             - Category or Type Grant not found
+   *             - Old category not founded
+   *       '422':
+   *          description:
    */
   putRoutes() {
     this.router.put(

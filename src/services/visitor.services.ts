@@ -16,6 +16,7 @@ import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
 import { ILoginCreate } from '../intefaces/login.interfaces';
 import { hash } from 'bcrypt';
+import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 
 class VisitorService {
   private readonly visitorDALs: VisitorDALs;
@@ -27,6 +28,8 @@ class VisitorService {
   private readonly studentDALs: StudentDALs;
   private readonly employeeDALs: EmployeeDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
+  private readonly pictureDALs: PictureDALs;
+
   constructor() {
     this.visitorDALs = new VisitorDALs();
     this.loginDALs = new LoginDALs();
@@ -37,6 +40,7 @@ class VisitorService {
     this.studentDALs = new StudentDALs();
     this.employeeDALs = new EmployeeDALs();
     this.enrollmentDALs = new EnrollmentDALs();
+    this.pictureDALs = new PictureDALs();
   }
 
   async createVisitor({
@@ -83,7 +87,16 @@ class VisitorService {
       dailyMeals: dailyMeals,
       loginUserId: createLogin.id,
     });
+     let url = "";
 
+    if (picture) {
+      url = picture;
+    }
+
+    const createPicture = await this.pictureDALs.createPicture({
+      url: url,
+      userId: createUser.id,
+    });
     const visitors = await this.visitorDALs.createVisitor(createUser.id);
 
     return {
@@ -92,6 +105,7 @@ class VisitorService {
       categoryName: getCategory.name,
       typeGrantName: getTypeGrant.name,
       dailyMeals: dailyMeals,
+      picture: createPicture.url,
       loginData: {
         email: createLogin.email,
         emailRecovery: createLogin.emailRecovery,

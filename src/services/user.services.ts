@@ -16,60 +16,38 @@ import { EmployeeDALs } from '../database/repositories/user.repositories/user.da
 import { EnrollmentDALs } from '../database/repositories/user.repositories/user.dals/enrollment.dals';
 import { VisitorDALs } from '../database/repositories/user.repositories/user.dals/visitor.dals';
 import { PersonDALs } from '../database/repositories/person.dals';
+import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 dotenv.config();
 
 const { Link } = process.env;
 
 class UserServices {
-  userDALs: UserDALs;
-  categoryDALs: CategoryDALs;
-  typeGrantDALs: TypeGrantDALs;
-  verifyHelpers: VerifyHelpers;
-  loginDALs: LoginDALs;
-  employeeDALs: EmployeeDALs;
-  studentDALs: StudentDALs;
-  enrollmentDALs: EnrollmentDALs;
-  visitorDALs: VisitorDALs;
-  personDALs: PersonDALs;
 
-  constructor() {
-    this.userDALs = new UserDALs();
-    this.categoryDALs = new CategoryDALs();
-    this.typeGrantDALs = new TypeGrantDALs();
-    this.verifyHelpers = new VerifyHelpers();
-    this.loginDALs = new LoginDALs();
-    this.studentDALs = new StudentDALs();
-    this.employeeDALs = new EmployeeDALs();
-    this.enrollmentDALs = new EnrollmentDALs();
-    this.visitorDALs = new VisitorDALs();
-    this.personDALs = new PersonDALs();
-  }
+    userDALs: UserDALs;
+    categoryDALs: CategoryDALs;
+    typeGrantDALs: TypeGrantDALs;
+    verifyHelpers: VerifyHelpers;
+    loginDALs: LoginDALs;
+    employeeDALs: EmployeeDALs;
+    studentDALs: StudentDALs;
+    enrollmentDALs: EnrollmentDALs;
+    visitorDALs: VisitorDALs;
+    personDALs: PersonDALs;
+    private readonly pictureDALs: PictureDALs;
 
-  async updateAnUser(
-    {
-      name,
-      category,
-      dailyMeals,
-      typeGrant,
-      picture,
-      enrollment,
-      emailRecovery,
-      password,
-    }: IUserDataUpdate,
-    id: number,
-  ) {
-    if (dailyMeals < 1 || dailyMeals > 3) {
-      throw new UnprocessedEntityError({
-        message: 'Daily meals must be between 1 and 3',
-      });
-    }
-    const oldUser = await this.userDALs.existsUserById(id);
-    if (!oldUser) {
-      throw new NotFoundError({ message: 'User not Found!' });
-    }
-    const oldLogin = await this.loginDALs.findLoginById(oldUser.loginUserId!);
-    if (!oldLogin) {
-      throw new NotFoundError({ message: 'Login not Found!' });
+    constructor() {
+        this.userDALs = new UserDALs();
+        this.categoryDALs = new CategoryDALs();
+        this.typeGrantDALs = new TypeGrantDALs();
+        this.verifyHelpers = new VerifyHelpers();
+        this.loginDALs = new LoginDALs();
+        this.studentDALs = new StudentDALs();
+        this.employeeDALs = new EmployeeDALs();
+        this.enrollmentDALs = new EnrollmentDALs();
+        this.visitorDALs = new VisitorDALs();
+        this.personDALs = new PersonDALs();
+        this.pictureDALs = new PictureDALs();
+
     }
 
     let passwordHash = oldLogin!.password; // recebe por padrão a senha antiga do usuario caso o administrador não mande nenhuma senha para trocar
@@ -97,8 +75,39 @@ class UserServices {
       throw new BadRequestError({ message: 'Enrollment is required' });
     }
 
-    if (oldCategory === null) {
-      throw new NotFoundError({ message: 'Old category not founded' });
+
+    async listAllUsers() {
+        const users = await this.userDALs.listAllUsers();
+        const usersArray: { user: any; enrrolment: any; picture: any }[] = [];
+        await Promise.all(
+            users.map(async (user) => {
+                const picture = await this.pictureDALs.findPictureByUserId(user.id);
+                let url = "";
+                if(picture){
+                    url = picture.url;
+                }
+                if (user.category?.name === 'ESTUDANTE') {
+                    const result = await this.studentDALs.findEnrrolmentByUserId(user.id);
+                    
+                    if (result && result.enrollment ) {
+                        usersArray.push({user: user, enrrolment: result.enrollment!, picture: url});
+                    }
+                }
+                if (user.category?.name === 'FUNCIONARIO') {
+
+                    const result = await this.employeeDALs.findEnrrolmentByUserId(user.id);
+                    if (result && result.enrollment ) {
+                        usersArray.push({user: user, enrrolment: result!.enrollment, picture: url});
+                    }
+                }
+                if (user.category?.name === 'VISITANTE' ) {
+                    usersArray.push({user: user, enrrolment: '', picture: url});
+                }
+
+            }),
+        );
+        return usersArray;
+
     }
 
     await this.verifyHelpers.verifyUpdateByCategory({

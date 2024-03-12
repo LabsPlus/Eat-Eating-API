@@ -1,28 +1,27 @@
-import { UserDALs } from '../database/repositories/user.repositories/user.dals/user.dals';
-import { CategoryDALs } from '../database/repositories/user.repositories/user.dals/category.dals';
-import { TypeGrantDALs } from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
+import {UserDALs} from '../database/repositories/user.repositories/user.dals/user.dals';
+import {CategoryDALs} from '../database/repositories/user.repositories/user.dals/category.dals';
+import {TypeGrantDALs} from '../database/repositories/user.repositories/user.dals/typeGrant.dals';
 import dotenv from 'dotenv';
-import { IUserData, IUserDataUpdate } from '../intefaces/user.interfaces';
-import { VerifyHelpers } from '../helpers/verify.helpers';
-import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
+import {IUserData, IUserDataUpdate} from '../intefaces/user.interfaces';
+import {VerifyHelpers} from '../helpers/verify.helpers';
+import {LoginDALs} from '../database/repositories/user.repositories/user.dals/login.dals';
 import {
-  BadRequestError,
-  NotFoundError,
-  UnprocessedEntityError,
+    BadRequestError,
+    NotFoundError,
+    UnprocessedEntityError,
 } from '../helpers/errors.helpers';
-import { hash } from 'bcrypt';
-import { StudentDALs } from '../database/repositories/user.repositories/user.dals/student.dals';
-import { EmployeeDALs } from '../database/repositories/user.repositories/user.dals/employee.dals';
-import { EnrollmentDALs } from '../database/repositories/user.repositories/user.dals/enrollment.dals';
+import {hash} from 'bcrypt';
+import {StudentDALs} from '../database/repositories/user.repositories/user.dals/student.dals';
+import {EmployeeDALs} from '../database/repositories/user.repositories/user.dals/employee.dals';
+import {EnrollmentDALs} from "../database/repositories/user.repositories/user.dals/enrollment.dals";
 import { VisitorDALs } from '../database/repositories/user.repositories/user.dals/visitor.dals';
 import { PersonDALs } from '../database/repositories/person.dals';
 import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 dotenv.config();
 
-const { Link } = process.env;
+const {Link} = process.env;
 
 class UserServices {
-
     userDALs: UserDALs;
     categoryDALs: CategoryDALs;
     typeGrantDALs: TypeGrantDALs;
@@ -47,7 +46,6 @@ class UserServices {
         this.visitorDALs = new VisitorDALs();
         this.personDALs = new PersonDALs();
         this.pictureDALs = new PictureDALs();
-
     }
 
     async updateAnUser(
@@ -167,105 +165,44 @@ class UserServices {
             }),
         );
         return usersArray;
-
     }
 
-    await this.verifyHelpers.verifyUpdateByCategory({
-      userId: id,
-      oldCategory: oldCategory.name,
-      category: category,
-      enrollment: enrollment,
-    });
+    /**
+     * Método assíncrono para deletar um usuário pelo ID.
+     *
+     * @async
+     * @param {number} id - O ID do usuário a ser deletado.
+     * @returns {Promise<{message: string, id: number}>} - Um objeto contendo uma mensagem de sucesso e o ID do usuário deletado.
+     * @throws {NotFoundError} Se o usuário com o ID fornecido não for encontrado.
+     * @description
+     * Este método primeiro verifica se o usuário existe chamando o método `existsUserById` da classe `UserDALs`.
+     * Se o usuário não existir, um erro `NotFoundError` é lançado.
+     * Se o usuário existir, o método `deleteUserById` da classe `UserDALs` é chamado para deletar o usuário.
+     * Finalmente, um objeto contendo uma mensagem de sucesso e o ID do usuário deletado é retornado.
+     */
+    async deleteById(id: number): Promise<{ message: string; id: number; }> {
+        const user = await this.userDALs.existsUserById(id);
 
-    const updateUser = await this.userDALs.updateUser({
-      id: id,
-      categoryId: getCategory.id,
-      typeGrantId: getTypeGrant.id,
-      name: name,
-      dailyMeals: dailyMeals,
-    });
+        if (!user) {
+            throw new NotFoundError({message: 'Usuário não encontrado'});
 
-    return {
-      id: updateUser.id,
-      enrollment: enrollment,
-      personName: name,
-      categoryName: getCategory.name,
-      typeGrantName: getTypeGrant.name,
-      dailyMeals: dailyMeals,
-      loginData: {
-        email: updateLogin.email,
-        emailRecovery: updateLogin.emailRecovery,
-      },
-    };
-  }
-
-  async listAllUsers() {
-    const users = await this.userDALs.listAllUsers();
-    const usersArray: { user: any; enrrolment: any }[] = [];
-    await Promise.all(
-      users.map(async (user) => {
-        if (user.category?.name === 'ESTUDANTE') {
-          const result = await this.studentDALs.findEnrrolmentByUserId(user.id);
-          if (result && result.enrollment) {
-            usersArray.push({ user: user, enrrolment: result.enrollment! });
-          }
         }
-        if (user.category?.name === 'FUNCIONARIO') {
-          const result = await this.employeeDALs.findEnrrolmentByUserId(
-            user.id,
-          );
-          if (result && result.enrollment) {
-            usersArray.push({ user: user, enrrolment: result!.enrollment });
-          }
-        }
-        if (user.category?.name === 'VISITANTE') {
-          usersArray.push({ user: user, enrrolment: '' });
-        }
-      }),
-    );
-    return usersArray;
-  }
-
-  /**
-   * Método assíncrono para deletar um usuário pelo ID.
-   *
-   * @async
-   * @param {number} id - O ID do usuário a ser deletado.
-   * @returns {Promise<{message: string, id: number}>} - Um objeto contendo uma mensagem de sucesso e o ID do usuário deletado.
-   * @throws {NotFoundError} Se o usuário com o ID fornecido não for encontrado.
-   * @description
-   * Este método primeiro verifica se o usuário existe chamando o método `existsUserById` da classe `UserDALs`.
-   * Se o usuário não existir, um erro `NotFoundError` é lançado.
-   * Se o usuário existir, o método `deleteUserById` da classe `UserDALs` é chamado para deletar o usuário.
-   * Finalmente, um objeto contendo uma mensagem de sucesso e o ID do usuário deletado é retornado.
-   */
-  async deleteById(id: number): Promise<{ message: string; id: number }> {
-    const user = await this.userDALs.existsUserById(id);
-
-    if (!user) {
-      throw new NotFoundError({ message: 'Usuário não encontrado' });
+        const category = await this.userDALs.getUserCategoryNameByUserId(id);
+        // verifica se é empregado ou estudante para excluir a matricula
+        const employeeOrStudent = category === "ESTUDANTE" || category === "FUNCIONARIO";
+        if (employeeOrStudent) {
+                const userEntity = category === "ESTUDANTE" 
+                        ? await this.studentDALs.findStudentByUserId(user.id)
+                        : await this.employeeDALs.findEmployeeByUserId(user.id);
+                 userEntity ? await this.enrollmentDALs.deleteEnrollmentById(userEntity?.enrollmentId): null;
+         }
+         // exclui em cascada o usuario e a categoria referente a ele
+         await this.loginDALs.deleteLoginById(user.loginUserId);
+         await this.personDALs.deletePerson(user.personId);
+        
+        return {message: 'User successfully deleted', id: user.id};
+        
     }
-    const category = await this.userDALs.getUserCategoryNameByUserId(id);
-    // verifica se é empregado ou estudante para excluir a matricula
-    const employeeOrStudent =
-      category === 'ESTUDANTE' || category === 'FUNCIONARIO';
-    if (employeeOrStudent) {
-      const userEntity =
-        category === 'ESTUDANTE'
-          ? await this.studentDALs.findStudentByUserId(user.id)
-          : await this.employeeDALs.findEmployeeByUserId(user.id);
-      userEntity
-        ? await this.enrollmentDALs.deleteEnrollmentById(
-            userEntity?.enrollmentId,
-          )
-        : null;
-    }
-    // exclui em cascada o usuario e a categoria referente a ele
-    await this.loginDALs.deleteLoginById(user.loginUserId);
-    await this.personDALs.deletePerson(user.personId);
-
-    return { message: 'User successfully deleted', id: user.id };
-  }
 }
 
-export { UserServices };
+export {UserServices};

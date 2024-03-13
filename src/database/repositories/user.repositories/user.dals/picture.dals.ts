@@ -17,7 +17,17 @@ class PictureDALs{
             where:{
                 userId: userId
             }
-        })
+        });
+
+        return result;
+    }
+
+    async findPictureByUrl(url: string){
+        const result = await prisma.picture.findMany({
+            where:{
+                url: url,
+            }
+        });
 
         return result;
     }

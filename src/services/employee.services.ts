@@ -155,7 +155,7 @@ class EmployeeService {
     }
 
     switch (oldCategory) {
-      case 'ESTUDANTE':
+      case 'ALUNO':
         const oldEnrollmentStudent =
           await this.studentDALs.findEnrrolmentByUserId(userId);
         if (!oldEnrollmentStudent) {

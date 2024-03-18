@@ -191,7 +191,7 @@ class StudentService {
           enrollmentId: createEnrollment.id,
         });
 
-      case 'ESTUDANTE':
+      case 'ALUNO':
         const oldEnrollmentStudent = await this.studentDALs.findEnrrolmentByUserId(
           userId,
         );

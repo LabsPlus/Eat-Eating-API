@@ -198,7 +198,7 @@ class UserServices {
          }
          // exclui em cascada o usuario e a categoria referente a ele
          await this.loginDALs.deleteLoginById(user.loginUserId);
-         await this.personDALs.deletePerson(user.personId)
+         await this.personDALs.deletePerson(user.personId);
         
         return {message: 'User successfully deleted', id: user.id};
         

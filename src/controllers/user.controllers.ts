@@ -50,7 +50,7 @@ class UserControllers {
         };
 
         switch (category) {
-            case 'ESTUDANTE':
+            case 'ALUNO':
                 const result = await this.studentService.createStudent(users);
                 return response.status(201).json(result);
             case 'FUNCIONARIO':

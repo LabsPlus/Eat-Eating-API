@@ -144,7 +144,7 @@ class UserServices {
                 if(picture){
                     url = picture.url;
                 }
-                if (user.category?.name === 'ESTUDANTE') {
+                if (user.category?.name === 'ALUNO') {
                     const result = await this.studentDALs.findEnrrolmentByUserId(user.id);
                     
                     if (result && result.enrollment ) {
@@ -189,9 +189,9 @@ class UserServices {
         }
         const category = await this.userDALs.getUserCategoryNameByUserId(id);
         // verifica se é empregado ou estudante para excluir a matricula
-        const employeeOrStudent = category === "ESTUDANTE" || category === "FUNCIONARIO";
+        const employeeOrStudent = category === "ALUNO" || category === "FUNCIONARIO";
         if (employeeOrStudent) {
-                const userEntity = category === "ESTUDANTE" 
+                const userEntity = category === "ALUNO" 
                         ? await this.studentDALs.findStudentByUserId(user.id)
                         : await this.employeeDALs.findEmployeeByUserId(user.id);
                  userEntity ? await this.enrollmentDALs.deleteEnrollmentById(userEntity?.enrollmentId): null;

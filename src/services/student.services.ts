@@ -192,11 +192,14 @@ class StudentService {
           enrollmentId: createEnrollment.id,
         });
 
-      case 'ESTUDANTE':
-        const oldEnrollmentStudent =
-          await this.studentDALs.findEnrrolmentByUserId(userId);
 
-        if (!oldEnrollmentStudent) {
+      case 'ALUNO':
+        const oldEnrollmentStudent = await this.studentDALs.findEnrrolmentByUserId(
+          userId,
+        );
+        
+         if (!oldEnrollmentStudent) {
+
           throw new BadRequestError({ message: 'OldEnrollment is required' });
         }
 

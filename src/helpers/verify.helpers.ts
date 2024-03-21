@@ -15,7 +15,7 @@ class VerifyHelpers{
      async verifyUpdateByCategory({userId, oldCategory, category, enrollment}: IVerifyUpdateByCategory): Promise<any>{
             
             switch (category) {
-                case "ESTUDANTE":
+                case "ALUNO":
                     return await this.studentService.updatetoStudent({userId, oldCategory, category, enrollment});
                 case "FUNCIONARIO":
                     

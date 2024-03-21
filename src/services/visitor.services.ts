@@ -120,7 +120,7 @@ class VisitorService {
         const employee = await this.employeeDALs.deleteByUserId(userId);
         await this.enrollmentDALs.deleteEnrollmentById(employee.enrollmentId);
         return await this.visitorDALs.createVisitor(userId);
-      case 'ESTUDANTE':
+      case 'ALUNO':
         const student = await this.studentDALs.deleteByUserId(userId);
         await this.enrollmentDALs.deleteEnrollmentById(student.enrollmentId);
         return await this.visitorDALs.createVisitor(userId);

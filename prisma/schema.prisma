@@ -110,7 +110,7 @@ model Picture {
 }
 
 enum CategoryName {
-  ESTUDANTE
+  ALUNO
   FUNCIONARIO
   VISITANTE
 }

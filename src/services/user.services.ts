@@ -104,6 +104,11 @@ class UserServices {
         if (oldCategory === null) {
             throw new NotFoundError({message: 'old category not founded'});
         }
+        let url = await this.pictureDALs.findPictureByUserId(id);
+        if(picture){
+
+            url = await this.pictureDALs.updatePicture({url: picture, userId: id})
+        }
        
         await this.verifyHelpers.verifyUpdateByCategory({
             userId: id,
@@ -131,6 +136,7 @@ class UserServices {
                 email: updateLogin.email,
                 emailRecovery: updateLogin.emailRecovery,
             },
+            picture: url,
         };
     }
 

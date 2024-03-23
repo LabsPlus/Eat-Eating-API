@@ -71,11 +71,15 @@ class EmployeeService {
       });
     }
 
-    const loginByEmail = await this.loginDALs.findLoginByEmail(email);
+    const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery(
+      email,
+      emailRecovery,
+    );
 
     if (loginByEmail) {
       throw new BadRequestError({
-        message: 'Email already exists, only one email is allowed.',
+        message:
+          'Email or Email Recovery already exists, only one email is allowed.',
       });
     }
     const passwordHash = await hash(password, 10);
@@ -105,14 +109,14 @@ class EmployeeService {
       loginUserId: createLogin.id,
     });
 
-    let url = "";
+    let url = '';
 
     if (picture) {
       url = picture;
     }
     const existPicture = await this.pictureDALs.findPictureByUrl(url);
-    if(existPicture && url !== ""){
-      throw new BadRequestError({message: 'existPicture already exists'});
+    if (existPicture && url !== '') {
+      throw new BadRequestError({ message: 'existPicture already exists' });
     }
 
     const createPicture = await this.pictureDALs.createPicture({
@@ -166,7 +170,6 @@ class EmployeeService {
           throw new UnprocessedEntityError({
             message: 'category cannot be update without enrrolment',
           });
-
         }
         const IsEnrrolmentUnique =
           this.enrollmentDALs.checkEnrollmentUnique(enrollment);

@@ -71,11 +71,15 @@ class StudentService {
         message: 'Enrollment already exists, only one enrollment is allowed.',
       });
     }
-    const loginByEmail = await this.loginDALs.findLoginByEmail(email);
+    const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery(
+      email,
+      emailRecovery,
+    );
 
     if (loginByEmail) {
       throw new BadRequestError({
-        message: 'Email already exists, only one email is allowed.',
+        message:
+          'Email or Email Recovery already exists, only one email is allowed.',
       });
     }
     const passwordHash = await hash(password, 10);
@@ -106,7 +110,7 @@ class StudentService {
       dailyMeals: dailyMeals,
       loginUserId: createLogin.id,
     });
-     let url = "";
+    let url = '';
 
     if (picture) {
       url = picture;
@@ -165,11 +169,13 @@ class StudentService {
           });
         }
 
-        const IsEnrrolmentUnique = this.enrollmentDALs.checkEnrollmentUnique(enrollment);
-        if(!IsEnrrolmentUnique){
+        const IsEnrrolmentUnique =
+          this.enrollmentDALs.checkEnrollmentUnique(enrollment);
+        if (!IsEnrrolmentUnique) {
           throw new BadRequestError({
-            message: 'Enrollment already exists, only one enrollment is allowed.',
-          }); 
+            message:
+              'Enrollment already exists, only one enrollment is allowed.',
+          });
         }
 
         const employee = await this.employeeDALs.deleteByUserId(userId);
@@ -182,7 +188,6 @@ class StudentService {
           enrollmentId: updateEnrollment.id,
         });
       case 'VISITANTE':
-        
         await this.visitorDALs.deleteByUserId(userId);
         const createEnrollment = await this.enrollmentDALs.createEnrollment(
           enrollment,
@@ -192,14 +197,11 @@ class StudentService {
           enrollmentId: createEnrollment.id,
         });
 
-
       case 'ALUNO':
-        const oldEnrollmentStudent = await this.studentDALs.findEnrrolmentByUserId(
-          userId,
-        );
-        
-         if (!oldEnrollmentStudent) {
+        const oldEnrollmentStudent =
+          await this.studentDALs.findEnrrolmentByUserId(userId);
 
+        if (!oldEnrollmentStudent) {
           throw new BadRequestError({ message: 'OldEnrollment is required' });
         }
 

@@ -1,8 +1,8 @@
 import {prisma} from  '../../../prisma.databases'
-import {IPictureCreate} from '../../../../intefaces/picture.interfaces'
+import {IPictureData} from '../../../../intefaces/picture.interfaces'
 
 class PictureDALs{
-    async createPicture({url, userId}: IPictureCreate){
+    async createPicture({url, userId}: IPictureData){
         const result = await prisma.picture.create({
             data:{
                 url,
@@ -26,8 +26,22 @@ class PictureDALs{
         const result = await prisma.picture.findMany({
             where:{
                 url: url,
-            }
+            },
         });
+
+        return result;
+    }
+
+    async updatePicture({url, userId}: IPictureData){
+        const result = await prisma.picture.update({
+            where:{
+                userId,
+            },
+            data:{
+                url,
+                
+            }
+        })
 
         return result;
     }

@@ -111,7 +111,7 @@ class EmployeeService {
       url = picture;
     }
     const existPicture = await this.pictureDALs.findPictureByUrl(url);
-    if(existPicture && url !== ""){
+    if(existPicture.length !== 0 && url !== ""){
       throw new BadRequestError({message: 'existPicture already exists'});
     }
 

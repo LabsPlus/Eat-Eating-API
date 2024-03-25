@@ -1,4 +1,4 @@
-export interface IPictureCreate {
+export interface IPictureData{
    url: string,
    userId: number
 }

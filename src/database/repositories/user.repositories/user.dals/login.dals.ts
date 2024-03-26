@@ -28,6 +28,7 @@ class LoginDALs {
     return result;
   }
 
+
   async findLoginByEmailOREmailRecovery({email, emailRecovery}: ILoginFind) {
     const result = await prisma.loginUser.findFirst({
       where: {

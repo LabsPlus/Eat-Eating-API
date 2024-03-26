@@ -59,6 +59,7 @@ class VisitorService {
         message: 'Daily meals must be between 1 and 3',
       });
     }
+
     const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery({
       email,
       emailRecovery,

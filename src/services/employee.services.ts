@@ -75,7 +75,6 @@ class EmployeeService {
       email,
       emailRecovery,
   });
-
     if (loginByEmail) {
       throw new BadRequestError({
         message:

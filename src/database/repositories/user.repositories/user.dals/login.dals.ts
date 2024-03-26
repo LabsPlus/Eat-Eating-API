@@ -24,6 +24,8 @@ class LoginDALs {
         return result;
     }
 
+   
+
     async findLoginById(id: number) {
         const result = await prisma.loginUser.findUnique({
             where: {

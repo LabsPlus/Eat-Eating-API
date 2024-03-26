@@ -17,6 +17,7 @@ import { LoginDALs } from '../database/repositories/user.repositories/user.dals/
 import { ILoginCreate } from '../intefaces/login.interfaces';
 import { hash } from 'bcrypt';
 import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
+import e from 'express';
 
 class VisitorService {
   private readonly visitorDALs: VisitorDALs;
@@ -58,10 +59,14 @@ class VisitorService {
         message: 'Daily meals must be between 1 and 3',
       });
     }
-    const loginByEmail = await this.loginDALs.findLoginByEmail(email);
+    const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery({
+      email,
+      emailRecovery,
+     });
     if (loginByEmail) {
       throw new BadRequestError({
-        message: 'Email already exists, only one email is allowed.',
+        message:
+          'Email or Email Recovery already exists, only one email is allowed.',
       });
     }
     const passwordHash = await hash(password, 10);
@@ -87,7 +92,7 @@ class VisitorService {
       dailyMeals: dailyMeals,
       loginUserId: createLogin.id,
     });
-     let url = "";
+    let url = '';
 
     if (picture) {
       url = picture;

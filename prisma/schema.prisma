@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  
 }
 
 datasource db {
@@ -103,7 +102,7 @@ model Visitor {
 
 model Picture {
   id  Int    @id @default(autoincrement())
-  url String 
+  url String
 
   userId Int  @unique // 1-1 : (Obrigatório) Uma imagem está associada a um usuário
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -160,7 +159,7 @@ model LoginUser {
   id               Int       @id @default(autoincrement())
   email            String    @unique
   password         String
-  emailRecovery    String
+  emailRecovery    String    @unique
   resetToken       String?
   resetTokenExpiry DateTime?
 

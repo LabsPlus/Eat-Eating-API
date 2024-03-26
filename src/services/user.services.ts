@@ -74,7 +74,16 @@ class UserServices {
         if(!oldLogin){
             throw new NotFoundError({message: 'Login not Found!'});
         }
-       
+        const loginByEmailRecovery = await this.loginDALs.findLoginByEmailOREmailRecovery({
+                              emailRecovery,
+                          });
+
+    if (loginByEmailRecovery) {
+      throw new BadRequestError({
+        message:
+          ' Email Recovery already exists, only one email is allowed.',
+      });
+     }
         let passwordHash = oldLogin!.password // recebe por padrão a senha antiga do usuario caso o administrador não mande nenhuma senha para trocar
     
         if(password){

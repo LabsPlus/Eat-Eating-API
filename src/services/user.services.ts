@@ -78,10 +78,10 @@ class UserServices {
                               emailRecovery,
                           });
 
-    if (loginByEmailRecovery) {
+    if (loginByEmailRecovery && loginByEmailRecovery.id !== oldUser.loginUserId) {
       throw new BadRequestError({
         message:
-          ' Email Recovery already exists, only one email is allowed.',
+          'Email Recovery already exists, only one email is allowed.',
       });
      }
         let passwordHash = oldLogin!.password // recebe por padrão a senha antiga do usuario caso o administrador não mande nenhuma senha para trocar

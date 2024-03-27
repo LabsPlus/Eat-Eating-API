@@ -1,6 +1,7 @@
 import { prisma } from '../../../prisma.databases';
 import {
   ILoginCreate,
+  ILoginFind,
   ILoginUserUpdate,
 } from '../../../../intefaces/login.interfaces';
 
@@ -27,7 +28,7 @@ class LoginDALs {
     return result;
   }
 
-  async findLoginByEmailOREmailRecovery(email: string, emailRecovery: string) {
+  async findLoginByEmailOREmailRecovery({email, emailRecovery}: ILoginFind) {
     const result = await prisma.loginUser.findFirst({
       where: {
         OR: [

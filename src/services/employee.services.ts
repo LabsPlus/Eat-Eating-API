@@ -71,10 +71,11 @@ class EmployeeService {
       });
     }
 
-    const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery(
+
+    const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery({
       email,
       emailRecovery,
-    );
+  });
 
     if (loginByEmail) {
       throw new BadRequestError({

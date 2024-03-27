@@ -71,10 +71,11 @@ class StudentService {
         message: 'Enrollment already exists, only one enrollment is allowed.',
       });
     }
-    const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery(
+
+    const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery({
       email,
       emailRecovery,
-    );
+    });
 
     if (loginByEmail) {
       throw new BadRequestError({

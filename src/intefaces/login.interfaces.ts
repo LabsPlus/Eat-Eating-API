@@ -37,4 +37,9 @@ export interface ILoginUserUpdate {
   password: string;
 }
 
+export interface ILoginFind{
+  email?: string;
+  emailRecovery?: string;
+}
+
 

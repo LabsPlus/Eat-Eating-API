@@ -48,8 +48,8 @@ class LoginRoutes {
      * @swagger
      * /login/auth-login:
      *   post:
-     *     summary: Criar login para os administradores de usuários
-     *     description: Criar login para os administradores de usuários
+     *     summary: Fazer autenticação e login dos administradores
+     *     description: Fazer autenticação e login dos administradores
      *     tags:
      *       - Login Admin
      *     requestBody:
@@ -78,8 +78,8 @@ class LoginRoutes {
      * @swagger
      * /login/refresh-token-login:
      *   post:
-     *     summary: Criar login para os administradores de usuários
-     *     description: Criar login para os administradores de usuários
+     *     summary: Fazer atualização do token para validação de autenticação
+     *     description: Fazer atualização do token para validação de autenticação
      *     tags:
      *       - Login Admin
      *     requestBody:
@@ -109,9 +109,9 @@ class LoginRoutes {
     /**
      * @swagger
      * /login/update-password-login:
-     *   post:
-     *     summary: Criar login para os administradores de usuários
-     *     description: Criar login para os administradores de usuários
+     *   patch:
+     *     summary: Atualizar senha do administrador que solicitou o forgot password
+     *     description: Atualizar senha do administrador que solicitou o forgot password
      *     tags:
      *       - Login Admin
      *     requestBody:
@@ -139,9 +139,9 @@ class LoginRoutes {
     /**
      * @swagger
      * /login/forgot-password-login:
-     *   post:
-     *     summary: Criar login para os administradores de usuários
-     *     description: Criar login para os administradores de usuários
+     *   patch:
+     *     summary: Enviar token para o email do administrador que solicitou o forgot password
+     *     description: Enviar token para o email do administrador que solicitou o forgot password
      *     tags:
      *       - Login Admin
      *     requestBody:

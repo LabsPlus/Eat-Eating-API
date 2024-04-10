@@ -178,7 +178,7 @@ model Ticket {
   id                       Int          @id @default(autoincrement())
   status                   TypeStatus   @default(NAO_USADO)
   purchaseDate             DateTime     @default(now())
-  expiration               DateTime
+  ticketPrice              Float        @default(0)
   userTicketsCountId       Int
 
   userCount UserTicketsCount @relation(fields: [userTicketsCountId], references: [id]) // N-1  Muitos tickets podem pertencer a um userTicketsCount
@@ -190,6 +190,8 @@ model UserTicketsCount {
   totalTicketsOfUserActive Int
   lastPurchaseDate         DateTime @default(now())
 
+  ticket Ticket[] // 1-N Um userTicketsCount tem vários tickets
+
   user       User          @relation(fields: [userId], references: [id]) // 1-1 Um usuario tem um userTicketsCount
   userId     Int
 }
@@ -200,5 +202,5 @@ model OperatedTickets {
   ticketsSold      Int
   ticketsAvailable Int
   ticketsConsumed  Int
-
+  
 } 

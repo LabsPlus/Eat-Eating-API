@@ -55,7 +55,7 @@ model User {
   loginUser   LoginUser? @relation(fields: [loginUserId], references: [id], onDelete: Cascade)
   category    Category?  @relation(fields: [categoryId], references: [id])
   typeGrant   TypeGrant? @relation(fields: [typeGrantId], references: [id])
-
+  userTicketsCount UserTicketsCount?
   picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
   visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante
@@ -191,9 +191,9 @@ model UserTicketsCount {
   lastPurchaseDate         DateTime @default(now())
 
   ticket Ticket[] // 1-N Um userTicketsCount tem vários tickets
-
-  user       User          @relation(fields: [userId], references: [id]) // 1-1 Um usuario tem um userTicketsCount
-  userId     Int
+  userId     Int @unique
+  user       User     @relation(fields: [userId], references: [id]) // 1-1 Um usuario tem um userTicketsCount
+ 
 }
 
 model OperatedTickets {

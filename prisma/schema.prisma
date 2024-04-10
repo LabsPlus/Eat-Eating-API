@@ -168,3 +168,37 @@ model LoginUser {
 
   user User? // 1-1: Um LoginUser está associado a um usuário
 }
+
+enum TypeStatus {
+ NAO_USADO
+ USADO
+}
+
+model Ticket {
+  id                       Int          @id @default(autoincrement())
+  status                   TypeStatus   @default(NAO_USADO)
+  purchaseDate             DateTime     @default(now())
+  expiration               DateTime
+  userTicketsCountId       Int
+
+  userCount UserTicketsCount @relation(fields: [userTicketsCountId], references: [id]) // N-1  Muitos tickets podem pertencer a um userTicketsCount
+}
+
+model UserTicketsCount {
+  id                       Int      @id @default(autoincrement())
+  totalTicketsOfUser       Int
+  totalTicketsOfUserActive Int
+  lastPurchaseDate         DateTime @default(now())
+
+  user       User          @relation(fields: [userId], references: [id]) // 1-1 Um usuario tem um userTicketsCount
+  userId     Int
+}
+
+model OperatedTickets {
+  id               Int      @id @default(autoincrement())
+  ticketsOpened    Int
+  ticketsSold      Int
+  ticketsAvailable Int
+  ticketsConsumed  Int
+
+} 

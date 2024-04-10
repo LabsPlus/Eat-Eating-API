@@ -55,7 +55,7 @@ model User {
   loginUser   LoginUser? @relation(fields: [loginUserId], references: [id], onDelete: Cascade)
   category    Category?  @relation(fields: [categoryId], references: [id])
   typeGrant   TypeGrant? @relation(fields: [typeGrantId], references: [id])
-
+  userTicketsCount UserTicketsCount?
   picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
   visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante
@@ -168,3 +168,39 @@ model LoginUser {
 
   user User? // 1-1: Um LoginUser está associado a um usuário
 }
+
+enum TypeStatus {
+ NAO_USADO
+ USADO
+}
+
+model Ticket {
+  id                       Int          @id @default(autoincrement())
+  status                   TypeStatus   @default(NAO_USADO)
+  purchaseDate             DateTime     @default(now())
+  ticketPrice              Float        @default(0)
+  userTicketsCountId       Int
+
+  userCount UserTicketsCount @relation(fields: [userTicketsCountId], references: [id]) // N-1  Muitos tickets podem pertencer a um userTicketsCount
+}
+
+model UserTicketsCount {
+  id                       Int      @id @default(autoincrement())
+  totalTicketsOfUser       Int
+  totalTicketsOfUserActive Int
+  lastPurchaseDate         DateTime @default(now())
+
+  ticket Ticket[] // 1-N Um userTicketsCount tem vários tickets
+  userId     Int @unique
+  user       User     @relation(fields: [userId], references: [id]) // 1-1 Um usuario tem um userTicketsCount
+ 
+}
+
+model OperatedTickets {
+  id               Int      @id @default(autoincrement())
+  ticketsOpened    Int
+  ticketsSold      Int
+  ticketsAvailable Int
+  ticketsConsumed  Int
+  
+} 

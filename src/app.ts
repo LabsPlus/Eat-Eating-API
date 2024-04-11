@@ -2,6 +2,7 @@ import 'express-async-errors';
 import express, { Application } from 'express';
 import { LoginRoutes } from './routes/login.routes';
 import { UserRoutes } from './routes/user.routes';
+import { TicketsRoutes } from './routes/tickets.routes'
 import { errorMiddleware } from './middlewares/error.middlewares';
 import requestIp from 'request-ip';
 import { CorsMiddleware } from './server';
@@ -27,6 +28,7 @@ export class App {
   private setupAllRoutes() {
     this.setupLoginRoutes();
     this.setupUserRoutes();
+    this.setupTicketsRoutes();
     this.setupSwagger();
   }
 
@@ -54,6 +56,14 @@ export class App {
 
     this.app.use(loginBaseRoute, loginRoutes.patchRoutes());
     this.app.use(loginBaseRoute, loginRoutes.postRoutes());
+  }
+
+  private setupTicketsRoutes(){
+    const ticketsRoutes = new TicketsRoutes();
+    const ticketsBaseRoute = '/tickets';
+
+    this.app.use(ticketsBaseRoute, ticketsRoutes.postRoutes());
+    this.app.use(ticketsBaseRoute, ticketsRoutes.getRoutes());
   }
 
   private middleware(corsConfig: CorsMiddleware) {

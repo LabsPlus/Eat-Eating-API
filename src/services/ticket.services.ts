@@ -26,7 +26,7 @@ class TicketServices {
 
     const userTicketCount =
       await this.userTicketCountDALs.findUserTicketsCountDALsByUserId(user.id);
-    let createdOrUpdateTicketCount;
+    let createdOrUpdateTicketCount : any;
     if (!userTicketCount) {
       createdOrUpdateTicketCount =
         await this.userTicketCountDALs.createUserTicketsCount({

@@ -188,8 +188,6 @@ model UserTicketsCount {
   id                       Int      @id @default(autoincrement())
   totalTicketsOfUser       Int
   totalTicketsOfUserActive Int
-  lastPurchaseDate         DateTime @default(now())
-
   ticket Ticket[] // 1-N Um userTicketsCount tem vários tickets
   userId     Int @unique
   user       User     @relation(fields: [userId], references: [id]) // 1-1 Um usuario tem um userTicketsCount

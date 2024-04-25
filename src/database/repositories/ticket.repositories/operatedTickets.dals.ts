@@ -16,6 +16,7 @@ class OperatedTicketsDALs{
                     ticketsConsumed,
                 }
             })
+            return result;
     }
 
     async findOperatedTicketsById(id: number){

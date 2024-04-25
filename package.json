@@ -9,6 +9,9 @@
     "dev": " ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
     "build": "tsc"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

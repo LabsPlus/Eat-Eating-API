@@ -55,6 +55,7 @@ model User {
   category    Category?  @relation(fields: [categoryId], references: [id])
   typeGrant   TypeGrant? @relation(fields: [typeGrantId], references: [id])
   userTicketsCount UserTicketsCount?
+  dailyMeals Int
   picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
   visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante

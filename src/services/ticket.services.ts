@@ -26,7 +26,8 @@ class TicketServices {
 
     const userTicketCount =
       await this.userTicketCountDALs.findUserTicketsCountDALsByUserId(user.id);
-    let createdOrUpdateTicketCount : any;
+
+    let createdOrUpdateTicketCount: any;
     if (!userTicketCount) {
       createdOrUpdateTicketCount =
         await this.userTicketCountDALs.createUserTicketsCount({
@@ -55,10 +56,26 @@ class TicketServices {
       },
     );
 
+    const operatedTickets =
+      await this.operatedTicketDALs.findOperatedTicketsById(1);
+    if (!operatedTickets) {
+      throw new NotFoundError({ message: 'tickets not founded!' });
+    }
+    const sumTicketsSold = operatedTickets.ticketsSold + quantity;
+    const subTicketsAvailable = operatedTickets.ticketsAvailable - quantity;
+    const updatedOperatedTickets =
+      await this.operatedTicketDALs.updateOperatedTickets({
+        id: 1,
+        ticketsAvailable: subTicketsAvailable,
+        ticketsSold: sumTicketsSold,
+        ticketsConsumed: operatedTickets.ticketsConsumed,
+      });
+
     const createdTickets = await Promise.all(ticketCreationPromises);
 
     return {purchaseTickets:createdTickets,
             ticketUserCount: createdOrUpdateTicketCount,
+            operatedTickets: updatedOperatedTickets
             };
   }
 }

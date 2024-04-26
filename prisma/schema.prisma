@@ -50,12 +50,12 @@ model User {
   loginUserId Int?       @unique // 1-1 : (Opcional) Um usuário está associado a um login
   categoryId  Int? // 1-1 : (Opcional) Um usuário está associado a uma categoria
   typeGrantId Int? // 1-1 : (Opcional) Um usuário está associado a um tipo de bolsa
-  dailyMeals  Int
   person      Person     @relation(fields: [personId], references: [id], onDelete: Cascade)
   loginUser   LoginUser? @relation(fields: [loginUserId], references: [id], onDelete: Cascade)
   category    Category?  @relation(fields: [categoryId], references: [id])
   typeGrant   TypeGrant? @relation(fields: [typeGrantId], references: [id])
   userTicketsCount UserTicketsCount?
+  dailyMeals Int
   picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
   visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante

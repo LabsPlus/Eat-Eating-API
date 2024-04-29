@@ -6,6 +6,7 @@ import { OperatedTicketsDALs } from '../database/repositories/ticket.repositorie
 import { TicketDALs } from '../database/repositories/ticket.repositories/ticket.dals';
 import { IPurchaseTicket } from '../intefaces/ticket.interfaces';
 
+
 jest.mock('../database/repositories/user.repositories/user.dals/user.dals', () => ({
   UserDALs: jest.fn(() => ({
     existsUserById: jest.fn().mockResolvedValue(false), // Mock para simular usuário não existente
@@ -18,9 +19,11 @@ jest.mock('../database/repositories/ticket.repositories/ticket.dals');
 
 describe('TicketServices', () => {
   let ticketServices: TicketServices;
+  let operatedTicketDALs: OperatedTicketsDALs;
 
   beforeEach(() => {
     ticketServices = new TicketServices();
+    operatedTicketDALs = new OperatedTicketsDALs();
   });
 
   describe('purchaseTicket', () => {
@@ -35,5 +38,29 @@ describe('TicketServices', () => {
 
   
   });
+
+   describe('getOperatedTicked', () => {
+  it('should return operated ticket when found', async () => {
+    // Mock do resultado retornado por findOperatedTicketsById
+    const operatedTicket = { id: 1, name: 'Operated Ticket', quantity: 5 };
+
+    // Mock do método findOperatedTicketsById para retornar o ticket operado
+    operatedTicketDALs.findOperatedTicketsById = jest.fn().mockResolvedValue(operatedTicket);
+
+    // Chama a função getOperatedTicked
+    const result = await ticketServices.getOperatedTicked();
+
+    // Verifica se o resultado retornado é o esperado
+    expect(result).toEqual(operatedTicket);
+  });
+
+  it('should throw NotFoundError if operated ticket not found', async () => {
+    // Mock do método findOperatedTicketsById para simular o caso em que o ticket operado não é encontrado
+    operatedTicketDALs.findOperatedTicketsById = jest.fn().mockResolvedValue(null);
+
+    // Chama a função getOperatedTicked e verifica se lança a NotFoundError
+    await expect(ticketServices.getOperatedTicked()).rejects.toThrowError(NotFoundError);
+  });
+});
 });
 

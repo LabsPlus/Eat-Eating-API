@@ -8,7 +8,11 @@ constructor(){
     this.ticketServices = new TicketServices();
 }
 
-async getInfoTickets(){}
+async getInfoTickets(request: Request, response: Response, next: NextFunction){
+
+    const result =  await this.ticketServices.getOperatedTicked();
+    return response.status(200).json(result);
+}
 
 async purchaseTickets(request: Request, response: Response, next: NextFunction){
     const {userId, quantity} = request.body;

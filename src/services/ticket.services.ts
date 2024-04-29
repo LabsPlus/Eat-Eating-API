@@ -77,6 +77,15 @@ class TicketServices {
             operatedTickets: updatedOperatedTickets
             };
   }
+
+  async getOperatedTicked(){
+    const result = await this.operatedTicketDALs.findOperatedTicketsById(1);
+    if(!result){
+      throw new NotFoundError({message: 'Operated Ticket no found!'});
+    }
+
+    return result;
+  }
 }
 
 export { TicketServices };

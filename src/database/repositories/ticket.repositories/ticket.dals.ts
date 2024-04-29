@@ -1,22 +1,19 @@
-import {prisma} from '../../prisma.databases'
+import { prisma } from '../../prisma.databases';
 
-class TicketDALs{
+class TicketDALs {
+  constructor() {}
 
+  async createTicket(userTicketsCountId: number) {
+    const result = await prisma.ticket.create({
+      data: {
+        userTicketsCountId,
+      },
+    });
 
-    constructor(){
+    return result;
+  }
 
-    }
-
-    async createTicket(userTicketsCountId: number){
-        const result = await prisma.ticket.create({
-            data:{
-                userTicketsCountId,
-            }
-        });
-
-        return result;
-    }
-
+  
 }
 
-export {TicketDALs}
+export { TicketDALs };

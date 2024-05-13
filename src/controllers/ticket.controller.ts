@@ -20,6 +20,12 @@ async purchaseTickets(request: Request, response: Response, next: NextFunction){
     const result = await this.ticketServices.purchaseTicket({userId, quantity});
     return response.status(200).json(result);
 }
+async removeTickets(request: Request, response: Response, next: NextFunction){
+    const {userId, quantity} = request.body;
+
+    const result = await this.ticketServices.removeTicket({userId, quantity});
+    return response.status(200).json(result);
+}
     
 
 

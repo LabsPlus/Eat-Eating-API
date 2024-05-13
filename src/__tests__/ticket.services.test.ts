@@ -62,5 +62,38 @@ describe('TicketServices', () => {
     await expect(ticketServices.getOperatedTicked()).rejects.toThrowError(NotFoundError);
   });
 });
+
+ describe('removeTicket', () => {
+    it('should remove tickets and update counts', async () => {
+      // Mock input data
+      const userId = 1;
+      const quantity = 3;
+
+      // Call the method
+      const result = await ticketServices.removeTicket({ userId, quantity });
+
+      // Assertions
+      expect(result).toEqual({
+        ticketUserCount: { id: 1 },
+        operatedTickets: { id: 1 },
+      });
+    });
+
+    it('should throw NotFoundError if tickets not found', async () => {
+      // Re-mock findQuantityTickets to return empty array
+      require('../database/repositories/ticket.repositories/ticket.dals').TicketDALs.mockImplementationOnce(() => ({
+        findQuantityTickets: jest.fn().mockResolvedValue([]),
+      }));
+
+      // Mock input data
+      const userId = 1;
+      const quantity = 3;
+
+      // Call the method and expect NotFoundError
+      await expect(ticketServices.removeTicket({ userId, quantity })).rejects.toThrowError(NotFoundError);
+    });
+
+    // Add more test cases for other scenarios
+  });
 });
 

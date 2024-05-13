@@ -8,3 +8,7 @@ export interface IUserTicketCountUpdate{
     totalTicketsOfUser: number;    
     totalTicketsOfUserActive: number;
 }
+export interface IUserTicketCountFind{
+    userTicketsCountId: number;
+    quantity: number;
+}

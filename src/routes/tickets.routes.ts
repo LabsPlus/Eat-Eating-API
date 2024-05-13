@@ -26,6 +26,14 @@ class TicketsRoutes {
         return this.router;
     }
 
+    putRoutes(){
+        this.router.put(
+            '/update',
+            this.ticketsController.removeTickets.bind(this.ticketsController),
+        );
+        return this.router;
+    }
+
 }
 
 export {TicketsRoutes}

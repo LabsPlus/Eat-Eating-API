@@ -64,6 +64,7 @@ export class App {
 
     this.app.use(ticketsBaseRoute, ticketsRoutes.postRoutes());
     this.app.use(ticketsBaseRoute, ticketsRoutes.getRoutes());
+     this.app.use(ticketsBaseRoute, ticketsRoutes.putRoutes());
   }
 
   private middleware(corsConfig: CorsMiddleware) {

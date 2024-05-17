@@ -3,6 +3,7 @@ import express, { Application } from 'express';
 import { LoginRoutes } from './routes/login.routes';
 import { UserRoutes } from './routes/user.routes';
 import { TicketsRoutes } from './routes/tickets.routes'
+import {OperatedTicketsRoutes} from './routes/operatedTickets.routes';
 import { errorMiddleware } from './middlewares/error.middlewares';
 import requestIp from 'request-ip';
 import { CorsMiddleware } from './server';
@@ -29,6 +30,7 @@ export class App {
     this.setupLoginRoutes();
     this.setupUserRoutes();
     this.setupTicketsRoutes();
+    this.setupOperatedTicketsRoutes();
     this.setupSwagger();
   }
 
@@ -65,6 +67,11 @@ export class App {
     this.app.use(ticketsBaseRoute, ticketsRoutes.postRoutes());
     this.app.use(ticketsBaseRoute, ticketsRoutes.getRoutes());
      this.app.use(ticketsBaseRoute, ticketsRoutes.putRoutes());
+  }
+  private setupOperatedTicketsRoutes(){
+    const operatedTicketsRoutes = new OperatedTicketsRoutes();
+    const OperatedTicketsBaseRoute = '/operated-tickets';
+     this.app.use(OperatedTicketsBaseRoute , operatedTicketsRoutes.putRoutes());
   }
 
   private middleware(corsConfig: CorsMiddleware) {

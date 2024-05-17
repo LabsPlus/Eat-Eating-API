@@ -3,4 +3,5 @@ export interface IOperatedTicketsUpdate{
     ticketsAvailable: number;
     ticketsSold: number;
     ticketsConsumed: number;
+    ticketsOpened: number;
 }

@@ -23,11 +23,17 @@ class TicketServices {
     if (!user) {
       throw new NotFoundError({ message: 'User not found' });
     }
-
+    const operatedTicket = await this.operatedTicketDALs.findOperatedTicketsById(1);
+    if(!operatedTicket){
+      throw new NotFoundError({message: 'operatedTickets not founded'})
+    }
     const userTicketCount =
       await this.userTicketCountDALs.findUserTicketsCountDALsByUserId(user.id);
 
     let createdOrUpdateTicketCount: any;
+    if(quantity > operatedTicket.ticketsOpened ){
+          throw new UnprocessedEntityError({message: 'totalTickets user cannot be higher than tickets opened'})
+        }
     if (!userTicketCount) {
       createdOrUpdateTicketCount =
         await this.userTicketCountDALs.createUserTicketsCount({
@@ -39,6 +45,9 @@ class TicketServices {
       const sumTotalTickets = userTicketCount.totalTicketsOfUser + quantity;
       const sumTotalTicketsActive =
         userTicketCount.totalTicketsOfUserActive + quantity;
+        if(sumTotalTickets > operatedTicket?.ticketsOpened || sumTotalTicketsActive > operatedTicket?.ticketsOpened){
+          throw new UnprocessedEntityError({message: 'totalTickets user cannot be higher than tickets opened'})
+        }
       createdOrUpdateTicketCount =
         await this.userTicketCountDALs.updateUserTicketsCount({
           userId,
@@ -63,12 +72,16 @@ class TicketServices {
     }
     const sumTicketsSold = operatedTickets.ticketsSold + quantity;
     const subTicketsAvailable = operatedTickets.ticketsAvailable - quantity;
+    if(subTicketsAvailable < 0){
+      throw new NotFoundError({message: 'ticket available cannot be under zero'});
+    }
     const updatedOperatedTickets =
       await this.operatedTicketDALs.updateOperatedTickets({
         id: 1,
         ticketsAvailable: subTicketsAvailable,
         ticketsSold: sumTicketsSold,
         ticketsConsumed: operatedTickets.ticketsConsumed,
+        ticketsOpened: operatedTicket.ticketsOpened,
       });
 
     const createdTickets = await Promise.all(ticketCreationPromises);
@@ -133,6 +146,7 @@ class TicketServices {
         ticketsAvailable: sumTicketsAvailable,
         ticketsSold: subTicketsSold,
         ticketsConsumed: operatedTickets.ticketsConsumed,
+        ticketsOpened: operatedTickets.ticketsOpened
       });
 
    

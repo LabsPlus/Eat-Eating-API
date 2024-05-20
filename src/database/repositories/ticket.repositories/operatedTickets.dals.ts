@@ -1,4 +1,4 @@
-import { IOperatedTicketsUpdate } from '../../../intefaces/operatedTickets.interfaces'
+import { IOperatedTicketsUpdate} from '../../../intefaces/operatedTickets.interfaces'
 import {prisma} from '../../prisma.databases'
 
 
@@ -6,14 +6,15 @@ class OperatedTicketsDALs{
     constructor(){
         
     }
-
-    async updateOperatedTickets({id, ticketsAvailable, ticketsSold, ticketsConsumed}: IOperatedTicketsUpdate){
+   
+    async updateOperatedTickets({id, ticketsAvailable, ticketsSold, ticketsConsumed, ticketsOpened}: IOperatedTicketsUpdate){
             const result = await prisma.operatedTickets.update({
                 where: {id},
                 data:{
                     ticketsAvailable,
                     ticketsSold,
                     ticketsConsumed,
+                    ticketsOpened,
                 }
             })
             return result;

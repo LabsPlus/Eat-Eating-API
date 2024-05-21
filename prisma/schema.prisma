@@ -181,7 +181,7 @@ model Ticket {
   ticketPrice              Float        @default(0)
   userTicketsCountId       Int
 
-  userCount UserTicketsCount @relation(fields: [userTicketsCountId], references: [id]) // N-1  Muitos tickets podem pertencer a um userTicketsCount
+  userCount UserTicketsCount @relation(fields: [userTicketsCountId], references: [id], onDelete: Cascade) // N-1  Muitos tickets podem pertencer a um userTicketsCount
 }
 
 model UserTicketsCount {
@@ -190,7 +190,7 @@ model UserTicketsCount {
   totalTicketsOfUserActive Int
   ticket Ticket[] // 1-N Um userTicketsCount tem vários tickets
   userId     Int @unique
-  user       User     @relation(fields: [userId], references: [id]) // 1-1 Um usuario tem um userTicketsCount
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade) // 1-1 Um usuario tem um userTicketsCount
  
 }
 

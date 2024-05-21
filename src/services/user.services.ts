@@ -17,6 +17,7 @@ import {EnrollmentDALs} from "../database/repositories/user.repositories/user.da
 import { VisitorDALs } from '../database/repositories/user.repositories/user.dals/visitor.dals';
 import { PersonDALs } from '../database/repositories/person.dals';
 import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
+import { UserTicketsCountDALs } from '../database/repositories/ticket.repositories/userTicketsCount.dals'; 
 dotenv.config();
 
 const {Link} = process.env;
@@ -32,6 +33,7 @@ class UserServices {
     enrollmentDALs: EnrollmentDALs;
     visitorDALs: VisitorDALs;
     personDALs: PersonDALs;
+    userTicketsCountDALs: UserTicketsCountDALs;
     private readonly pictureDALs: PictureDALs;
 
     constructor() {
@@ -46,6 +48,7 @@ class UserServices {
         this.visitorDALs = new VisitorDALs();
         this.personDALs = new PersonDALs();
         this.pictureDALs = new PictureDALs();
+        this.userTicketsCountDALs =new UserTicketsCountDALs();
     }
 
     async updateAnUser(
@@ -211,7 +214,8 @@ class UserServices {
                         : await this.employeeDALs.findEmployeeByUserId(user.id);
                  userEntity ? await this.enrollmentDALs.deleteEnrollmentById(userEntity?.enrollmentId): null;
          }
-         // exclui em cascada o usuario e a categoria referente a ele
+         // exclui em cascada o usuario, o ticket e a categoria referente a ele
+         await this.userTicketsCountDALs.deleteUserTicketsCountByUserId(user.id);
          await this.loginDALs.deleteLoginById(user.loginUserId);
          await this.personDALs.deletePerson(user.personId);
         

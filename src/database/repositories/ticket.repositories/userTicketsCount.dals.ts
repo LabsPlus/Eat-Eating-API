@@ -44,6 +44,12 @@ class UserTicketsCountDALs{
 
         return result;
     }
+    async deleteUserTicketsCountByUserId(userId: number){
+        const result = await prisma.userTicketsCount.delete({
+            where: {userId}
+        })
+        return result;
+    }
 
 }
 

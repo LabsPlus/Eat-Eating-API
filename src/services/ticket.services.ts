@@ -72,7 +72,7 @@ class TicketServices {
     const sumTicketsSold = operatedTickets.ticketsSold + quantity;
     const subTicketsAvailable = operatedTickets.ticketsAvailable - quantity;
     if(subTicketsAvailable < 0){
-      throw new NotFoundError({message: 'ticket available cannot be under zero'});
+      throw new UnprocessedEntityError({message: 'ticket available cannot be under zero'});
     }
     const updatedOperatedTickets =
       await this.operatedTicketDALs.updateOperatedTickets({

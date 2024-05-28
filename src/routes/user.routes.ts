@@ -10,7 +10,7 @@ class UserRoutes {
         this.userController = new UserControllers();
     }
 
-    /**
+     /**
      * @swagger
      * /user/list-all-users:
      *   get:

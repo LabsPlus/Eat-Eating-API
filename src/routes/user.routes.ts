@@ -145,7 +145,7 @@ class UserRoutes {
      *                   studentId: 1
      *                   enrollment: "1234567"
      *                   personName: "name test"
-     *                   categoryName: "ESTUDANTE"
+     *                   categoryName: "ALUNO"
      *                   typeGrantName: "INTEGRAL"
      *                   dailyMeals: 2
      *                   loginData:

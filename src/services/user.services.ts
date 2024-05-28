@@ -215,7 +215,10 @@ class UserServices {
                  userEntity ? await this.enrollmentDALs.deleteEnrollmentById(userEntity?.enrollmentId): null;
          }
          // exclui em cascada o usuario, o ticket e a categoria referente a ele
-         await this.userTicketsCountDALs.deleteUserTicketsCountByUserId(user.id);
+         const userTicketsCount = await this.userTicketsCountDALs.findUserTicketsCountDALsByUserId(user.id);
+         if(userTicketsCount){
+            await this.userTicketsCountDALs.deleteUserTicketsCountByUserId(user.id);
+         }
          await this.loginDALs.deleteLoginById(user.loginUserId);
          await this.personDALs.deletePerson(user.personId);
         

@@ -22,6 +22,7 @@ export class App {
   listen(port: number) {
     this.app.listen(port, () => {
       console.log(`Servidor rodando na porta ${port}`);
+      return this.setupAllRoutes()
     });
     this.app.use(errorMiddleware);
   }

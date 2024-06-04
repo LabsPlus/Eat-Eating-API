@@ -24,7 +24,6 @@ describe('Email', () => {
             destination: 'example@example.com',
             subject: 'Subject',
             content: 'Content',
-            link: 'https://example.com',
         });
 
         expect(nodemailer.createTransport).toHaveBeenCalledWith({
@@ -50,7 +49,6 @@ describe('Email', () => {
             destination: 'example@example.com',
             subject: 'Subject',
             content: 'Content',
-            link: 'https://example.com',
         })).rejects.toThrow('email not sended');
 
         expect(nodemailer.createTransport).toHaveBeenCalledWith({

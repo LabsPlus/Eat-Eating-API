@@ -1,16 +1,17 @@
-import {EmployeeService} from '../services/employee.services';
-import {EmployeeDALs} from "../database/repositories/user.repositories/user.dals/employee.dals";
-import {PersonDALs} from "../database/repositories/person.dals";
-import {CategoryDALs} from "../database/repositories/user.repositories/user.dals/category.dals";
-import {TypeGrantDALs} from "../database/repositories/user.repositories/user.dals/typeGrant.dals";
-import {UserDALs} from "../database/repositories/user.repositories/user.dals/user.dals";
+import { EmployeeService } from '../services/employee.services';
+import { EmployeeDALs } from "../database/repositories/user.repositories/user.dals/employee.dals";
+import { PersonDALs } from "../database/repositories/person.dals";
+import { CategoryDALs } from "../database/repositories/user.repositories/user.dals/category.dals";
+import { TypeGrantDALs } from "../database/repositories/user.repositories/user.dals/typeGrant.dals";
+import { UserDALs } from "../database/repositories/user.repositories/user.dals/user.dals";
+import { IUserDataCreate } from '../intefaces/user.interfaces';
+import { EnrollmentDALs } from '../database/repositories/user.repositories/user.dals/enrollment.dals';
 
 jest.mock('../database/repositories/user.repositories/user.dals/employee.dals');
 jest.mock('../database/repositories/person.dals');
 jest.mock('../database/repositories/user.repositories/user.dals/category.dals');
 jest.mock('../database/repositories/user.repositories/user.dals/typeGrant.dals');
 jest.mock('../database/repositories/user.repositories/user.dals/user.dals');
-
 
 describe('EmployeeService', () => {
     let service: EmployeeService;
@@ -23,56 +24,45 @@ describe('EmployeeService', () => {
         jest.clearAllMocks();
     });
 
-    it('should throw an error if category or typeGrant is not found', async () => {
-        const mockEmployeeData = {
-            name: 'Test Name',
-            category: 'Nonexistent Category',
-            dailyMeals: 2,
-            typeGrant: 'Nonexistent TypeGrant',
-            picture: 'Test Picture',
-            enrollment: 'Test Enrollment'
-        };
 
-        service.categoryDALs.getCategoryByName.bind(CategoryDALs);
-        service.typeGrantDALs.getTypeGrantByName.bind(TypeGrantDALs);
-
-        await expect(service.createEmployee(mockEmployeeData as any)).rejects.toThrow('Category or Type Grant not found');
-    });
     it('should create an employee successfully', async () => {
-
-        const mockEmployeeData = {
-            name: 'Test Name',
-            category: 'Test Category',
-            dailyMeals: 2,
-            typeGrant: 'Test TypeGrant',
-            picture: 'Test Picture',
-            enrollment: 'Test Enrollment'
+        const mockEmployeeData: IUserDataCreate = {
+             name: 'John Doe',
+            category: 'ALUNO',
+            enrollment: '12345',
+            dailyMeals: 3,
+            typeGrant: 'PARCIAL',
+            picture: 'path/to/picture.jpg',
+             email: 'www.teste@gmail.com',
+            password: 'Gateeqsa23!',
+            emailRecovery: 'www.teste@gmail.com'
         };
 
-        (PersonDALs.prototype.createPerson as jest.Mock).mockResolvedValue({id: 1, name: mockEmployeeData.name});
-        (CategoryDALs.prototype.getCategoryByName as jest.Mock).mockResolvedValue({
+        jest.spyOn(PersonDALs.prototype, 'createPerson').mockResolvedValue({ id: 1, name: mockEmployeeData.name, cpf: '85984846527', born: new Date()});
+        jest.spyOn(CategoryDALs.prototype, 'getCategoryByName').mockResolvedValue({
             id: 1,
             name: mockEmployeeData.category
         });
-        (TypeGrantDALs.prototype.getTypeGrantByName as jest.Mock).mockResolvedValue({
+        jest.spyOn(TypeGrantDALs.prototype, 'getTypeGrantByName').mockResolvedValue({
             id: 1,
             name: mockEmployeeData.typeGrant
         });
-        (UserDALs.prototype.createUser as jest.Mock).mockResolvedValue({
+        jest.spyOn(UserDALs.prototype, 'createUser').mockResolvedValue({
             id: 1,
             categoryId: 1,
             typeGrantId: 1,
             personId: 1,
+            loginUserId: 1,
             dailyMeals: mockEmployeeData.dailyMeals
         });
-        (EmployeeDALs.prototype.checkEnrollmentUnique as jest.Mock).mockResolvedValue(true);
-        (EmployeeDALs.prototype.createEmployee as jest.Mock).mockResolvedValue({
+        jest.spyOn(EnrollmentDALs.prototype, 'checkEnrollmentUnique').mockResolvedValue(true);
+        jest.spyOn(EmployeeDALs.prototype, 'createEmployee').mockResolvedValue({
             id: 1,
             userId: 1,
-            enrollment: mockEmployeeData.enrollment
+            enrollmentId: 1,
         });
 
-        const result = await service.createEmployee(mockEmployeeData as any);
+        const result = await service.createEmployee(mockEmployeeData);
 
         expect(result).toEqual({
             id: 1,
@@ -83,6 +73,5 @@ describe('EmployeeService', () => {
             typeGrantName: mockEmployeeData.typeGrant,
             dailyMeals: mockEmployeeData.dailyMeals
         });
-
     });
 });

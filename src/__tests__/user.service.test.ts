@@ -52,7 +52,7 @@ describe('UserServices - updateAnUser', () => {
 
     categoryDALsMock.getCategoryByName.mockResolvedValue({
       id: 2,
-      name: 'ESTUDANTE',
+      name: 'ALUNO',
     });
 
     typeGrantDALsMock.getTypeGrantByName.mockResolvedValue({
@@ -95,7 +95,7 @@ describe('UserServices - updateAnUser', () => {
   test('should throw UnprocessedEntityError for invalid dailyMeals', async () => {
     const userData: IUserDataUpdate = {
       name: 'John Doe',
-      category: 'ESTUDANTE',
+      category: 'ALUNO',
       dailyMeals: 0,
       typeGrant: 'PARCIAL',
       picture: 'profile.jpg',
@@ -115,7 +115,7 @@ describe('UserServices - updateAnUser', () => {
 
     const userData: IUserDataUpdate = {
       name: 'John Doe',
-      category: 'ESTUDANTE',
+      category: 'ALUNO',
       dailyMeals: 2,
       typeGrant: 'INTEGRAL',
       picture: 'profile.jpg',

@@ -59,6 +59,7 @@ class UserServices {
             typeGrant,
             picture,
             enrollment,
+            email,
             emailRecovery,
             password,
         }: IUserDataUpdate,
@@ -80,11 +81,20 @@ class UserServices {
         const loginByEmailRecovery = await this.loginDALs.findLoginByEmailOREmailRecovery({
                               emailRecovery,
                           });
+        const loginByEmail = await this.loginDALs.findLoginByEmail(email);
+
 
     if (loginByEmailRecovery && loginByEmailRecovery.id !== oldUser.loginUserId) {
       throw new BadRequestError({
         message:
           'Email Recovery already exists, only one email is allowed.',
+      });
+     }
+
+     if (loginByEmail && loginByEmail.id !== oldUser.loginUserId) {
+      throw new BadRequestError({
+        message:
+          'Email already exists, only one email is allowed.',
       });
      }
         let passwordHash = oldLogin!.password // recebe por padrão a senha antiga do usuario caso o administrador não mande nenhuma senha para trocar
@@ -94,6 +104,7 @@ class UserServices {
         }
         const updateLogin = await this.loginDALs.updateLogin({
             id: oldUser.loginUserId!,
+            email: email,
             emailRecovery: emailRecovery,
             password: passwordHash,
         });

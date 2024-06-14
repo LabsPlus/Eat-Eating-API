@@ -33,6 +33,7 @@ export interface ILoginUpdateResetToken {
 
 export interface ILoginUserUpdate {
   id: number;
+  email: string;
   emailRecovery: string;
   password: string;
 }

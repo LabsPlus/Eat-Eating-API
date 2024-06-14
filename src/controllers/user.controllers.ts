@@ -75,6 +75,7 @@ class UserControllers {
             course,
             cpf,
             born,
+            email,
             emailRecovery,
             password
         } = request.body;
@@ -88,6 +89,7 @@ class UserControllers {
                 typeGrant,
                 picture,
                 enrollment,
+                email,
                 emailRecovery,
                 password
             },

@@ -54,10 +54,11 @@ class LoginDALs {
 
     return result;
   }
-  async updateLogin({ id, emailRecovery, password }: ILoginUserUpdate) {
+  async updateLogin({ id, emailRecovery, password, email }: ILoginUserUpdate) {
     const result = await prisma.loginUser.update({
       where: { id: id },
       data: {
+        email,
         emailRecovery,
         password,
       },

@@ -76,7 +76,11 @@ class EmployeeService {
       email,
       emailRecovery,
   });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+        if (!emailRegex.test(email) || !emailRegex.test(emailRecovery)) {
+        throw new BadRequestError({ message: 'Invalid email format.' });
+        }
     if (loginByEmail) {
       throw new BadRequestError({
         message:

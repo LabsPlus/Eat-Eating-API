@@ -62,7 +62,13 @@ class VisitorService {
     const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery({
       email,
       emailRecovery,
-     });
+    });
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email) || !emailRegex.test(emailRecovery)) {
+      throw new BadRequestError({ message: 'Invalid email format.' });
+    }
     if (loginByEmail) {
       throw new BadRequestError({
         message:
@@ -97,9 +103,9 @@ class VisitorService {
     if (picture) {
       url = picture;
     }
-     const existPicture = await this.pictureDALs.findPictureByUrl(url);
-    if(existPicture.length !== 0 && url !== ""){
-      throw new BadRequestError({message: 'existPicture already exists'});
+    const existPicture = await this.pictureDALs.findPictureByUrl(url);
+    if (existPicture.length !== 0 && url !== '') {
+      throw new BadRequestError({ message: 'existPicture already exists' });
     }
 
     const createPicture = await this.pictureDALs.createPicture({

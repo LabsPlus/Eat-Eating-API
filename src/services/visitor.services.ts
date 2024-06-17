@@ -16,6 +16,7 @@ import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
 import { ILoginCreate } from '../intefaces/login.interfaces';
 import { hash } from 'bcrypt';
+import { VerifyHelpers } from '../helpers/verify.helpers';
 import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 import e from 'express';
 
@@ -30,6 +31,7 @@ class VisitorService {
   private readonly employeeDALs: EmployeeDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
   private readonly pictureDALs: PictureDALs;
+  private readonly verifyHelpers: VerifyHelpers;
 
   constructor() {
     this.visitorDALs = new VisitorDALs();
@@ -42,6 +44,7 @@ class VisitorService {
     this.employeeDALs = new EmployeeDALs();
     this.enrollmentDALs = new EnrollmentDALs();
     this.pictureDALs = new PictureDALs();
+    this.verifyHelpers = new VerifyHelpers();
   }
 
   async createVisitor({
@@ -64,9 +67,10 @@ class VisitorService {
       emailRecovery,
     });
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email) || !emailRegex.test(emailRecovery)) {
+        if (
+      !(await this.verifyHelpers.verifyFormatEmail(email)) ||
+      !(await this.verifyHelpers.verifyFormatEmail(emailRecovery))
+    ) {
       throw new BadRequestError({ message: 'Invalid email format.' });
     }
     if (loginByEmail) {

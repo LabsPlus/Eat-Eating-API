@@ -16,6 +16,7 @@ import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
 import { hash } from 'bcrypt';
 import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
+import { VerifyHelpers } from '../helpers/verify.helpers';
 
 class StudentService {
   private readonly studentDALs: StudentDALs;
@@ -28,6 +29,7 @@ class StudentService {
   private readonly userDALs: UserDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
   private readonly pictureDALs: PictureDALs;
+  verifyHelpers: VerifyHelpers;
 
   constructor() {
     this.studentDALs = new StudentDALs();
@@ -40,6 +42,7 @@ class StudentService {
     this.employeeDALs = new EmployeeDALs();
     this.enrollmentDALs = new EnrollmentDALs();
     this.pictureDALs = new PictureDALs();
+    this.verifyHelpers = new VerifyHelpers();
   }
 
   async createStudent({
@@ -76,11 +79,12 @@ class StudentService {
       email,
       emailRecovery,
     });
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!emailRegex.test(email) || !emailRegex.test(emailRecovery)) {
-        throw new BadRequestError({ message: 'Invalid email format.' });
-        }
+    if (
+      !(await this.verifyHelpers.verifyFormatEmail(email)) ||
+      !(await this.verifyHelpers.verifyFormatEmail(emailRecovery))
+    ) {
+      throw new BadRequestError({ message: 'Invalid email format.' });
+    }
 
     if (loginByEmail) {
       throw new BadRequestError({
@@ -121,11 +125,10 @@ class StudentService {
     if (picture) {
       url = picture;
     }
-     const existPicture = await this.pictureDALs.findPictureByUrl(url);
-    if(existPicture.length !== 0 && url !== ""){
-      throw new BadRequestError({message: 'existPicture already exists'});
+    const existPicture = await this.pictureDALs.findPictureByUrl(url);
+    if (existPicture.length !== 0 && url !== '') {
+      throw new BadRequestError({ message: 'existPicture already exists' });
     }
-
 
     const createPicture = await this.pictureDALs.createPicture({
       url: url,

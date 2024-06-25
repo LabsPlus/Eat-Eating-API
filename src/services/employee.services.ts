@@ -12,7 +12,8 @@ import {
   NotFoundError,
   UnprocessedEntityError,
 } from '../helpers/errors.helpers';
-import { VerifyHelpers } from '../helpers/verify.helpers';
+// import { VerifyHelpers } from '../helpers/verify.helpers';
+import { EmailValidator } from '../helpers/validators/email.validators';
 import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 import { hash } from 'bcrypt';
 import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
@@ -28,7 +29,8 @@ private readonly employeeDALs: EmployeeDALs;
   private readonly studentDALs: StudentDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
   private readonly pictureDALs: PictureDALs;
-  private readonly verifyHelpers: VerifyHelpers;
+  // private readonly verifyHelpers: VerifyHelpers;
+  private readonly emailValidator: EmailValidator;
 
   constructor() {
     this.employeeDALs = new EmployeeDALs();
@@ -41,7 +43,8 @@ private readonly employeeDALs: EmployeeDALs;
     this.studentDALs = new StudentDALs();
     this.enrollmentDALs = new EnrollmentDALs();
     this.pictureDALs = new PictureDALs();
-    this.verifyHelpers = new VerifyHelpers();
+    // this.verifyHelpers = new VerifyHelpers();
+    this.emailValidator = new EmailValidator();
   }
 
   async createEmployee({
@@ -79,8 +82,8 @@ private readonly employeeDALs: EmployeeDALs;
       emailRecovery,
     });
       if (
-      !(await this.verifyHelpers.verifyFormatEmail(email)) ||
-      !(await this.verifyHelpers.verifyFormatEmail(emailRecovery))
+      !(await this.emailValidator.isValid(email)) ||
+      !(await this.emailValidator.isValid(emailRecovery))
     ) {
       throw new BadRequestError({ message: 'Invalid email format.' });
     }

@@ -16,7 +16,8 @@ import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
 import { hash } from 'bcrypt';
 import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
-import { VerifyHelpers } from '../helpers/verify.helpers';
+// import { VerifyHelpers } from '../helpers/verify.helpers';
+import { EmailValidator } from '../helpers/validators/email.validators';
 
 class StudentService {
   private readonly studentDALs: StudentDALs;
@@ -29,7 +30,8 @@ class StudentService {
   private readonly userDALs: UserDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
   private readonly pictureDALs: PictureDALs;
-  verifyHelpers: VerifyHelpers;
+  // verifyHelpers: VerifyHelpers;
+  private readonly emailValidator: EmailValidator;
 
   constructor() {
     this.studentDALs = new StudentDALs();
@@ -42,7 +44,8 @@ class StudentService {
     this.employeeDALs = new EmployeeDALs();
     this.enrollmentDALs = new EnrollmentDALs();
     this.pictureDALs = new PictureDALs();
-    this.verifyHelpers = new VerifyHelpers();
+    // this.verifyHelpers = new VerifyHelpers();
+    this.emailValidator = new EmailValidator();
   }
 
   async createStudent({
@@ -80,8 +83,10 @@ class StudentService {
       emailRecovery,
     });
     if (
-      !(await this.verifyHelpers.verifyFormatEmail(email)) ||
-      !(await this.verifyHelpers.verifyFormatEmail(emailRecovery))
+      // !(await this.verifyHelpers.verifyFormatEmail(email)) ||
+      // !(await this.verifyHelpers.verifyFormatEmail(emailRecovery))
+      !this.emailValidator.isValid(email) ||
+      !this.emailValidator.isValid(emailRecovery)
     ) {
       throw new BadRequestError({ message: 'Invalid email format.' });
     }

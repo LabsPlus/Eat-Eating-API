@@ -30,7 +30,6 @@ class StudentService {
   private readonly userDALs: UserDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
   private readonly pictureDALs: PictureDALs;
-  // verifyHelpers: VerifyHelpers;
   private readonly emailValidator: EmailValidator;
 
   constructor() {
@@ -44,7 +43,6 @@ class StudentService {
     this.employeeDALs = new EmployeeDALs();
     this.enrollmentDALs = new EnrollmentDALs();
     this.pictureDALs = new PictureDALs();
-    // this.verifyHelpers = new VerifyHelpers();
     this.emailValidator = new EmailValidator();
   }
 
@@ -83,8 +81,6 @@ class StudentService {
       emailRecovery,
     });
     if (
-      // !(await this.verifyHelpers.verifyFormatEmail(email)) ||
-      // !(await this.verifyHelpers.verifyFormatEmail(emailRecovery))
       !this.emailValidator.isValid(email) ||
       !this.emailValidator.isValid(emailRecovery)
     ) {

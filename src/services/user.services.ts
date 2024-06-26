@@ -18,6 +18,7 @@ import { VisitorDALs } from '../database/repositories/user.repositories/user.dal
 import { PersonDALs } from '../database/repositories/person.dals';
 import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 import { UserTicketsCountDALs } from '../database/repositories/ticket.repositories/userTicketsCount.dals';
+import { EmailValidator } from '../helpers/validators/email.validators';
 dotenv.config();
 
 const { Link } = process.env;
@@ -35,6 +36,7 @@ class UserServices {
   personDALs: PersonDALs;
   userTicketsCountDALs: UserTicketsCountDALs;
   private readonly pictureDALs: PictureDALs;
+  emailValidator: EmailValidator;
 
   constructor() {
     this.userDALs = new UserDALs();
@@ -49,6 +51,7 @@ class UserServices {
     this.personDALs = new PersonDALs();
     this.pictureDALs = new PictureDALs();
     this.userTicketsCountDALs = new UserTicketsCountDALs();
+    this.emailValidator = new EmailValidator();
   }
 
   async updateAnUser(
@@ -94,8 +97,8 @@ class UserServices {
     }
 
     if (
-        !await this.verifyHelpers.verifyFormatEmail(email) ||
-        !await this.verifyHelpers.verifyFormatEmail(emailRecovery)
+        !this.emailValidator.isValid(email) ||
+        !this.emailValidator.isValid(emailRecovery)
     ) {
         throw new BadRequestError({ message: 'Invalid email format.' });
     }

@@ -29,7 +29,6 @@ private readonly employeeDALs: EmployeeDALs;
   private readonly studentDALs: StudentDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
   private readonly pictureDALs: PictureDALs;
-  // private readonly verifyHelpers: VerifyHelpers;
   private readonly emailValidator: EmailValidator;
 
   constructor() {
@@ -43,7 +42,6 @@ private readonly employeeDALs: EmployeeDALs;
     this.studentDALs = new StudentDALs();
     this.enrollmentDALs = new EnrollmentDALs();
     this.pictureDALs = new PictureDALs();
-    // this.verifyHelpers = new VerifyHelpers();
     this.emailValidator = new EmailValidator();
   }
 
@@ -82,8 +80,8 @@ private readonly employeeDALs: EmployeeDALs;
       emailRecovery,
     });
       if (
-      !(await this.emailValidator.isValid(email)) ||
-      !(await this.emailValidator.isValid(emailRecovery))
+      ! this.emailValidator.isValid(email) ||
+      !this.emailValidator.isValid(emailRecovery)
     ) {
       throw new BadRequestError({ message: 'Invalid email format.' });
     }

@@ -16,6 +16,7 @@ import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
 import { ILoginCreate } from '../intefaces/login.interfaces';
 import { hash } from 'bcrypt';
+import { EmailValidator } from '../helpers/validators/email.validators';
 import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 import e from 'express';
 
@@ -30,6 +31,7 @@ class VisitorService {
   private readonly employeeDALs: EmployeeDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
   private readonly pictureDALs: PictureDALs;
+  private readonly emailValidator: EmailValidator;
 
   constructor() {
     this.visitorDALs = new VisitorDALs();
@@ -42,6 +44,7 @@ class VisitorService {
     this.employeeDALs = new EmployeeDALs();
     this.enrollmentDALs = new EnrollmentDALs();
     this.pictureDALs = new PictureDALs();
+    this.emailValidator = new EmailValidator();
   }
 
   async createVisitor({
@@ -64,9 +67,10 @@ class VisitorService {
       emailRecovery,
     });
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email) || !emailRegex.test(emailRecovery)) {
+        if (
+      !this.emailValidator.isValid(email)||
+      !this.emailValidator.isValid(emailRecovery)
+    ) {
       throw new BadRequestError({ message: 'Invalid email format.' });
     }
     if (loginByEmail) {

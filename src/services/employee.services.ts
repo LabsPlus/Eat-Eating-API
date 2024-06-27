@@ -12,12 +12,14 @@ import {
   NotFoundError,
   UnprocessedEntityError,
 } from '../helpers/errors.helpers';
+// import { VerifyHelpers } from '../helpers/verify.helpers';
+import { EmailValidator } from '../helpers/validators/email.validators';
 import { IVerifyUpdateByCategory } from '../intefaces/verify.interfaces';
 import { hash } from 'bcrypt';
 import { LoginDALs } from '../database/repositories/user.repositories/user.dals/login.dals';
 import { PictureDALs } from '../database/repositories/user.repositories/user.dals/picture.dals';
 class EmployeeService {
-  private readonly employeeDALs: EmployeeDALs;
+private readonly employeeDALs: EmployeeDALs;
   private readonly loginDALs: LoginDALs;
   private readonly personRepositories: PersonDALs;
   private readonly categoryDALs: CategoryDALs;
@@ -27,6 +29,7 @@ class EmployeeService {
   private readonly studentDALs: StudentDALs;
   private readonly enrollmentDALs: EnrollmentDALs;
   private readonly pictureDALs: PictureDALs;
+  private readonly emailValidator: EmailValidator;
 
   constructor() {
     this.employeeDALs = new EmployeeDALs();
@@ -39,6 +42,7 @@ class EmployeeService {
     this.studentDALs = new StudentDALs();
     this.enrollmentDALs = new EnrollmentDALs();
     this.pictureDALs = new PictureDALs();
+    this.emailValidator = new EmailValidator();
   }
 
   async createEmployee({
@@ -71,16 +75,16 @@ class EmployeeService {
       });
     }
 
-
     const loginByEmail = await this.loginDALs.findLoginByEmailOREmailRecovery({
       email,
       emailRecovery,
-  });
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!emailRegex.test(email) || !emailRegex.test(emailRecovery)) {
-        throw new BadRequestError({ message: 'Invalid email format.' });
-        }
+    });
+      if (
+      ! this.emailValidator.isValid(email) ||
+      !this.emailValidator.isValid(emailRecovery)
+    ) {
+      throw new BadRequestError({ message: 'Invalid email format.' });
+    }
     if (loginByEmail) {
       throw new BadRequestError({
         message:
@@ -121,8 +125,8 @@ class EmployeeService {
     }
     const existPicture = await this.pictureDALs.findPictureByUrl(url);
 
-    if(existPicture.length !== 0 && url !== ""){
-      throw new BadRequestError({message: 'existPicture already exists'});
+    if (existPicture.length !== 0 && url !== '') {
+      throw new BadRequestError({ message: 'existPicture already exists' });
     }
 
     const createPicture = await this.pictureDALs.createPicture({

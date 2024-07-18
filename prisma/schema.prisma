@@ -24,12 +24,13 @@ model LoginAdministrator {
 model Administrator {
   id       Int     @id @default(autoincrement())
   isMaster Boolean @default(false)
-
+  phone String
   personId   Int @unique // 1-1 : Um administrador está associado a uma pessoa
   loginAdmId Int @unique // 1-1 : Um administrador está associado a um login
-
+  pictureId Int @unique
   person Person             @relation(fields: [personId], references: [id])
   login  LoginAdministrator @relation(fields: [loginAdmId], references: [id])
+  picture Picture @relation(fields: [pictureId], references: [id])
 }
 
 // NÃO ESQUECER DE COLOCAR O cpf PARA @UNIQUE E RETIRAR O @default("") QUANDO ELE FOR IMPLEMENTADO
@@ -103,7 +104,7 @@ model Visitor {
 model Picture {
   id  Int    @id @default(autoincrement())
   url String
-
+  Adiministrador Administrator?
   userId Int  @unique // 1-1 : (Obrigatório) Uma imagem está associada a um usuário
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

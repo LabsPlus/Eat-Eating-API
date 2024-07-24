@@ -8,17 +8,7 @@ class LoginControllers {
         this.loginServices = new AdministratorServices();
     }
 
-    async createLogin(request: Request, response: Response, next: NextFunction) {
-        const {email, password, emailRecovery} = request.body;
-        const result = await this.loginServices.createLogin({
-            email,
-            password,
-            emailRecovery,
-        });
-
-        return response.status(201).json(result);
-    }
-
+    
     async authLogin(request: Request, response: Response, next: NextFunction) {
         const {email, password} = request.body;
         const result = await this.loginServices.authLogin({email, password});

@@ -8,11 +8,13 @@ import {
   ILoginForgotPassword,
   ILoginUpdatePassword,
 } from '../intefaces/login.interfaces';
+import {IAdministratorData} from '../intefaces/administrator.interfaces'
 import { RateLimitUtils } from '../utils/rate.limit.utils';
 import { sign, verify } from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { ErrorsHelpers } from '../helpers/errors.helpers';
-
+import { BadRequestError, ErrorsHelpers } from '../helpers/errors.helpers';
+import { AdministratorDALs } from '../database/repositories/administrator.repositories/administator.dals/administrator.dals';
+import { EmailValidator } from '../helpers/validators/email.validators';
 dotenv.config();
 
 const { Link } = process.env;
@@ -23,6 +25,8 @@ class AdministratorServices {
   private rateLimitUtils: RateLimitUtils;
   private invalidAttempts: Map<string, number>;
   private htmlMessages: HtmlMessages;
+  private administratorDals: AdministratorDALs;
+  private emailValidator: EmailValidator;
 
   constructor() {
     this.loginDALs = new LoginDALs();
@@ -30,9 +34,11 @@ class AdministratorServices {
     this.rateLimitUtils = new RateLimitUtils();
     this.invalidAttempts = new Map();
     this.htmlMessages = new HtmlMessages();
+    this.administratorDals = new AdministratorDALs();
+    this.emailValidator = new EmailValidator();
   }
 
-  async createLogin({ email, password, emailRecovery }: ILoginCreate) {
+  async createAdministrator({ email, password, emailRecovery, phone, name, picture }: IAdministratorData) {
     const findLoginByEmail =
       await this.loginDALs.findLoginByEmailOREmailRecovery(
         email,
@@ -45,12 +51,20 @@ class AdministratorServices {
         statusCode: 401,
       });
     }
-
+     if (
+        !this.emailValidator.isValid(email) ||
+        !this.emailValidator.isValid(emailRecovery)
+    ) {
+        throw new BadRequestError({ message: 'Invalid email format.' });
+    }
     const passwordHash = await hash(password, 10);
-    const result = await this.loginDALs.createLogin({
+    const result = await this.administratorDals.createAdministrator({
       email,
       password: passwordHash,
       emailRecovery,
+      phone,
+      name,
+      picture
     });
 
     return result;

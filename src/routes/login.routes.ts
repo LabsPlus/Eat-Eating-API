@@ -11,39 +11,7 @@ class LoginRoutes {
   }
 
   postRoutes() {
-    /**
-     * @swagger
-     * /login/create-login:
-     *   post:
-     *     summary: Criar login para os administradores de usuários
-     *     description: Criar login para os administradores de usuários
-     *     tags:
-     *       - Login Admin
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               email:
-     *                 type: string
-     *               password:
-     *                 type: string
-     *               emailRecovery:
-     *                 type: string
-     *     responses:
-     *       '201':
-     *         description: Login criado com sucesso
-     *       '401':
-     *         description: Email or Email Recovery already exists, only one email is allowed.
-     */
-
-    this.router.post(
-      '/create-login',
-      this.loginController.createLogin.bind(this.loginController),
-    );
-
+   
     /**
      * @swagger
      * /login/auth-login:

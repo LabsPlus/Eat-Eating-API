@@ -29,6 +29,7 @@ class TicketServices {
     }
     const userTicketCount =
       await this.userTicketCountDALs.findUserTicketsCountDALsByUserId(user.id);
+
     let createdOrUpdateTicketCount: any;
     if(quantity > operatedTicket.ticketsOpened ){
           throw new UnprocessedEntityError({message: 'totalTickets user cannot be higher than tickets opened'})

@@ -24,7 +24,7 @@ model LoginAdministrator {
 model Administrator {
   id       Int     @id @default(autoincrement())
   isMaster Boolean @default(false)
-
+  phone String @unique
   personId   Int @unique // 1-1 : Um administrador está associado a uma pessoa
   loginAdmId Int @unique // 1-1 : Um administrador está associado a um login
 

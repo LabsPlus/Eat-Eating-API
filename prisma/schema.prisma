@@ -24,13 +24,12 @@ model LoginAdministrator {
 model Administrator {
   id       Int     @id @default(autoincrement())
   isMaster Boolean @default(false)
-  phone String
+
   personId   Int @unique // 1-1 : Um administrador está associado a uma pessoa
   loginAdmId Int @unique // 1-1 : Um administrador está associado a um login
-  pictureId Int @unique
+
   person Person             @relation(fields: [personId], references: [id])
   login  LoginAdministrator @relation(fields: [loginAdmId], references: [id])
-  picture Picture @relation(fields: [pictureId], references: [id])
 }
 
 // NÃO ESQUECER DE COLOCAR O cpf PARA @UNIQUE E RETIRAR O @default("") QUANDO ELE FOR IMPLEMENTADO
@@ -39,10 +38,11 @@ model Person {
   name String
   cpf  String   @default("")
   born DateTime @default(now())
-
+  picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   user          User? // 1-1 : (Opcional) Uma pessoa está associada a um usuário
   Administrator Administrator? // 1-1 : (Opcional) Uma pessoa está associada a um administrador
 }
+
 
 model User {
   id Int @id @default(autoincrement())
@@ -57,7 +57,6 @@ model User {
   typeGrant   TypeGrant? @relation(fields: [typeGrantId], references: [id])
   userTicketsCount UserTicketsCount?
   dailyMeals Int
-  picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
   visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante
   employee Employee? // 1-1 : (Opcional) Um usuário está associado a um funcionário
@@ -104,9 +103,9 @@ model Visitor {
 model Picture {
   id  Int    @id @default(autoincrement())
   url String
-  Adiministrador Administrator?
-  userId Int  @unique // 1-1 : (Obrigatório) Uma imagem está associada a um usuário
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  personId Int  @unique // 1-1 : (Obrigatório) Uma imagem está associada a um usuário
+  person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
 }
 
 enum CategoryName {

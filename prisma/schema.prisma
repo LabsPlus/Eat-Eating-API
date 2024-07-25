@@ -213,5 +213,4 @@ model RfidCard {
   updatedAt   DateTime @default(now()) @updatedAt @map("updatedAt")
   userId      Int      @unique @map("userId")
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
 }

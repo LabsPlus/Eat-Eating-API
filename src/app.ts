@@ -4,6 +4,7 @@ import { LoginRoutes } from './routes/login.routes';
 import { UserRoutes } from './routes/user.routes';
 import { TicketsRoutes } from './routes/tickets.routes'
 import {OperatedTicketsRoutes} from './routes/operatedTickets.routes';
+import { RfidCardRoutes } from './routes/rfid.routes';
 import { errorMiddleware } from './middlewares/error.middlewares';
 import requestIp from 'request-ip';
 import { CorsMiddleware } from './server';
@@ -32,6 +33,7 @@ export class App {
     this.setupUserRoutes();
     this.setupTicketsRoutes();
     this.setupOperatedTicketsRoutes();
+    this.setupRfidCardRoutes();
     this.setupSwagger();
   }
 
@@ -73,6 +75,13 @@ export class App {
     const operatedTicketsRoutes = new OperatedTicketsRoutes();
     const OperatedTicketsBaseRoute = '/operated-tickets';
      this.app.use(OperatedTicketsBaseRoute , operatedTicketsRoutes.putRoutes());
+  }
+
+  private setupRfidCardRoutes() {
+    const rfidCardRoutes = new RfidCardRoutes();
+    const rfidBaseRoute = '/rfid-card';
+
+    this.app.use(rfidBaseRoute, rfidCardRoutes.getRoutes());
   }
 
   private middleware(corsConfig: CorsMiddleware) {

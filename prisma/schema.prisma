@@ -38,7 +38,7 @@ model Person {
   name String
   cpf  String   @default("")
   born DateTime @default(now())
-
+  picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   user          User? // 1-1 : (Opcional) Uma pessoa está associada a um usuário
   Administrator Administrator? // 1-1 : (Opcional) Uma pessoa está associada a um administrador
 }
@@ -56,10 +56,10 @@ model User {
   typeGrant   TypeGrant? @relation(fields: [typeGrantId], references: [id])
   userTicketsCount UserTicketsCount?
   dailyMeals Int
-  picture  Picture? // 1-1 : (Opcional) Um usuário está associado a uma imagem
   student  Student? // 1-1 : (Opcional) Um usuário está associado a um estudante
   visitor  Visitor? // 1-1 : (Opcional) Um usuário está associado a um visitante
   employee Employee? // 1-1 : (Opcional) Um usuário está associado a um funcionário
+  rfidCard RfidCard? // 1-1 : (Opcional) Um usuário está associado a um funcionário
 }
 
 model Student {
@@ -104,8 +104,8 @@ model Picture {
   id  Int    @id @default(autoincrement())
   url String
 
-  userId Int  @unique // 1-1 : (Obrigatório) Uma imagem está associada a um usuário
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personId Int  @unique // 1-1 : (Obrigatório) Uma imagem está associada a um usuário
+  person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
 }
 
 enum CategoryName {
@@ -202,3 +202,15 @@ model OperatedTickets {
   ticketsConsumed  Int
   
 } 
+
+
+model RfidCard {
+
+  id          Int      @id @default(autoincrement()) @map("id")
+  cardNumber  String   @unique @map("cardNumber")
+  createdAt   DateTime @default(now()) @map("createdAt")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updatedAt")
+  userId      Int      @unique @map("userId")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+}

@@ -2,6 +2,7 @@ import 'express-async-errors';
 import express, { Application } from 'express';
 import { LoginRoutes } from './routes/login.routes';
 import { UserRoutes } from './routes/user.routes';
+import { AdministratorRoutes } from './routes/administrator.routes';
 import { TicketsRoutes } from './routes/tickets.routes'
 import {OperatedTicketsRoutes} from './routes/operatedTickets.routes';
 import { RfidCardRoutes } from './routes/rfid.routes';
@@ -35,6 +36,7 @@ export class App {
     this.setupOperatedTicketsRoutes();
     this.setupRfidCardRoutes();
     this.setupSwagger();
+    this.setupAdministratorRoutes();
   }
 
   private setupSwagger() {
@@ -61,6 +63,13 @@ export class App {
 
     this.app.use(loginBaseRoute, loginRoutes.patchRoutes());
     this.app.use(loginBaseRoute, loginRoutes.postRoutes());
+  }
+  private setupAdministratorRoutes() {
+    const administratorRoutes = new AdministratorRoutes();
+    const administratorBaseRoute = '/administrator';
+
+    this.app.use(administratorBaseRoute, administratorRoutes.postRoutes());
+    
   }
 
   private setupTicketsRoutes(){

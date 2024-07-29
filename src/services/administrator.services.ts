@@ -12,7 +12,7 @@ import {IAdministratorData} from '../intefaces/administrator.interfaces'
 import { RateLimitUtils } from '../utils/rate.limit.utils';
 import { sign, verify } from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { BadRequestError, ErrorsHelpers } from '../helpers/errors.helpers';
+import { BadRequestError, ErrorsHelpers, NotFoundError } from '../helpers/errors.helpers';
 import { AdministratorDALs } from '../database/repositories/administrator.repositories/administator.dals/administrator.dals';
 import { EmailValidator } from '../helpers/validators/email.validators';
 dotenv.config();
@@ -59,6 +59,46 @@ class AdministratorServices {
     }
     const passwordHash = await hash(password, 10);
     const result = await this.administratorDals.createAdministrator({
+      email,
+      password: passwordHash,
+      emailRecovery,
+      phone,
+      name,
+      picture
+    });
+
+    return result;
+  }
+
+   async updateAdministrator(id: number, { email, password, emailRecovery, phone, name, picture }: IAdministratorData) {
+    const administrator = await this.administratorDals.findAdministrator(id);
+    if(!administrator){
+      throw new NotFoundError({message:'administrator not found'});
+    }
+    const findLoginByEmail =
+      await this.loginDALs.findLoginByEmailOREmailRecovery(
+        email,
+        emailRecovery,
+      );
+    if (findLoginByEmail && administrator.loginAdmId !== findLoginByEmail.id) {
+      throw new ErrorsHelpers({
+        message:
+          'Email or Email Recovery already exists, only one email is allowed.',
+        statusCode: 401,
+      });
+    }
+     if (
+        !this.emailValidator.isValid(email) ||
+        !this.emailValidator.isValid(emailRecovery)
+    ) {
+        throw new BadRequestError({ message: 'Invalid email format.' });
+    }
+   
+    const passwordHash = await hash(password, 10);
+    
+    const result = await this.administratorDals.updateAdministrator({
+      adminId: administrator.id,
+      personId: administrator.personId,
       email,
       password: passwordHash,
       emailRecovery,

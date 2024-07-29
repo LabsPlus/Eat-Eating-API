@@ -20,6 +20,7 @@ class PersonDALs {
 
         return result
     }
+    
 }
 
 export {PersonDALs};

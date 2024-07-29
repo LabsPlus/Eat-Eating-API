@@ -53,6 +53,54 @@ class AdministratorRoutes {
     return this.router;
 
   }
+
+  putRoutes() {
+    /**
+     * @swagger
+     * /administrator/create-administrator:
+     *   post:
+     *     summary: atualiza administradores comuns
+     *     description:  rota para atualizar administradores comuns
+     *     tags:
+     *       - Admin
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         description: ID do usuário a ser atualizado
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name: 
+     *                   type: string
+     *               phone:
+     *                  type: string
+     *               picture:
+     *                  type: string
+     *               email:
+     *                 type: string
+     *               password:
+     *                 type: string
+     *               emailRecovery:
+     *                 type: string
+     *     responses:
+     *       '201':
+     *         description: Administrador criado com sucesso
+     *       '401':
+     *         description: Email or Email Recovery already exists, only one email is allowed.
+     */
+
+    this.router.put(
+      '/update-administrator/:id',
+      this.administratorController.updateAdministrator.bind(this.administratorController),
+    );
+    return this.router;
+
+  }
 }
 
 export { AdministratorRoutes };

@@ -69,7 +69,7 @@ export class App {
     const administratorBaseRoute = '/administrator';
 
     this.app.use(administratorBaseRoute, administratorRoutes.postRoutes());
-    
+    this.app.use(administratorBaseRoute, administratorRoutes.putRoutes());
   }
 
   private setupTicketsRoutes(){

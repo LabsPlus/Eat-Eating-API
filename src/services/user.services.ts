@@ -137,9 +137,16 @@ class UserServices {
     if (oldCategory === null) {
       throw new NotFoundError({ message: 'old category not founded' });
     }
-    let url = await this.pictureDALs.findPictureByUserId(id);
+    let userHasPicture = await this.pictureDALs.userHasPicture(id);
+
     if (picture) {
-      url = await this.pictureDALs.updatePicture({ url: picture, userId: id });
+
+      if (userHasPicture) {
+        await this.pictureDALs.updatePicture({ url: picture, userId: id });
+      } else {
+        await this.pictureDALs.createPicture({ url: picture, userId: id });
+      }
+
     }
 
     await this.verifyHelpers.verifyUpdateByCategory({
@@ -168,7 +175,7 @@ class UserServices {
         email: updateLogin.email,
         emailRecovery: updateLogin.emailRecovery,
       },
-      picture: url,
+      picture: picture,
     };
   }
 

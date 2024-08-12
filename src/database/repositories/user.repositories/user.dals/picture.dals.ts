@@ -73,5 +73,32 @@ class PictureDALs{
         })
         return result;
     }
+
+    async userHasPicture(userId: number){
+        
+        const user = await prisma.user.findUnique({
+            where:{
+                id: userId,
+            },
+            select:{
+                personId: true,
+            }
+        });
+
+        if(!user){
+            throw new Error('User not found');
+        }
+
+        let personId = user.personId;
+
+        const result = await prisma.picture.findUnique({
+            where:{
+                personId: personId,
+            }
+        });
+
+        return result;
+        
+    };
 }
 export {PictureDALs};
